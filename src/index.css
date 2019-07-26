@@ -7,6 +7,7 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 	text-decoration: none;
 	list-style: none;
+	background-color: '#ebeef1';
 	/*background-image: url(./bgImg.jpg);
 	background-size: cover;
 	background-position: center;

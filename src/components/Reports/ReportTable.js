@@ -21,6 +21,8 @@ import tiny from '@material-ui/core/colors/green';
 import little from '@material-ui/core/colors/deepOrange';
 import Switch from '@material-ui/core/Switch';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Chip from '@material-ui/core/Chip';
+
 
 //Icons
 import CopyIcon from '@material-ui/icons/ContentCopy';
@@ -33,18 +35,19 @@ function getSorting(order, orderBy) {
 		: (a, b) => (a[orderBy] < b[orderBy] ? -1 : 1);
 }
 
+
 const columnData = [
-	{ id: 'airlines', numeric: false, disablePadding: true, label: 'Airlines' },
-	{ id: 'date_of_birth', numeric: false, disablePadding: true, label: 'DOB' },
-	{ id: 'passport_number', numeric: false, disablePadding: true, label: 'Passport No' },
-	{ id: 'place_of_issue', numeric: false, disablePadding: true, label: 'Place of Issue'},
-	{ id: 'exp_date', numeric: false, disablePadding: true, label: 'Date of Expiry' },
-	{ id: 'nationality', numeric: false, disablePadding: true, label: 'Nationality' },
-	{ id: 'visa_type', numeric: false, disablePadding: true, label: 'Visa Type' },
+	{ id: 'title', numeric: false, disablePadding: true, label: 'Report Title' },
+	{ id: 'date', numeric: false, disablePadding: true, label: 'Date' },
+	{ id: 'emp_name', numeric: false, disablePadding: true, label: 'Employee Name' },
+	{ id: 'client_name', numeric: false, disablePadding: true, label: 'Client Name'},
+	{ id: 'region', numeric: false, disablePadding: true, label: 'Task Region' },
+	{ id: 'priority', numeric: false, disablePadding: true, label: 'Task Priority' },
+	{ id: 'status', numeric: false, disablePadding: true, label: 'Task Status' },
 	{ id: 'more', numeric: false, disablePadding: true, label: 'Action' }
 ];
 
-class PassportAirlinesTableHeader extends React.Component {
+class ReportTableHeader extends React.Component {
 	createSortHandler = (property) => (event) => {
 		this.props.onRequestSort(event, property);
 	};
@@ -85,7 +88,7 @@ class PassportAirlinesTableHeader extends React.Component {
 	}
 }
 
-PassportAirlinesTableHeader.propTypes = {
+ReportTableHeader.propTypes = {
 	numSelected: PropTypes.number.isRequired,
 	onRequestSort: PropTypes.func.isRequired,
 	onSelectAllClick: PropTypes.func.isRequired,
@@ -212,7 +215,7 @@ const styles = (theme) => ({
 	}
 });
 
-class PassportAirlinesMandatTable extends React.Component {
+class ReportTable extends React.Component {
 	constructor(props) {
 		super(props);
 
@@ -308,7 +311,7 @@ class PassportAirlinesMandatTable extends React.Component {
 				<EnhancedTableToolbar numSelected={selected.length} />
 				<div className={classes.tableWrapper}>
 					<Table className={classes.table} aria-labelledby="tableTitle">
-						<PassportAirlinesTableHeader
+						<ReportTableHeader
 							numSelected={selected.length}
 							order={order}
 							orderBy={orderBy}
@@ -324,84 +327,21 @@ class PassportAirlinesMandatTable extends React.Component {
 								.map((n) => {
 									return (
 										<TableRow hover role="checkbox" tabIndex={-1} key={n.id}>
-											<TableCell>{n.airlines}</TableCell>
+											<TableCell>{n.title}</TableCell>
+											<TableCell>{moment(n.date).format('Do MMM YYYY') }</TableCell>
+											<TableCell>{n.emp_name}</TableCell>
+											<TableCell>{n.client_name}</TableCell>
+											<TableCell>{n.region}</TableCell>
 											<TableCell>
-												<FormControlLabel
-													control={
-														<Switch
-															checked={n.date_of_birth}
-															onChange={this.handleDOB(n)}
-															value={n.date_of_birth}
-														/>
-													}
-													label=""
-												/>
-											</TableCell>
-											
-											<TableCell>
-												<FormControlLabel
-													control={
-														<Switch
-															checked={n.passport_number}
-															onChange={this.handlePassportNumber(n)}
-															value={n.passport_number}
-														/>
-													}
-													label=""
-												/>
+												{n.priority == 2 && <Chip label="Urgent" className={classes.chip}  color="secondary" /> }
+												{n.priority == 1 && <Chip label="High" className={classes.chip} color="default" /> }
+												{n.priority == 0 && <Chip label="Normal" className={classes.chip} color="primary" /> }
 											</TableCell>
 											<TableCell>
-												<FormControlLabel
-													control={
-														<Switch
-															checked={n.place_of_issue}
-															onChange={this.handlePlaceOfIssue(n)}
-															value={n.place_of_issue}
-														/>
-													}
-													label=""
-												/>
+												{n.status == 2 && <Chip label="Completed" className={classes.chip}  color="secondary" /> }
+												{n.status == 1 && <Chip label="On Progress" className={classes.chip} color="default" /> }
+												{n.status == 0 && <Chip label="Pending" className={classes.chip} color="primary" /> }
 											</TableCell>
-											
-											<TableCell>
-												<FormControlLabel
-													control={
-														<Switch
-															checked={n.exp_date}
-															onChange={this.handleExpDate(n)}
-															value={n.exp_date}
-														/>
-													}
-													label=""
-												/>
-											</TableCell>
-
-											<TableCell>
-												<FormControlLabel
-													control={
-														<Switch
-															checked={n.nationality}
-															onChange={this.handleNationality(n)}
-															value={n.nationality}
-														/>
-													}
-													label=""
-												/>
-											</TableCell>
-
-											<TableCell>
-												<FormControlLabel
-													control={
-														<Switch
-															checked={n.visa_type}
-															onChange={this.handleVisaType(n)}
-															value={n.visa_type}
-														/>
-													}
-													label=""
-												/>
-											</TableCell>
-
 											<TableCell>
 												<IconButton
 													className={classes.button}
@@ -442,8 +382,8 @@ class PassportAirlinesMandatTable extends React.Component {
 	}
 }
 
-PassportAirlinesMandatTable.propTypes = {
+ReportTable.propTypes = {
 	classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(PassportAirlinesMandatTable);
+export default withStyles(styles)(ReportTable);

@@ -14,6 +14,7 @@ import NativeSelect from '@material-ui/core/NativeSelect';
 import Grid from '@material-ui/core/Grid';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import CardBoard from '../Common/CardBoard';
 
 // Icons
 import BackIcon from '@material-ui/icons/ArrowBack';
@@ -54,10 +55,11 @@ const styles = (theme) => ({
 		padding: theme.spacing.unit * 3
 	},
 	formControl: {
-		width: '50%',
-		backgroundColor: '#663354',
+		width: '100%',
 		display: 'flex',
-		margin: theme.spacing.unit
+		borderColor: 'blue',
+		borderWidth: 2,
+		minHeight: 50,
 	},
 	textField: {
 		marginLeft: theme.spacing.unit,
@@ -84,6 +86,14 @@ const styles = (theme) => ({
 		position: 'absolute',
 		top: theme.spacing.unit * 20,
 		right: theme.spacing.unit * 10
+	},
+	textContent: {
+		backgroundColor: 'blue',
+		height: 600
+	},
+	locationContent:{
+		backgroundColor: 'green',
+		height: 600
 	}
 });
 
@@ -215,6 +225,8 @@ class AddClient extends React.Component {
 	}
 
 
+
+
 	//Add Bank
 	addClientUI = () => {
 		const { classes, regions } = this.props;
@@ -222,8 +234,12 @@ class AddClient extends React.Component {
 		const { client_name, first_name, middle_name,
 		last_name,address, area, city, state, country, pin, mobile, email } = this.state;
 
+ 
+
 		return (
 			<Grid container spacing={24}>
+				<view>
+				</view>
 				<Grid item xs={6}>
 					<FormControl>
 						
@@ -403,21 +419,23 @@ class AddClient extends React.Component {
 		);
 	};
 
+	textContent = () =>{
+
+		const { classes } = this.props;
+
+		return(<view className={classes.formControl}>
+				Client Name: 
+			</view>);
+	}
+	
+
 	render() {
 		const { classes } = this.props;
 		const { showAlert, title, msg } = this.state;
 
 		return (
 			<div className={classes.root}>
-				<Button
-					variant="extendedFab"
-					color="secondary"
-					className={classes.btnRightA}
-					onClick={this.onTapBack.bind(this)}
-				>
-					Back <BackIcon className={classes.rightIcon} />
-				</Button>
-
+				 
 				<Alert
 					open={this.props.isAdded}
 					onCancel={this.onOkay.bind(this)}
@@ -434,7 +452,28 @@ class AddClient extends React.Component {
 					title={title}
 					msg={msg}
 				/>
-				{this.addClientUI()}
+				
+				<Grid container spacing={24}>
+					<Grid item xs={1}>
+						
+					</Grid>
+					<Grid item xs={6}>
+						<CardBoard>
+							{this.textContent()}
+						</CardBoard>
+					</Grid>
+					<Grid item xs={3}>
+						<CardBoard>
+							Location Contents
+						</CardBoard>
+					</Grid>
+					<Grid item xs={2}>
+						
+					</Grid>
+				
+					 
+				</Grid>
+
 			</div>
 		);
 	}

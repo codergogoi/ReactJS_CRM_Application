@@ -1,6 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+import Fab from '@material-ui/core/Fab';
+import Icon from '@material-ui/core/Icon';
+
 import Button from '@material-ui/core/Button';
 import classes from 'classnames';
 import Card from '@material-ui/core/Card';
@@ -20,63 +23,99 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import AddIcon from '@material-ui/icons/Add';
 import BackIcon from '@material-ui/icons/KeyboardArrowLeft';
 
+
 const styles = (theme) => ({
+
+	titleHeader: {
+		display: 'flex',
+		flexDirection: 'row',
+		height: 60,
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		backgroundColor: '#FFFF',
+		borderRadius: 10,
+	},
+	content:{
+		marginTop: 20,
+		width: '100%',
+	},
+	title:{
+		display: 'flex',
+		marginLeft: 20,
+		width: 300,
+		height: 60,
+		justifyContent: 'space-between',
+		alignItems: 'center',
+		color: '#900C3F',
+		fontSize: 26,
+	},
+	btnAction:{
+		width: 80,
+		height: 60,
+		marginRight: 50,
+	},
 	card: {
 		flex: 1,
-		backgroundColor: 'none'
-	},
-	title: {
-		marginBottom: 16,
-		fontSize: 14
-	},
-	media: {
-		height: 0,
-		paddingTop: '2%' // 16:9
-	},
-	actions: {
-		display: 'flex'
-	},
-	expand: {
-		transform: 'rotate(0deg)',
-		transition: theme.transitions.create('transform', {
-			duration: theme.transitions.duration.shortest
-		}),
-		marginLeft: 'auto'
-	},
-	expandOpen: {
-		transform: 'rotate(180deg)'
-	},
-	avatar: {
-		backgroundColor: red[500]
+		backgroundColor: '#ebeef1',
+		},
+	 
+	fab:{
+		backgroundColor: '#900C3F'
 	}
 });
 
 class CardDiv extends React.Component {
 	constructor(props) {
 		super(props);
-
-		this.state = {
-			title: props.title,
-			isAdd: props.isAdd,
-			isBack: props.isBack
-		};
-
-		this.addButton = this.addButton.bind(this);
 	}
 
-	addButton() {}
+	onTapBack = () => {
+		this.props.onTapBack();
+	}
+
+	onTapAdd = () => {
+		this.props.onTapAdd();
+	}
+
+
+	onDisplayBackButton = () =>{
+
+		const { classes, isAdd, isBack } = this.props;
+
+		if(isAdd){
+			return (
+				<div className={classes.btnAction}>
+					<Fab color="secondary" aria-label="Edit" className={classes.fab} onClick={this.onTapAdd.bind(this)}>
+						<AddIcon />
+					</Fab>
+				</div>
+			);
+		}else if(isBack){
+			return (
+				<div className={classes.btnAction}>
+					<Fab color="secondary" aria-label="Edit" className={classes.fab} onClick={this.onTapBack.bind(this)}>
+						<BackIcon />
+					</Fab>
+				</div>
+			);
+		}else{
+			return('');
+		}
+	}
+
 
 	render() {
-		const { classes } = this.props;
-
+		const { classes, title, isAdd, isBack } = this.props;
 		return (
-			<div>
-				<Card className={classes.card}>
-					<CardHeader action={this.addButton()} title={this.state.title} />
-					<CardContent>
-						<Typography component="p">{this.props.children}</Typography>
-					</CardContent>
-				</Card>
+			<div  className={classes.card}>
+				<div className={classes.titleHeader}>
+					<div className={classes.title}>{title}: </div>
+					{this.onDisplayBackButton()}
+				</div>
+				<div className={classes.content}>
+					<Typography component="p">{this.props.children}</Typography>
+				</div>
+				
 			</div>
 		);
 	}

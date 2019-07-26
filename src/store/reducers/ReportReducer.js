@@ -1,27 +1,22 @@
 import Actions from '../actions/Actions';
 
 const initialState = {
-	country_fields: [],
-	airlines_fields: [],
+	reports: [],
 	isAdded: false
 };
 
 export default function(state = initialState, action) {
 	switch (action.type) {
-		case Actions.VIEW_BY_AIRLINES:
+		case Actions.VIEW:
 			return {
 				...state,
-				airlines_fields: action.payload
+				reports: action.payload
 			};
-		case Actions.VIEW_BY_COUNTRY:
-			return {
-				...state,
-				country_fields: action.payload
-			};
+		 
 		case Actions.DELETE:
 			return {
 				...state,
-				fields: action.payload
+				reports: action.payload
 			};
 		case Actions.ADD:
 			return {
@@ -31,7 +26,7 @@ export default function(state = initialState, action) {
 		case Actions.EDIT:
 			return {
 				...state,
-				fields: action.payload
+				reports: action.payload
 			};
 		case Actions.DISMISS:
 			return {

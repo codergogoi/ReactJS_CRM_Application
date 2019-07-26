@@ -6,23 +6,13 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import { Grid, Card, CardContent, Typography, Avatar } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 
-//Icons
-import DashboardIcon from '@material-ui/icons/Home';
-import NotificationIcon from '@material-ui/icons/NotificationsActive';
-import OfferIcon from '@material-ui/icons/CardGiftcard';
-import RoutingIcon from '@material-ui/icons/CallSplit';
-
-
-import ReportIcon from '@material-ui/icons/PlaylistAddCheck';
-import SDKIcon from '@material-ui/icons/PhonelinkSetup';
+import TrackingIcon from '@material-ui/icons/GpsFixed';
+import TaskIcon from '@material-ui/icons/Assignment';
+import ClientIcon from '@material-ui/icons/Store';
+import EmployeeIcon from '@material-ui/icons/AssignmentInd';
+import ReportIcon from '@material-ui/icons/InsertChart';
+import ExpensesIcon from '@material-ui/icons/AttachMoney';
 import SettingsIcon from '@material-ui/icons/Settings';
-import SignOutIcon from '@material-ui/icons/ExitToApp';
-import MenuIcon from '@material-ui/icons/Menu';
-import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import PromoIcon from '@material-ui/icons/Receipt';
-import PassportIcon from '@material-ui/icons/LineStyle'
-import LegalIcon from '@material-ui/icons/Announcement';
 
 // App Classes
 // import ManageTask from '../Tasks/ManageTask';
@@ -86,7 +76,7 @@ class Applications extends Component {
 							<li>
 								<Link to={`${process.env.PUBLIC_URL}/track`}>
 									<Button className={classes.paper}>
-										<NotificationIcon  className={classes.leftIcon}/> Track User
+										<TrackingIcon  className={classes.leftIcon}/> Track User
 									</Button>
 								</Link>
 							</li>
@@ -96,7 +86,7 @@ class Applications extends Component {
 						<li>
 							<Link to={`${process.env.PUBLIC_URL}/task`}>
 								<Button className={classes.paper}>
-								<OfferIcon  className={classes.leftIcon}/>Task
+								<TaskIcon  className={classes.leftIcon}/>Task
 								</Button>
 							</Link>
 						</li>
@@ -106,7 +96,7 @@ class Applications extends Component {
 						<li>
 							<Link to={`${process.env.PUBLIC_URL}/clients`}>
 								<Button className={classes.paper} onClick={this.onTapOptions}>
-									<RoutingIcon  className={classes.leftIcon}/>
+									<ClientIcon  className={classes.leftIcon}/>
 									Clients
 								</Button>
 							</Link>
@@ -119,7 +109,7 @@ class Applications extends Component {
 						<li>
 							<Link to={`${process.env.PUBLIC_URL}/employee`}>
 								<Button className={classes.paper}>
-								<SDKIcon  className={classes.leftIcon}/>
+								<EmployeeIcon  className={classes.leftIcon}/>
 									Employee
 								</Button>
 							</Link>
@@ -141,7 +131,7 @@ class Applications extends Component {
 						<li>
 							<Link to={`${process.env.PUBLIC_URL}/expenses`}>
 								<Button className={classes.paper}>
-								<ReportIcon  className={classes.leftIcon}/>Expenses
+								<ExpensesIcon  className={classes.leftIcon}/>Expenses
 								</Button>
 							</Link>
 						</li>

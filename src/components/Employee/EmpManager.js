@@ -22,6 +22,14 @@ import AddEmployee from './AddEmp';
 import { connect } from 'react-redux';
 import { GetEmployees, RemoveEmp } from '../../store/actions/EmployeeActions';
 
+import Paper from '@material-ui/core/Paper';
+import InputBase from '@material-ui/core/InputBase';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
+import SearchIcon from '@material-ui/icons/Search';
+import DirectionsIcon from '@material-ui/icons/Directions';
+
 function TabContainer(props) {
 	return (
 		<Typography component="div" style={{ padding: 8 * 3 }}>
@@ -36,8 +44,14 @@ TabContainer.propTypes = {
 
 const styles = (theme) => ({
 	root: {
+		display: 'flex',
 		flexGrow: 1,
 		width: '100%'
+	},
+	searchBar:{
+		padding: '2px 4px',
+		alignItems: 'center',
+		width: 400,
 	},
 	bar: {
 		backgroundColor: '#1a237e'
@@ -54,7 +68,24 @@ const styles = (theme) => ({
 		position: 'absolute',
 		bottom: theme.spacing.unit * 12,
 		left: theme.spacing.unit * 13
-	}
+	},
+	searchView: {
+		height: 100,
+		backgroundColor: 'red',
+		width: 400,
+	},
+	input: {
+		marginLeft: 8,
+		flex: 1,
+	  },
+	  iconButton: {
+		padding: 10,
+	  },
+	  divider: {
+		width: 1,
+		height: 28,
+		margin: 4,
+	  },
 });
 
 class EmpManager extends Component {
@@ -65,7 +96,8 @@ class EmpManager extends Component {
 			id: '',
 			value: 0,
 			isAddNew: false,
-			isEdit: false
+			isEdit: false,
+			isSearch: false
 		};
 	}
 
@@ -123,10 +155,34 @@ class EmpManager extends Component {
 		this.props.RemoveEmp({ id });
 	}
 
+	onTapSearch = () => {
+		this.setState({isSearch: true});
+	}
+
+	onDisplaySearchView = () => {
+
+		return (
+			<div style={styles.searchView}>
+					<IconButton className={styles.iconButton} aria-label="Menu">
+						<MenuIcon />
+					</IconButton>
+					<InputBase
+						className={styles.input}
+						placeholder="Search Employee"
+						inputProps={{ 'aria-label': 'Search Employee' }}
+					/>
+					<IconButton className={styles.iconButton} aria-label="Search">
+						<SearchIcon />
+					</IconButton>
+					<Divider className={styles.divider} />
+			</div>
+		);
+	}
+
 	render() {
 
 		const { classes,employees } = this.props;
-		const { value, isAddNew, showAlert, title, msg } = this.state;
+		const { value, isAddNew, showAlert, title, msg , isSearch} = this.state;
 
 		if (isAddNew) {
 			return (
@@ -156,6 +212,8 @@ class EmpManager extends Component {
 								>
 									Add <BankIcon className={classes.rightIcon} />
 								</Button>
+								
+								{this.onDisplaySearchView()}
 								{employees !== undefined && (<Table
 									onEditPaymentMode={this.onEditPaymentMode.bind(this)}
 									onDeleteEmp={this.onDeleteEmp.bind(this)}
@@ -179,6 +237,7 @@ class EmpManager extends Component {
 		this.setState({ showAlert: false });
 		this.onExecuteDeleteCommand();
 	};
+	
 }
 
 EmpManager.propTypes = {

@@ -130,8 +130,8 @@ class ClientManager extends Component {
  
 		if (isAddNew) {
 			return (
-				<CardDiv title={'Add Client'}>
-					<AddClient onTapBack={this.onTapBack.bind(this)} />
+				<CardDiv title={'Add Client'} isBack={true} onTapBack={this.onTapBack.bind(this)}>
+					<AddClient  />
 				</CardDiv>
 			);
 		} else {
@@ -145,17 +145,9 @@ class ClientManager extends Component {
 						msg={msg}
 					/>
 
-					<CardDiv title={'Manage Clients'}>
+					<CardDiv title={'Manage Clients'} isAdd={true} onTapAdd={this.onTapRegister.bind(this)}>
 						{value === 0 && (
 							<div>
-								<Button
-									variant="extendedFab"
-									color="secondary"
-									className={classes.btnRightA}
-									onClick={this.onTapRegister.bind(this)}
-								>
-									Add <AddOffersIcon className={classes.rightIcon} />
-								</Button>
 								<Table
 									onEditPaymentMode={this.onEditPaymentMode.bind(this)}
 									onDeletePaymentMode={this.onDeletePaymentMode.bind(this)}

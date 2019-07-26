@@ -27,16 +27,12 @@ import ListItem from '@material-ui/core/ListItem';
 
 //Icons
 import DashboardIcon from '@material-ui/icons/Home';
-
-import TrackUserIcon from '@material-ui/icons/LocationSearching';
-import TaskIcon from '@material-ui/icons/FeaturedPlayList';
-import ClientIcon from '@material-ui/icons/VerifiedUser';
-
-
-
-import RoutingIcon from '@material-ui/icons/CallSplit';
-import BankIcon from '@material-ui/icons/AccountBalance';
-import SDKIcon from '@material-ui/icons/PhonelinkSetup';
+import TrackingIcon from '@material-ui/icons/GpsFixed';
+import TaskIcon from '@material-ui/icons/Assignment';
+import ClientIcon from '@material-ui/icons/Store';
+import EmployeeIcon from '@material-ui/icons/AssignmentInd';
+import ReportIcon from '@material-ui/icons/InsertChart';
+import ExpensesIcon from '@material-ui/icons/AttachMoney';
 import SettingsIcon from '@material-ui/icons/Settings';
 
 import SignOutIcon from '@material-ui/icons/ExitToApp';
@@ -54,7 +50,7 @@ import TrackManager from './Track/TrackManeger';
 import TaskManager from './Task/TaskManager';
 import ClientManager from './Clients/ClientManager';
 import EmpManager from './Employee/EmpManager';
-import ManageReports from './Reports/ManageReports';
+import ReportManager from './Reports/ReportManager';
 import SettingsManager from './Settings/SettingsManager';
 import ExpensesManager from './Expenses/ExpensesManager';
 
@@ -129,7 +125,7 @@ const styles = (theme) => ({
 	},
 	content: {
 		flexGrow: 1,
-		backgroundColor: 'transparent',
+		backgroundColor: '#ebeef1',
 		padding: theme.spacing.unit * 3
 	},
 	row: {
@@ -311,19 +307,6 @@ class Dashboard extends Component {
 			});
 	};
 
-	//155678,566767,560000-59999
-
-	checkUserAuth = (user) => {
-
-		if(user === 'Admin' && localStorage.getItem('currency') === 'INR'){
-			return (<MenuItem onClick={this.handleClose}>
-				<Link className="linkName" to={`${process.env.PUBLIC_URL}/view-users`}>
-					Add User
-				</Link>
-			</MenuItem>);
-		}
-		
-	}
 
 	// render UI
 	render() {
@@ -370,9 +353,6 @@ class Dashboard extends Component {
 											Switch Country
 										</Link>
 									</MenuItem>
-
-									{ this.checkUserAuth(user_type) }
-									
 									
 									<MenuItem onClick={this.showAlert}>Logout</MenuItem>
 								</Menu>
@@ -417,7 +397,7 @@ class Dashboard extends Component {
 							<Link className="linkName" to={`${process.env.PUBLIC_URL}/track`}>
 								<ListItem button>
 									<ListItemIcon>
-										<TrackUserIcon />
+										<TrackingIcon />
 									</ListItemIcon>
 									<ListItemText primary="Track User" />
 								</ListItem>
@@ -450,23 +430,31 @@ class Dashboard extends Component {
 							<Link className="linkName" to={`${process.env.PUBLIC_URL}/employee`}>
 								<ListItem button>
 									<ListItemIcon>
-										<PromoIcon />
+										<EmployeeIcon />
 									</ListItemIcon>
-									<ListItemText primary="employee" />
+									<ListItemText primary="Employee" />
 								</ListItem>
 							</Link>
 						</List>
-
-					 
-
  
 						<List>
 							<Link className="linkName" to={`${process.env.PUBLIC_URL}/reports`}>
 								<ListItem button>
 									<ListItemIcon>
-										<SDKIcon />
+										<ReportIcon />
 									</ListItemIcon>
 									<ListItemText primary="Reoports" />
+								</ListItem>
+							</Link>
+						</List>
+
+						<List>
+							<Link className="linkName" to={`${process.env.PUBLIC_URL}/expenses`}>
+								<ListItem button>
+									<ListItemIcon>
+										<ExpensesIcon />
+									</ListItemIcon>
+									<ListItemText primary="Expenses" />
 								</ListItem>
 							</Link>
 						</List>
@@ -478,7 +466,7 @@ class Dashboard extends Component {
 									<ListItemIcon>
 										<SettingsIcon />
 									</ListItemIcon>
-									<ListItemText primary="settings" />
+									<ListItemText primary="Settings" />
 								</ListItem>
 							</Link>
 						</List>
@@ -531,7 +519,7 @@ class Dashboard extends Component {
 							<Route
 								path={`${process.env.PUBLIC_URL}/reports`}
 								render={(props) => (
-									<ManageReports user_type={user_type} onLoadMenu={this.onCollapseMenu} {...props} />
+									<ReportManager user_type={user_type} onLoadMenu={this.onCollapseMenu} {...props} />
 								)}
 							/>
 

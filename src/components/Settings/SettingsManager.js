@@ -199,7 +199,7 @@ class SettingsManager extends Component {
 
 		if (isAddNew) {
 			return (
-				<CardDiv title={'Add Offers'}>
+				<CardDiv title={'Add New '+ type}>
 					<AddSettings type={type} onTapBack={this.onTapBack.bind(this)} />
 				</CardDiv>
 			);

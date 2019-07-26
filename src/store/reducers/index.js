@@ -7,7 +7,7 @@ import TaskReducer from './TaskReducer';
 import PromoReducer from './PromoReducer';
 import NotificationReducer from './NotificationsReducer';
 import ExpensesReducer from './ExpensesReducer';
-import PassportReducer from './PassportReducer';
+import ReportReducer from './ReportReducer';
 import SettigsReducer from './SettingsReducer';
 
 export default combineReducers({
@@ -19,6 +19,6 @@ export default combineReducers({
 	promoReducer: PromoReducer,
 	notificationReducer: NotificationReducer,
 	expensesReducer: ExpensesReducer,
-	passportReducer: PassportReducer,
+	reportReducer: ReportReducer,
 	settingsReducer: SettigsReducer
 });
