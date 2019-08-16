@@ -70,23 +70,51 @@ export const GetAttributes = (postData) => (dispatch) => {
 
 
 export const UpdateEmp = (postData) => (dispatch) => {
-	const { id, status } = postData;
 
-	axios.defaults.baseURL = BASE_URL;
-	axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
-	axios
-		.post('', {
-			action: 'update-bank',
-			id: id,
-			status: status,
-			country: 'INR'
-		})
-		.then((res) =>
-			dispatch({
-				type: Actions.DEFAULT
+		const { id, title,
+			first_name,
+			middle_name,
+			last_name,
+			emp_id,
+			mobile,
+			region,
+			designation,
+			email } = postData;
+	
+	
+		axios.defaults.baseURL = BASE_URL;
+		axios.defaults.headers.post['Content-Type'] = 'application/json';
+		axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
+	
+		axios
+			.post('/user/update/'+id, {
+				title: title,
+				first_name: first_name,
+				middle_name: middle_name,
+				last_name: last_name,
+				emp_id: emp_id,
+				mobile: mobile,
+				region: region,
+				designation: designation,
+				email: email
 			})
-		)
-		.catch((error) => console.log(' Error Encountered'));
+			.then((res) => {
+				
+				const status = parseInt(res.data.status);
+				if (status === 200) {
+					const responseString = JSON.parse(JSON.stringify(res.data));
+					let attributes = responseString.data;
+					dispatch({
+						type: Actions.ADD,
+						payload: attributes
+					})
+				}else{
+					dispatch({
+						type: Actions.VIEW,
+						payload: []
+					})
+				}
+		});
 };
 
 export const RemoveEmp = (postData) => (dispatch) =>{

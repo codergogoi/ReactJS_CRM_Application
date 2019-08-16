@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import UserReducer from './UserReducer';
-import OfferReducer from './OffersReducer';
+import TrackingReducer from './TrackingReducer';
 import EmployeeReducer from './EmployeeReducer';
 import ClientReducer from './ClientReducer';
 import TaskReducer from './TaskReducer';
@@ -12,7 +12,7 @@ import SettigsReducer from './SettingsReducer';
 
 export default combineReducers({
 	userReducer: UserReducer,
-	offerReducer: OfferReducer,
+	trackingReducer: TrackingReducer,
 	employeeReducer: EmployeeReducer,
 	clientReducer: ClientReducer,
 	taskReducer: TaskReducer,

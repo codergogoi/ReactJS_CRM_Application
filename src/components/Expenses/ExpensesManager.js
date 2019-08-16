@@ -51,10 +51,10 @@ class ExpensesManager extends Component {
 		super(props);
 		this.state = {
 			id: '',
-			currentOffer: '',
 			value: 0,
 			isAddNew: false,
-			isEdit: false
+			isEdit: false,
+			current_item: ''
 		};
 	}
 
@@ -80,17 +80,16 @@ class ExpensesManager extends Component {
 		this.fetchExpenses();
 	}
 
-	onEditExpenses(item) {
-		// this.setState({ isAddNew: true, isEdit: true, currentOffer: offer });
+	onEditExpenses = (item) => {
+		this.setState({ isAddNew: true, isEdit: true, current_item: item });
 	}
-
  
 	onDeleteExpenses(offer) {
 		const { id } = offer;
 		this.setState({
 			id: id,
 			showAlert: true,
-			msg: 'Are you sure to delete the Offer?',
+			msg: 'Are you sure to delete the Expenses?',
 			title: 'Delete Confirmation!'
 		});
 	}
@@ -104,12 +103,12 @@ class ExpensesManager extends Component {
 
 		const { classes, offer, expenses } = this.props;
 		
-		const { value, isAddNew, isEdit, currentOffer, showAlert, title, msg } = this.state;
+		const { value, isAddNew, isEdit, current_item, showAlert, title, msg } = this.state;
 
 		if (isAddNew) {
 			return (
-				<CardDiv title={'Add Expenses'}>
-					<AddExpenses currentOffer={currentOffer} clone={isEdit} onTapBack={this.onTapBack.bind(this)} />
+				<CardDiv title={'Add Expenses'} isBack={true} onTapBack={this.onTapBack.bind(this)}>
+					<AddExpenses current_item={current_item} isEdit={isEdit} onTapBack={this.onTapBack.bind(this)} />
 				</CardDiv>
 			);
 		} else {
@@ -123,15 +122,7 @@ class ExpensesManager extends Component {
 						msg={msg}
 					/>
 
-					<CardDiv title={'Expenses Report'}>
-						<Button
-							variant="extendedFab"
-							color="secondary"
-							className={classes.btnRightA}
-							onClick={this.onTapAddNew.bind(this)}
-						>
-							Add <AddOffersIcon className={classes.rightIcon} />
-						</Button>
+					<CardDiv title={'Expennses Details'} isAdd={false} onTapAdd={this.onTapAddNew.bind(this)}>
 						<Table
 							onEditExpenses={this.onEditExpenses.bind(this)}
 							onDeleteExpenses={this.onDeleteExpenses.bind(this)}

@@ -6,6 +6,9 @@ import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import NativeSelect from '@material-ui/core/NativeSelect';
+import CardBoard from '../Common/CardBoard';
+import moment from 'moment';
+
 
 // Icons
 import AddEmployeeIcon from '@material-ui/icons/PersonAdd';
@@ -15,69 +18,74 @@ import BackIcon from '@material-ui/icons/ArrowBack';
 import Alert from '../Common/Alert';
 
 import { connect } from 'react-redux';
-import { GetExpenses, DismissAlert } from '../../store/actions/ExpensesActions';
+import { GetExpenses, DismissAlert, ApproveExpenses } from '../../store/actions/ExpensesActions';
+import { Chip } from '@material-ui/core';
 
 // CSS Module
 const styles = (theme) => ({
 	root: {
+		display: 'flex',
 		width: '90%'
 	},
-	groupForm: {
+	formControl: {
 		width: '100%',
-		flexDirection: 'column'
+		display: 'flex',
+		flexDirection: 'column',
+		alignContent: 'flex-start',
+		
 	},
-	formContent: {
-		width: '45%',
-		backgroundColor: '#66ffcc',
-		display: 'flex'
+	textFields:{
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'flex-start',
+		padding: 10,
+		paddingBottom: 5,
+		paddingTop: 5,
+		marginBottom: 20,
+	},
+	mapContent:{
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'flex-start',
+		height: 500,
+		padding: 5,
+	},
+	txtTitle:{
+		display: 'flex',
+		flexDirection: 'row',
+		marginTop: 20,
+		fontSize: 18,
+		padding: 5,
+		color: '#5B5B5B',
+		alignItems: 'center',
+	},
+	txtLabel:{
+		width: 240,
+		fontSize: 18,
+		color: '#A2A2A2',
+		marginRight: 5,
+	},
+	buttonAction: {
+		width: '100%',
+		display: 'flex',
+		flexDirection: 'row',
+		justifyContent: 'center',
+		alignContent: 'center',
 	},
 	button: {
-		marginTop: theme.spacing.unit,
-		marginRight: theme.spacing.unit
+		width: 160,
+		height: 40,
+		margin: 10,
+		backgroundColor: '#900C3F'
 	},
-
-	input: {
-		display: 'none'
-	},
-	actionsContainer: {
-		marginTop: 30,
-		marginBottom: theme.spacing.unit * 2
-	},
-	resetContainer: {
-		padding: theme.spacing.unit * 3
-	},
-	formControl: {
-		width: '50%',
-		backgroundColor: '#663354',
-		display: 'flex',
-		margin: theme.spacing.unit
-	},
-	textField: {
-		marginLeft: theme.spacing.unit,
-		marginRight: theme.spacing.unit,
-		width: 300
-	},
-	formInputs: {
-		width: '90%',
-		backgroundColor: '#FF3322',
-		flexDirection: 'row'
-	},
-	groupInputs: {
-		width: '90%',
-		backgroundColor: '#dd6655'
-	},
-	selectEmpty: {
-		marginTop: theme.spacing.unit * 2,
-		marginLeft: 10
-	},
-	rightIcon: {
-		marginLeft: theme.spacing.unit
-	},
-	btnRightA: {
-		position: 'absolute',
-		top: theme.spacing.unit * 20,
-		right: theme.spacing.unit * 10
+	buttonNagetive: {
+		width: 160,
+		height: 40,
+		margin: 10,
+		backgroundColor: '#338241'
 	}
+
+
 });
 
 function getSteps() {
@@ -87,28 +95,39 @@ function getSteps() {
 class AddExtension extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			offer_id: 0,
-			currentOffer: this.props.currentOffer,
-			clone: this.props.clone,
-			offer_content: '',
-			promo: '',
-			country: 'IN',
+		this.state = {	
+			id:0,		
+			task_title: '',
+			description: '',
+			expense_date: '',
+			emp_name: '',
+			client_name: '',
+			total_cost: 0.0,
+			payment_status: '',
+			currency: '',
 			
 		};
 	}
 
 	componentWillMount() {
-		const { clone, currentOffer } = this.state;
 
-		if (clone) {
+		if(this.props.isEdit){
+
+			const { id,title,description,date,cost,emp_name,client_name, status, currency} = this.props.current_item;
+
 			this.setState({
-				offer_content: currentOffer.msg,
-				offer_type: currentOffer.from_sector,
-				promo: currentOffer.to_sector,
-				country: currentOffer.country,
+				id:id,
+				task_title: title,
+				description: description,
+				expense_date: date,
+				emp_name: emp_name,
+				client_name: client_name,
+				total_cost: cost,
+				payment_status: status,
+				currency: currency,
 			});
 		}
+
 	}
 
 	handleNext = () => {
@@ -132,6 +151,7 @@ class AddExtension extends React.Component {
 	onOkay = () => {
 		this.setState({ showAlert: false });
 		this.props.DismissAlert();
+		this.onTapBack();
 	};
 
 	handleReset = () => {
@@ -152,137 +172,150 @@ class AddExtension extends React.Component {
 		this.props.onTapBack();
 	};
 
-	// Post data to Server
-	onTapNext = () => {
-		this.onTapAddNewOffer();
-	};
 
-	onTapAddNewOffer = () => {
+	onTapApproved = () =>{
 
-		const { offer_content, offer_type, promo,country } = this.state;
+		const { id } = this.state;
+		const status = 2;
+		this.props.ApproveExpenses({id, status})
 
-		if (offer_content.length < 1) {
-			this.setState({
-				showAlert: true,
-				msg: 'Please provide Offer Content text',
-				title: 'Offers Content is Missing!'
-			});
-			return;
-        }
-        
-        if (offer_type.length < 1) {
-			this.setState({
-				showAlert: true,
-				msg: 'Please provide Offer Type text',
-				title: 'Offers Type is Missing!'
-			});
-			return;
-		}
+	}
+
+	onTapReject = () => {
+
+		const { id } = this.state;
+		const status = 1;
+		this.props.ApproveExpenses({id, status})
+
+	}
 
 
-		this.props.NewOffers({ offer_content, offer_type, promo,country  });
-	};
+	onOkayForError = () =>{
+		this.setState({ showAlert: false });
+	}
+
+
 	
-	handleTextChanges = (event) => {
-		if (event.target.id === 'offer-content') {
-			this.setState({ offer_content: event.target.value });
-		} else if (event.target.id === 'promo-type') {
-			this.setState({ offer_type: event.target.value });
-		} else if (event.target.id === 'promo-code') {
-			this.setState({ promo: event.target.value });
-		} 
-	};
+	displayTextContent = () => {
 
-	//Add OfferUI
-	addOfferUI = () => {
-		const { classes } = this.props;
-		const { offer_content, offer_type, promo, } = this.state;
+		const { classes} = this.props;
+		const { task_title, description,expense_date,emp_name,client_name,total_cost,payment_status,currency} = this.state;
 
-		return (
-			<Grid container spacing={24}>
-				<Grid item xs={6}>
-					<FormControl>
-						<TextField
-							id="offer-content"
-							label="Offer Content"
-							className={classes.textField}
-							type="text"
-							required="true"
-							multiline="true"
-							rows="5"
-							margin="normal"
-							onChange={this.handleTextChanges.bind(this)}
-							value={offer_content}
-						/>
-						<TextField
-							id="promo-type"
-							label="Promo Type"
-							className={classes.textField}
-							type="text"
-							autoComplete="From Sector"
-							margin="normal"
-							onChange={this.handleTextChanges.bind(this)}
-							value={offer_type}
-						/>
-						<TextField
-							id="promo-code"
-							label="Promo Code"
-							className={classes.textField}
-							type="text"
-							autoComplete="From Sector"
-							margin="normal"
-							onChange={this.handleTextChanges.bind(this)}
-							value={promo}
-						/>
-						 
-					</FormControl>
-                    <Button
-							variant="extendedFab"
-							color="secondary"
-							className={classes.button}
-							onClick={this.onTapAddNewOffer.bind(this)}
-						>
-							Add Offer <AddEmployeeIcon className={classes.rightIcon} />
-					</Button>
-				</Grid>
-				
-			</Grid>
-		);
-	};
+		return(<view className={classes.formControl}>
+						<view className={classes.textFields}>
+							<view className={classes.txtTitle}>
+								<view className={classes.txtLabel}>Expenses Title : </view> {task_title}
+							</view>
+						</view>
+
+						<view className={classes.textFields}>
+							<view className={classes.txtTitle}>
+							<view className={classes.txtLabel}>Type of Expenses : </view> <Chip label={description} className={classes.chip} color="default" />
+							</view>
+						</view>	
+
+					<view className={classes.textFields}>
+						<view className={classes.txtTitle}>
+						<view className={classes.txtLabel}>Date : </view>{moment(expense_date).format('Do MMM YYYY')}
+						</view>
+					</view>	
+					
+					<view className={classes.textFields}>
+						<view className={classes.txtTitle}>
+						<view className={classes.txtLabel}>Employee Name: </view>{emp_name}
+						</view>
+					</view>
+
+					<view className={classes.textFields}>
+						<view className={classes.txtTitle}>
+						<view className={classes.txtLabel}>Client Name: </view>{client_name} 
+						</view>
+					</view>
+
+
+					<view className={classes.textFields}>
+						<view className={classes.txtTitle}>
+						<view className={classes.txtLabel}> Total Cost: </view> {currency} {total_cost}
+						</view>
+
+					</view>
+					<view className={classes.textFields}>
+						<view className={classes.txtTitle}>
+						<view className={classes.txtLabel}>Payment Status: </view>{payment_status == 2 && <Chip label="Approved" className={classes.chip}  color="primary" /> }
+							{payment_status == 1 && <Chip label="Rejected" className={classes.chip} color="secondary" /> }
+							{payment_status == 0 && <Chip label="Pending" className={classes.chip} color="default" /> }
+						</view>
+					</view>
+					
+					
+					
+					<view className={classes.textFields}>
+						<view className={classes.buttonAction}>
+							<Button
+								variant="contained"
+								color="primary"
+								onClick={this.onTapReject.bind(this)}
+								className={classes.button}
+							>
+								Reject
+							</Button>
+
+							<Button
+								variant="contained"
+								color="primary"
+								onClick={this.onTapApproved.bind(this)}
+								className={classes.buttonNagetive}
+							>
+								Approve
+							</Button>
+						</view>
+					</view>
+
+
+			</view>);
+	}
+	
+
+
 
 	render() {
+
 		const { classes } = this.props;
 		const { showAlert, title, msg } = this.state;
 
 		return (
 			<div className={classes.root}>
-				<Button
-					variant="extendedFab"
-					color="secondary"
-					className={classes.btnRightA}
-					onClick={this.onTapBack.bind(this)}
-				>
-					Back <BackIcon className={classes.rightIcon} />
-				</Button>
-
+				 
 				<Alert
 					open={this.props.isAdded}
 					onCancel={this.onOkay.bind(this)}
 					onOkay={this.onOkay.bind(this)}
-					title= "Added Successfully"
-					msg="Offer Added Successfully!"
+					title={"Save Changes!"}
+					msg={"Expenses Details Changed Successfully!"}
 				/>
 
 				<Alert
 					open={showAlert}
-					onCancel={this.onOkay.bind(this)}
-					onOkay={this.onOkay.bind(this)}
+					onCancel={this.onOkayForError.bind(this)}
+					onOkay={this.onOkayForError.bind(this)}
 					title={title}
 					msg={msg}
 				/>
-				
-				{this.addOfferUI() }
-				
+
+				<Grid container spacing={24}>
+					<Grid item xs={3}>
+					</Grid>
+
+					<Grid item xs={6}>
+						<CardBoard>
+							{this.displayTextContent()}
+						</CardBoard>
+					</Grid>
+					<Grid item xs={3}>
+					</Grid>
+					 
+				</Grid>
+
 			</div>
 		);
 	}
@@ -296,4 +329,4 @@ const mapStateToProps = (state) => ({
 	isAdded: state.expensesReducer.isAdded
 });
 
-export default connect(mapStateToProps, { GetExpenses, DismissAlert }) (withStyles(styles)(AddExtension));
+export default connect(mapStateToProps, { GetExpenses, DismissAlert, ApproveExpenses }) (withStyles(styles)(AddExtension));

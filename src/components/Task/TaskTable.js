@@ -23,6 +23,7 @@ import little from '@material-ui/core/colors/deepOrange';
 import CopyIcon from '@material-ui/icons/ContentCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import EditIcon from '@material-ui/icons/Edit';
 
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -254,6 +255,11 @@ class TaskTable extends React.Component {
 		this.props.onDeleteSDK(sdk);
 	};
 
+	onEditTask = (task) => {
+		this.props.onEditTask(task);
+	};
+
+
 	handleChangePage = (event, page) => {
 		this.setState({ page });
 	};
@@ -271,20 +277,7 @@ class TaskTable extends React.Component {
 		}
 	};
 
-	handleiOS = (mode) => (event) => {
-		mode.ios = mode.ios !== 0 ? 0 : 1;
-		this.props.onEditPaymentMode(mode);
-	};
-
-	handleAndroid = (mode) => (event) => {
-		mode.android = mode.android !== 0 ? 0 : 1;
-		this.props.onEditPaymentMode(mode);
-	};
-
-	handleMsite = (mode) => (event) => {
-		mode.msite = mode.msite !== 0 ? 0 : 1;
-		this.props.onEditPaymentMode(mode);
-	};
+	 
 
 	isSelected = (id) => this.state.selected.indexOf(id) !== -1;
 
@@ -322,7 +315,7 @@ class TaskTable extends React.Component {
 										<TableRow hover role="checkbox" tabIndex={-1} key={n.id}>
 											<TableCell>{n.title}</TableCell>
 
-											<TableCell>{moment(n.appointment_date+' '+ n.appointment_time).format('Do MMM YYYY LT') }</TableCell>
+											<TableCell>{moment(n.appointment_date).format('Do MMM YYYY') }</TableCell>
 											<TableCell>
 												{n.client_name}
 											</TableCell>
@@ -342,6 +335,14 @@ class TaskTable extends React.Component {
 
 											</TableCell>
 											<TableCell>
+												<IconButton
+													className={classes.button}
+													mini
+													aria-label="Edit"
+													onClick={(event) => this.onEditTask(n)}
+												>
+													<EditIcon />
+												</IconButton>
 												<IconButton
 													className={classes.button}
 													mini

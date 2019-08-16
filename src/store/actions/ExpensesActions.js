@@ -107,6 +107,39 @@ export const EditExpenses = (postData) => (dispatch) => {
 		.catch((error) => console.log(' Error Encountered'));
 }
 
+
+export const ApproveExpenses = (postData) => (dispatch) => {
+
+	const { id, status } = postData;
+
+	axios.defaults.baseURL = BASE_URL;
+	axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
+	axios
+		.post('/expenses/approve/'+id, {
+			status: status
+		})
+		.then((res) =>{
+
+				const status = parseInt(res.data.status);
+
+				if (status === 200) {
+					const responseString = JSON.parse(JSON.stringify(res.data));
+					let offers = responseString.data;
+					dispatch({
+						type: Actions.APPROVE_EXPENSE,
+						payload: []
+					})
+				}else{
+					dispatch({
+						type: Actions.APPROVE_EXPENSE,
+						payload: []
+					})
+				}
+			}
+		)
+		.catch((error) => console.log(' Error Encountered'));
+}
+
 export const RemoveExpenses = (postData) => (dispatch) => {
 
 	const { id } = postData;

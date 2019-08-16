@@ -37,14 +37,14 @@ function getSorting(order, orderBy) {
 
 
 const columnData = [
-	{ id: 'title', numeric: false, disablePadding: true, label: 'Report Title' },
-	{ id: 'date', numeric: false, disablePadding: true, label: 'Date' },
-	{ id: 'emp_name', numeric: false, disablePadding: true, label: 'Employee Name' },
-	{ id: 'client_name', numeric: false, disablePadding: true, label: 'Client Name'},
-	{ id: 'region', numeric: false, disablePadding: true, label: 'Task Region' },
-	{ id: 'priority', numeric: false, disablePadding: true, label: 'Task Priority' },
-	{ id: 'status', numeric: false, disablePadding: true, label: 'Task Status' },
-	{ id: 'more', numeric: false, disablePadding: true, label: 'Action' }
+	{ id: 'title', numeric: false, disablePadding: false, label: 'Report Title' },
+	{ id: 'date', numeric: false, disablePadding: false, label: 'Date' },
+	{ id: 'emp_name', numeric: false, disablePadding: false, label: 'Employee Name' },
+	{ id: 'client_name', numeric: false, disablePadding: false, label: 'Client Name'},
+	{ id: 'region', numeric: false, disablePadding: false, label: 'Task Region' },
+	{ id: 'priority', numeric: false, disablePadding: false, label: 'Task Priority' },
+	{ id: 'status', numeric: false, disablePadding: false, label: 'Task Status' },
+	{ id: 'more', numeric: false, disablePadding: false, label: 'Action' }
 ];
 
 class ReportTableHeader extends React.Component {
@@ -308,7 +308,6 @@ class ReportTable extends React.Component {
 
 		return (
 			<Paper className={classes.root}>
-				<EnhancedTableToolbar numSelected={selected.length} />
 				<div className={classes.tableWrapper}>
 					<Table className={classes.table} aria-labelledby="tableTitle">
 						<ReportTableHeader

@@ -42,13 +42,13 @@ const styles = (theme) => ({
 	},
 	btnRightA: {
 		position: 'absolute',
-		top: theme.spacing.unit * 13,
-		right: theme.spacing.unit * 10
+		top: theme.spacing.unit ,
+		right: theme.spacing.unit
 	},
 	btnRightB: {
 		position: 'absolute',
-		bottom: theme.spacing.unit * 12,
-		left: theme.spacing.unit * 13
+		bottom: theme.spacing.unit,
+		left: theme.spacing.unit
 	}
 });
 
@@ -60,7 +60,8 @@ class TaskManager extends Component {
 			tasks: [],
 			value: 0,
 			isAddNew: false,
-			isEdit: false
+			isEdit: false,
+			current_task: null
 		};
 	}
 
@@ -114,20 +115,38 @@ class TaskManager extends Component {
 		});
 	}
 
+
+	onEditTask = (task) => {
+		this.setState({
+			current_task: task,
+			isEdit: true,
+			isAddNew: true
+		})
+	}
+	 
+
 	onExecuteDeleteCommand() {
 		const { id } = this.state;
 		this.props.RemoveTask({id});
 	}
 
+	onTapAdd = () => {
+
+		this.setState({
+			isAddNew: true
+		});
+
+	}
+
 	render() {
 
 		const { classes, tasks } = this.props;
-		const { value, isAddNew, showAlert, title, msg } = this.state;
+		const { value, isAddNew, showAlert, title, msg, current_task, isEdit } = this.state;
 
 		if (isAddNew) {
 			return (
-				<CardDiv title={'Add Task'}>
-					<AddTask onTapBack={this.onTapBack.bind(this)} />
+				<CardDiv title={'Add Task'} isBack={true} onTapBack={this.onTapBack.bind(this)}>
+					<AddTask  isEdit={isEdit} current_task={current_task} />
 				</CardDiv>
 			);
 		} else {
@@ -141,22 +160,16 @@ class TaskManager extends Component {
 						msg={msg}
 					/>
 
-					<CardDiv title={'Manage Task'}>
+					<CardDiv title={'Manage Task'} isAdd={true} onTapAdd={this.onTapAdd.bind(this)}>
 						{value === 0 && (
 							<div>
-								<Button
-									variant="extendedFab"
-									color="secondary"
-									className={classes.btnRightA}
-									onClick={this.onTapRegister.bind(this)}
-								>
-									Add <AddOffersIcon className={classes.rightIcon} />
-								</Button>
+								
 								{tasks !== undefined && (
 								<Table
 									onEditPaymentMode={this.onEditPaymentMode.bind(this)}
 									onDeleteSDK={this.onDeleteSDK.bind(this)}
 									paymentModes={tasks}
+									onEditTask={this.onEditTask.bind(this)}
 								/>)}
 							</div>
 						)}

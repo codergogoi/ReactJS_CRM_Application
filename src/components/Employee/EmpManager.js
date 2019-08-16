@@ -92,6 +92,7 @@ class EmpManager extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			current_emp: '',
 			employees: [],
 			id: '',
 			value: 0,
@@ -125,19 +126,17 @@ class EmpManager extends Component {
 		this.setState({ isAddNew: true });
 	}
 
-	onTapBack() {
+	onTapBack = () => {
 		this.setState({ isAddNew: false, isEdit: false });
 		this.fetchEmployee();
 	}
 
-	onEditPaymentMode(bank) {
-		let index = this.state.banks.findIndex((x) => x.id === bank.id);
-		let activeBanks = this.state.banks;
-		activeBanks[index] = bank;
+	onEditEmp = (emp) => {
 		this.setState({
-			banks: activeBanks
-		});
-		// this.props.UpdateBank(bank);
+			current_emp: emp,
+			isEdit: true,
+			isAddNew: true
+		})
 	}
 
 	onDeleteEmp(emp) {
@@ -157,6 +156,14 @@ class EmpManager extends Component {
 
 	onTapSearch = () => {
 		this.setState({isSearch: true});
+	}
+
+	onTapAdd = () => {
+
+		this.setState({
+			isAddNew: true
+		});
+
 	}
 
 	onDisplaySearchView = () => {
@@ -182,12 +189,12 @@ class EmpManager extends Component {
 	render() {
 
 		const { classes,employees } = this.props;
-		const { value, isAddNew, showAlert, title, msg , isSearch} = this.state;
+		const { value, isAddNew, showAlert, title, msg , isSearch, isEdit, current_emp} = this.state;
 
 		if (isAddNew) {
 			return (
-				<CardDiv title={'Add Employee'}>
-					<AddEmployee onTapBack={this.onTapBack.bind(this)} />
+				<CardDiv title={'Add Employee'} isBack={true} onTapBack={this.onTapBack.bind(this)}>
+					<AddEmployee isEdit={isEdit} current_emp={current_emp}  />
 				</CardDiv>
 			);
 		} else {
@@ -201,21 +208,12 @@ class EmpManager extends Component {
 						msg={msg}
 					/>
 
-					<CardDiv title={'Employee'}>
+					<CardDiv title={'Employees'} isAdd={true} onTapAdd={this.onTapAdd.bind(this)}>
 						{value === 0 && (
-							<div>
-								<Button
-									variant="extendedFab"
-									color="secondary"
-									className={classes.btnRightA}
-									onClick={this.onTapRegister.bind(this)}
-								>
-									Add <BankIcon className={classes.rightIcon} />
-								</Button>
-								
+							<div>								
 								{this.onDisplaySearchView()}
 								{employees !== undefined && (<Table
-									onEditPaymentMode={this.onEditPaymentMode.bind(this)}
+									onEditEmp={this.onEditEmp.bind(this)}
 									onDeleteEmp={this.onDeleteEmp.bind(this)}
 									data={employees}
 								/>) }

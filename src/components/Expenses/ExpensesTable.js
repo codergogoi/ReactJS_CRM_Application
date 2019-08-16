@@ -19,6 +19,8 @@ import moment from 'moment';
 import Avatar from '@material-ui/core/Avatar';
 import tiny from '@material-ui/core/colors/green';
 import little from '@material-ui/core/colors/deepOrange';
+import EditIcon from '@material-ui/icons/Edit';
+import Chip from '@material-ui/core/Chip';
 
 //Icons
 import CopyIcon from '@material-ui/icons/ContentCopy';
@@ -31,31 +33,15 @@ function getSorting(order, orderBy) {
 		: (a, b) => (a[orderBy] < b[orderBy] ? -1 : 1);
 }
 
-/**
- *  /*
-* "id": "1",
-"title": "Travel expenses",
-"description": "Some travel expenses which is I have paid to Car and Auto",
-"date": "2019-07-01",
-"cost": 756,
-"emp_name": "Sam Sam",
-"client_name": "AKBAR",
-"client_id": "3",
-"task": "Meet the Manager to close this issue within 30th Jun",
-"status": 0
-		
-*/
-
-
 const columnData = [
-	{ id: 'travel', numeric: false, disablePadding: true, label: 'Title' },
-	{ id: 'description', numeric: false, disablePadding: true, label: 'Description' },
-	{ id: 'date', numeric: false, disablePadding: true, label: 'Date' },
-	{ id: 'cost', numeric: false, disablePadding: true, label: 'Cost' },
-	{ id: 'task', numeric: false, disablePadding: true, label: 'Completed Task' },
-	{ id: 'emp_name', numeric: false, disablePadding: true, label: 'Employee Name' },
-	{ id: 'client_name', numeric: false, disablePadding: true, label: 'Client Name' },
-	{ id: 'more', numeric: false, disablePadding: true, label: 'Action' },
+	{ id: 'title', numeric: false, disablePadding: false, label: 'Title' },
+	{ id: 'description', numeric: false, disablePadding: false, label: 'Expense Type' },
+	{ id: 'date', numeric: false, disablePadding: false, label: 'Date' },
+	{ id: 'cost', numeric: false, disablePadding: false, label: 'Cost' },
+	{ id: 'emp_name', numeric: false, disablePadding: false, label: 'Employee Name' },
+	{ id: 'client_name', numeric: false, disablePadding: false, label: 'Client Name' },
+	{ id: 'status', numeric: false, disablePadding: false, label: 'Approval Status' },
+	{ id: 'more', numeric: false, disablePadding: false, label: 'Action' },
 
 ];
 
@@ -252,7 +238,7 @@ class ExpensesTable extends React.Component {
 		this.setState({ order, orderBy });
 	};
 
-	onCloneClick = (item) => {
+	onEditExpenses = (item) => {
 		this.props.onEditExpenses(item);
 	};
 
@@ -287,9 +273,9 @@ class ExpensesTable extends React.Component {
 
 		const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
+
 		return (
 			<Paper className={classes.root}>
-				<EnhancedTableToolbar numSelected={selected.length} />
 				<div className={classes.tableWrapper}>
 					<Table className={classes.table} aria-labelledby="tableTitle">
 						<ExpensesTableHeader
@@ -312,10 +298,23 @@ class ExpensesTable extends React.Component {
 											<TableCell>{n.description}</TableCell>
 											<TableCell>{moment(n.date).format('Do MMM YYYY')}</TableCell>
 											<TableCell>{n.cost}</TableCell>
-											<TableCell>{n.task}</TableCell>	
 											<TableCell>{n.emp_name}</TableCell>	
-											<TableCell>{n.client_name}</TableCell>	
+											<TableCell>{n.client_name}</TableCell>
 											<TableCell>
+												{n.status == 2 && <Chip label="Approved" className={classes.chip}  color="primary" /> }
+												{n.status == 1 && <Chip label="Rejected" className={classes.chip} color="secondary" /> }
+												{n.status == 0 && <Chip label="Pending" className={classes.chip} color="default" /> }
+											</TableCell>	
+											<TableCell>
+												<IconButton
+													className={classes.button}
+													mini
+													aria-label="Edit"
+													onClick={(event) => this.onEditExpenses(n)}
+												>
+													<EditIcon />
+												</IconButton>
+
 												<IconButton
 													className={classes.button}
 													mini
@@ -324,14 +323,7 @@ class ExpensesTable extends React.Component {
 												>
 													<DeleteIcon />
 												</IconButton>
-												<IconButton
-													className={classes.button}
-													mini
-													aria-label="Edit"
-													onClick={(event) => this.onCloneClick(n)}
-												>
-													<CopyIcon />
-												</IconButton>
+												
 											</TableCell>
 										</TableRow>
 									);

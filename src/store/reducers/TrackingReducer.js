@@ -1,32 +1,18 @@
 import Actions from '../actions/Actions';
 
 const initialState = {
-	offers: [],
+	users: [],
 	isAdded: false
 };
 
 export default function(state = initialState, action) {
 	switch (action.type) {
-		case Actions.VIEW:
+		case Actions.VIEW_TRACKING:
 			return {
 				...state,
-				offers: action.payload
+				users: action.payload
 			};
-		case Actions.DELETE:
-			return {
-				...state,
-				offers: action.payload
-			};
-		case Actions.ADD:
-			return {
-				...state,
-				isAdded: true
-			};
-		case Actions.EDIT:
-			return {
-				...state,
-				offers: action.payload
-			};
+		 ;
 		case Actions.DISMISS:
 			return {
 				...state,

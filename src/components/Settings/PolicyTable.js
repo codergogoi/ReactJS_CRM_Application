@@ -36,14 +36,14 @@ function getSorting(order, orderBy) {
 
 
 const columnData = [
-	{ id: 'policy', numeric: false, disablePadding: true, label: 'Policy' },
-	{ id: 'portal_access', numeric: false, disablePadding: true, label: 'Portal Access' },
-    { id: 'app_access', numeric: false, disablePadding: true, label: 'App Access' },
-    { id: 'track_user', numeric: false, disablePadding: true, label: 'Track User' },
-    { id: 'add_user', numeric: false, disablePadding: true, label: 'Add User' },
-    { id: 'view_user', numeric: false, disablePadding: true, label: 'View User' },
-    { id: 'reports', numeric: false, disablePadding: true, label: 'Reports' },
-    { id: 'more', numeric: false, disablePadding: true, label: 'Action' }
+	{ id: 'policy', numeric: false, disablePadding: false, label: 'Policy' },
+	{ id: 'portal_access', numeric: false, disablePadding: false, label: 'Portal Access' },
+    { id: 'app_access', numeric: false, disablePadding: false, label: 'App Access' },
+    { id: 'track_user', numeric: false, disablePadding: false, label: 'Track User' },
+    { id: 'add_user', numeric: false, disablePadding: false, label: 'Add User' },
+    { id: 'view_user', numeric: false, disablePadding: false, label: 'View User' },
+    { id: 'reports', numeric: false, disablePadding: false, label: 'Reports' },
+    { id: 'more', numeric: false, disablePadding: false, label: 'Action' }
     
 ];
 
@@ -241,7 +241,7 @@ class PolicyTable extends React.Component {
 	};
 
 	onCloneClick = (offer) => {
-		this.props.onCloneClick(offer);
+		this.props.onEditItem(offer);
 	};
 
 	handleDelete = (item) => {
@@ -277,7 +277,6 @@ class PolicyTable extends React.Component {
 
 		return (
 			<Paper className={classes.root}>
-				<EnhancedTableToolbar numSelected={selected.length} />
 				<div className={classes.tableWrapper}>
 					<Table className={classes.table} aria-labelledby="tableTitle">
 						<PolicyTableHeader

@@ -16,6 +16,11 @@ const Actions = {
 	//EMPLOYEE
 	GET_ATTRIBUTES: 'GET_EMP_ATTRIBUTES',
 
+
+	//Tracking Users
+	VIEW_TRACKING: 'view_ytracking_users',
+	
+
 	//Common Mdata
 	VIEW: 'fetch_data',
 	ADD: 'add_data',
@@ -41,7 +46,11 @@ const Actions = {
 
 	VIEW_REGIONS: 'VIEW_REGION',
 	ADD_REGION: 'ADD_REGION',
-	DELETE_REGION: 'DELETE_REGION'
+	DELETE_REGION: 'DELETE_REGION',
+
+	//Expenses
+	APPROVE_EXPENSE: 'APPROVED_EXPENSES',
+
 
 
 };

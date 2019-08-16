@@ -17,7 +17,7 @@ export default function(state = initialState, action) {
 				...state,
 				expenses: action.payload
 			};
-		case Actions.ADD:
+		case Actions.APPROVE_EXPENSE:
 			return {
 				...state,
 				isAdded: true

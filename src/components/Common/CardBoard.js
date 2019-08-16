@@ -29,8 +29,7 @@ const styles = (theme) => ({
 	card: {
 		display: 'flex',
 		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
+		justifyContent: 'flex-start',
 		minHeight: 600,
 		backgroundColor: '#FFFF',
 		width: '100%',

@@ -42,7 +42,7 @@ const styles = (theme) => ({
 	title:{
 		display: 'flex',
 		marginLeft: 20,
-		width: 300,
+		width: 400,
 		height: 60,
 		justifyContent: 'space-between',
 		alignItems: 'center',
@@ -109,7 +109,7 @@ class CardDiv extends React.Component {
 		return (
 			<div  className={classes.card}>
 				<div className={classes.titleHeader}>
-					<div className={classes.title}>{title}: </div>
+					<div className={classes.title}>{title} </div>
 					{this.onDisplayBackButton()}
 				</div>
 				<div className={classes.content}>

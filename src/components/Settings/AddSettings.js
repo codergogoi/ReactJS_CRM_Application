@@ -10,6 +10,8 @@ import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import CardBoard from '../Common/CardBoard';
+
 
 // Icons
 import BackIcon from '@material-ui/icons/ArrowBack';
@@ -17,70 +19,38 @@ import BackIcon from '@material-ui/icons/ArrowBack';
 // App Classes
 import Alert from '../Common/Alert';
 
-import { NewRegion, DismissAlert, GetPolicies, NewDesignation, NewPolicy  } from '../../store/actions/SettingsActions';
+import { NewRegion, EditRegion, DismissAlert, GetPolicies, NewDesignation, EditDesignation, NewPolicy, EditPolicy } from '../../store/actions/SettingsActions';
 import { connect } from 'react-redux';
 
 // CSS Module
 const styles = (theme) => ({
 	root: {
+		display: 'flex',
 		width: '90%'
 	},
-	groupForm: {
-		width: '100%',
-		flexDirection: 'column'
-	},
-	formContent: {
-		width: '45%',
-		backgroundColor: '#66ffcc',
-		display: 'flex'
-	},
-	button: {
-		marginTop: theme.spacing.unit * 5,
-		marginRight: theme.spacing.unit
-	},
-
-	input: {
-		display: 'none'
-	},
-	actionsContainer: {
-		marginTop: 30,
-		marginBottom: theme.spacing.unit * 2
-	},
-	resetContainer: {
-		padding: theme.spacing.unit * 3
-	},
 	formControl: {
-		width: '50%',
-		backgroundColor: '#663354',
+		width: '100%',
 		display: 'flex',
-		margin: theme.spacing.unit
+		flexDirection: 'column',
+		alignContent: 'flex-start',
+		
 	},
-	textField: {
-		marginLeft: theme.spacing.unit,
-		marginRight: theme.spacing.unit,
-		width: 300
+	textFields:{
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'flex-start',
+		padding: 10,
+		paddingBottom: 5,
+		paddingTop: 5,
+		marginBottom: 20,
 	},
-	formInputs: {
-		width: '90%',
-		backgroundColor: '#FF3322',
-		flexDirection: 'row'
+	mapContent:{
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'flex-start',
+		height: 500,
+		padding: 5,
 	},
-	groupInputs: {
-		width: '90%',
-		backgroundColor: '#dd6655'
-	},
-	selectEmpty: {
-		marginTop: theme.spacing.unit * 2,
-		marginLeft: 10
-	},
-	rightIcon: {
-		marginLeft: theme.spacing.unit
-	},
-	btnRightA: {
-		position: 'absolute',
-		top: theme.spacing.unit * 20,
-		right: theme.spacing.unit * 10
-	}
 });
 
 class AddSettings extends React.Component {
@@ -88,6 +58,7 @@ class AddSettings extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			region_id: '',
 			region_name: '',
 			description: '',
 			emp_id: '12',
@@ -108,8 +79,48 @@ class AddSettings extends React.Component {
 
 
 	componentWillMount(){
+
 		if(this.props.type === 'DESIGNATION'){
 			this.props.GetPolicies('');
+		}
+
+		if(this.props.isEdit){
+			const  {id,region,region_desc} = this.props.current_item;
+			if(this.props.type === 'REGION'){
+				this.setState({
+					region_id: id,
+					region_name: region,
+					description: region_desc,
+				});
+			}else if(this.props.type === 'DESIGNATION'){
+				//Edit Data {"id":"3","policy":"Portal Access Policy","designation":"Operation Head","description":"Operation Head","created":"2019-06-26","created_by":" "}
+				const {id,policy,policy_id,designation,description} = this.props.current_item;
+				this.setState({
+					emp_id: id,
+					designation: designation, 
+					description: description,
+					policy_id: policy_id,
+					policy: policy,
+				})
+			}else if(this.props.type === 'POLICY'){
+				//Edit Data {"id":"2","policy":"Some Policy","portal_access":true,"app_access":true,"track_user":true,"add_user":true,"view_user":true,"add_task":true,"view_task":true,"reports":false}
+				const{id,policy,portal_access,app_access,track_user,add_user,view_user,add_task,view_task,reports} = this.props.current_item;
+
+				this.setState({
+					policy_id: id,
+					policy: policy,
+					portal_access: portal_access,
+					app_access: app_access,
+					track_user: track_user,
+					add_user: add_user,
+					view_user: view_user,
+					add_task: add_task,
+					view_task: view_task,
+					reports: reports,
+				});
+
+			}
+
 		}
 
 	}
@@ -135,25 +146,36 @@ class AddSettings extends React.Component {
 	};
 
 	onTapAddNewRegion() {
-		const {  description,
-        emp_id, designation } = this.state;
 
-		this.props.NewRegion({ designation,
-				description,
+		const { emp_id, region_id, region_name, description, designation } = this.state;
+
+		if(this.props.isEdit){
+			this.props.EditRegion({ region_id, region_name,
+				description  });
+		}else{
+			this.props.NewRegion({ region_name, description,
 				emp_id  });
+		}
+		
 	}
 
 	onTapAddNewDesignation() {
-		const { description,
+		const {  description,
         emp_id, designation,policy_id } = this.state;
 
-		this.props.NewDesignation({ designation,
+		if(this.props.isEdit){
+			this.props.EditDesignation({ designation,
+				description,policy_id,
+				emp_id  });
+		}else{
+			this.props.NewDesignation({ designation,
             description,policy_id,
 			emp_id  });
+		}
 	}
 
 	onTapAddNewPolicy() {
-		const { policy,
+		const { policy_id ,policy,
 		portal_access,
 		app_access,
 		track_user,
@@ -164,15 +186,32 @@ class AddSettings extends React.Component {
 		reports,
 		emp_id} = this.state;
 
-		this.props.NewPolicy({ policy,
-			portal_access,
-			app_access,
-			track_user,
-			add_user,
-			view_user,
-			add_task,
-			view_task,
-			reports, emp_id });
+
+		if(this.props.isEdit){
+			this.props.EditPolicy({ 
+				policy_id,
+				policy,
+				portal_access,
+				app_access,
+				track_user,
+				add_user,
+				view_user,
+				add_task,
+				view_task,
+				reports });
+		}else{
+			this.props.NewPolicy({ policy,
+				portal_access,
+				app_access,
+				track_user,
+				add_user,
+				view_user,
+				add_task,
+				view_task,
+				reports, emp_id });
+		}
+
+		
 	}
 
 	handleTextChanges = (event) => {
@@ -255,46 +294,57 @@ class AddSettings extends React.Component {
 	addNewRegionUI = () => {
 		const { classes } = this.props;
 		const { region_name,
-        description } = this.state;
+		description } = this.state;
+		
 
-		return (
-			<Grid container spacing={24}>
-				<Grid item xs={6}>
-					<FormControl>
+		return(<view className={classes.formControl}>
+				<view className={classes.textFields}>
+				
 						<TextField
-							id="region_name"
-							label="Region Name"
-							className={classes.textField}
-							type="text"
-							required="true"
-							margin="normal"
-							onChange={this.handleTextChanges.bind(this)}
-							value={region_name}
-						/>
+								id="region_name"
+								label="Region Name"
+								style={{width: 180,  marginTop: 0, marginRight: 20}}
+								type="text"
+								required="true"
+								margin="normal"
+								onChange={this.handleTextChanges.bind(this)}
+								value={region_name}
+							/>
+							
+				</view>
+
+				<view className={classes.textFields}>
 
 						<TextField
-							id="description"
-							label="Region Description"
-							className={classes.textField}
-							type="text"
-							required="true"
-							margin="normal"
-							onChange={this.handleTextChanges.bind(this)}
-							value={description}
-						/>
-						
-						<Button
-							variant="contained"
-							color="primary"
-							onClick={this.onTapAddNewRegion.bind(this)}
-							className={classes.button}
-						>
-							Add Region
-						</Button>
-					</FormControl>
-				</Grid>
-			</Grid>
-		);
+								id="description"
+								label="Region Description"
+								style={{ width: '100%',marginTop: 0}}
+								rows="2"
+								required="true"
+								margin="normal"
+								onChange={this.handleTextChanges.bind(this)}
+								value={description}
+							/>
+							
+							
+				
+				</view>
+
+				<view className={classes.textFields}>
+							<Button
+								variant="contained"
+								color="primary"
+								onClick={this.onTapAddNewRegion.bind(this)}
+								className={classes.button}
+							>
+								Add Region
+							</Button>
+			
+				</view>	
+
+	</view>);
+
+ 
 	};
 
 	//Add Designation
@@ -303,34 +353,41 @@ class AddSettings extends React.Component {
 		const { designation, description
          } = this.state;
 
-		return (
-			<Grid container spacing={24}>
-				<Grid item xs={6}>
-					<FormControl>
+
+			return(<view className={classes.formControl}>
+				<view className={classes.textFields}>
 						<TextField
 							id="designation"
 							label="Designation"
-							className={classes.textField}
+							style={{width: 180,  marginTop: 0, marginRight: 20}}
 							type="text"
 							required="true"
 							margin="normal"
 							onChange={this.handleTextChanges.bind(this)}
 							value={designation}
 						/>
+							
+				</view>
+
+				<view className={classes.textFields}>
 
 						<TextField
 							id="description"
 							label="Description"
-							className={classes.textField}
+							style={{ width: '100%',marginTop: 0}}
 							type="text"
 							required="true"
 							margin="normal"
 							onChange={this.handleTextChanges.bind(this)}
 							value={description}
 						/>
+						
+				
+				</view>
 
-						<NativeSelect
-							className={classes.selectEmpty}
+				<view className={classes.textFields}>
+					<NativeSelect
+							style={{width: 200, height: 48, marginTop: 0, marginRight: 20}}
 							required="true"
 							onChange={this.handlePolicyChanges.bind(this)}
 						>
@@ -342,7 +399,9 @@ class AddSettings extends React.Component {
 								})}		
 
 						</NativeSelect>
-						
+				</view>
+
+				<view className={classes.textFields}>
 						<Button
 							variant="contained"
 							color="primary"
@@ -351,149 +410,180 @@ class AddSettings extends React.Component {
 						>
 							Add Designation
 						</Button>
-					</FormControl>
-				</Grid>
-			</Grid>
-		);
+				</view>	
+
+			</view>);
+
+		 
 	};
 
 	//Add Settings UI
 	addNewPolicyUI = () => {
-		const { classes } = this.props;
-		const { policy,
-			portal_access,
-			app_access,
-			track_user,
-			add_user,
-			view_user,
-			add_task,
-			view_task,
-			reports,
-         } = this.state;
+		
+			const { classes } = this.props;
+			const { policy,
+				portal_access,
+				app_access,
+				track_user,
+				add_user,
+				view_user,
+				add_task,
+				view_task,
+				reports,
+				description
+			} = this.state;
+		 
 
-		return (
-			<Grid container spacing={24}>
-				<Grid item xs={6}>
-					<FormControl>
-						<TextField
-							id="policy"
-							label="Policy Title"
-							className={classes.textField}
-							type="text"
-							required="true"
-							margin="normal"
-							onChange={this.handleTextChanges.bind(this)}
-							value={policy}
-						/>
+			return(<view className={classes.formControl}>
+				<view className={classes.textFields}>
 
-						<FormControlLabel
-							control={
-								<Switch checked={portal_access} onChange={this.onChangePortalAccess.bind(this)} value={portal_access} />
-							}
-							label="Portal Access"
-						/>
-
-						<FormControlLabel
-							control={
-								<Switch checked={app_access} onChange={this.onChangeAppAccess.bind(this)} value={app_access} />
-							}
-							label="App Access"
-						/>
-
-						<FormControlLabel
-							control={
-								<Switch checked={track_user} onChange={this.onChangeTrackUser.bind(this)} value={track_user} />
-							}
-							label="Track User Access"
-						/>
-
-						<FormControlLabel
-							control={
-								<Switch checked={add_user} onChange={this.onChangeAddUser.bind(this)} value={add_user} />
-							}
-							label="Add User Access"
-						/>
-
-						<FormControlLabel
-							control={
-								<Switch checked={view_user} onChange={this.onChangeViewUser.bind(this)} value={view_user} />
-							}
-							label="View User Access"
-						/>
-						
-						<FormControlLabel
-							control={
-								<Switch checked={add_task} onChange={this.onChangeAddTask.bind(this)} value={add_task} />
-							}
-							label="Add Task Access"
-						/>
-
-						<FormControlLabel
-							control={
-								<Switch checked={view_task} onChange={this.onChangeViewTask.bind(this)} value={view_task} />
-							}
-							label="View Task Access"
-						/>
-
-						<FormControlLabel
-							control={
-								<Switch checked={reports} onChange={this.onChangeReports.bind(this)} value={reports} />
-							}
-							label="Report Access"
-						/>
-
-						<Button
-							variant="contained"
-							color="primary"
-							onClick={this.onTapAddNewPolicy.bind(this)}
-							className={classes.button}
-						>
-							Add Policy
-						</Button>
-					</FormControl>
-				</Grid>
-			</Grid>
-		);
-	};
+					<TextField
+						id="policy"
+						label="Policy Title"
+						style={{width: 320,  marginTop: 0, marginRight: 20}}
+						type="text"
+						required="true"
+						margin="normal"
+						onChange={this.handleTextChanges.bind(this)}
+						value={policy}
+					/>
+							
+				</view>
 
 
+				<view className={classes.textFields}>
+							<FormControlLabel
+								control={
+									<Switch checked={portal_access} onChange={this.onChangePortalAccess.bind(this)} value={portal_access} />
+								}
+								label="Portal Access"
+							/>
+
+							<FormControlLabel
+								control={
+									<Switch checked={app_access} onChange={this.onChangeAppAccess.bind(this)} value={app_access} />
+								}
+								label="App Access"
+							/>
+
+							<FormControlLabel
+								control={
+									<Switch checked={track_user} onChange={this.onChangeTrackUser.bind(this)} value={track_user} />
+								}
+								label="Track User Access"
+							/>
+
+							
+
+						</view>
+
+						<view className={classes.textFields}>
+
+							<FormControlLabel
+								control={
+									<Switch checked={add_user} onChange={this.onChangeAddUser.bind(this)} value={add_user} />
+								}
+								label="Add User Access"
+							/>
+
+							<FormControlLabel
+								control={
+									<Switch checked={view_user} onChange={this.onChangeViewUser.bind(this)} value={view_user} />
+								}
+								label="View User Access"
+							/>
+							
+							<FormControlLabel
+								control={
+									<Switch checked={add_task} onChange={this.onChangeAddTask.bind(this)} value={add_task} />
+								}
+								label="Add Task Access"
+							/>
+						</view>
+
+						<view className={classes.textFields}>
+
+							<FormControlLabel
+								control={
+									<Switch checked={view_task} onChange={this.onChangeViewTask.bind(this)} value={view_task} />
+								}
+								label="View Task Access"
+							/>
+
+							<FormControlLabel
+								control={
+									<Switch checked={reports} onChange={this.onChangeReports.bind(this)} value={reports} />
+								}
+								label="Report Access"
+							/>
+
+				</view>
+
+				<view className={classes.textFields}>
+							<Button
+								variant="contained"
+								color="primary"
+								onClick={this.onTapAddNewPolicy.bind(this)}
+								className={classes.button}
+							>
+								Add Policy
+							</Button>
+			
+				</view>	
+
+			</view>);
+
+		 }; 
+
+	onOkayForError = () =>{
+		this.setState({ showAlert: false });
+	}
+ 
 
 	render() {
+
 		const { classes, type } = this.props;
 		const { showAlert, title, msg } = this.state;
 
 		return (
 			<div className={classes.root}>
-				<Button
-					variant="extendedFab"
-					color="secondary"
-					className={classes.btnRightA}
-					onClick={this.onTapBack.bind(this)}
-				>
-					Back <BackIcon className={classes.rightIcon} />
-				</Button>
-
+				 
 				<Alert
 					open={this.props.isAdded}
 					onCancel={this.onOkay.bind(this)}
 					onOkay={this.onOkay.bind(this)}
-					title={"Add New Region"}
-					msg={"Successfully Added Region"}
+					title={"Add New Task"}
+					msg={"Task Added Successfully!"}
 				/>
+
 
 				<Alert
 					open={showAlert}
-					onCancel={this.onOkay.bind(this)}
-					onOkay={this.onOkay.bind(this)}
+					onCancel={this.onOkayForError.bind(this)}
+					onOkay={this.onOkayForError.bind(this)}
 					title={title}
 					msg={msg}
 				/>
-                {type === "REGION" && this.addNewRegionUI()}
-                {type === "DESIGNATION" && this.addNewDesignationUI()}
-                {type === "POLICY" && this.addNewPolicyUI()}
+				
+				<Grid container spacing={24}>
+					<Grid item xs={3}>
+					</Grid>
+
+					<Grid item xs={6}>
+						<CardBoard>
+						{type === "REGION" && this.addNewRegionUI()}
+						{type === "DESIGNATION" && this.addNewDesignationUI()}
+						{type === "POLICY" && this.addNewPolicyUI()}
+						</CardBoard>
+					</Grid>
+					<Grid item xs={3}>
+					</Grid>
+					 
+				</Grid>
 
 			</div>
 		);
+
 	}
 }
 
@@ -506,4 +596,4 @@ const mapStateToProps = (state) => ({
 	policies: state.settingsReducer.policies
 });
 
-export default connect(mapStateToProps, { NewRegion, DismissAlert, GetPolicies, NewDesignation, NewPolicy }) (withStyles(styles)(AddSettings));
+export default connect(mapStateToProps, { NewRegion, EditRegion, DismissAlert, GetPolicies, NewDesignation,EditDesignation, NewPolicy, EditPolicy }) (withStyles(styles)(AddSettings));

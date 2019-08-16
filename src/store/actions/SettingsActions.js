@@ -68,32 +68,29 @@ export const NewRegion= (postData) => (dispatch) => {
 
 
 export const EditRegion = (postData) => (dispatch) => {
-	const { legal_title, legal_content, legal_type, id } = postData;
+
+	const { region_id, region_name, description } = postData;
 		
 		axios.defaults.baseURL = BASE_URL;
 		axios.defaults.headers.post['Content-Type'] = 'application/json';
 		axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
 		axios
-			.post('', {
-				action: 'edit-legal',
-				id: id,
-				title: legal_title, 
-				content: legal_content, 
-				type: legal_type,
-				currency: localStorage.getItem('currency')
+			.post('/settings/update-region/'+region_id, {
+				region_name: region_name,
+				description: description,
 			})
 			.then((res) => {
 				const status = parseInt(res.data.status);
 				if (status === 200) {
 					const responseString = JSON.parse(JSON.stringify(res.data));
-					let sdks = responseString.data;
+					let regions = responseString.data;
 					dispatch({
-						type: Actions.ADD,
-						payload: sdks
+						type: Actions.ADD_REGION,
+						payload: regions
 					})
 				}else{
 					dispatch({
-						type: Actions.VIEW,
+						type: Actions.VIEW_REGIONS,
 						payload: []
 					})
 				}
@@ -196,32 +193,31 @@ export const NewDesignation= (postData) => (dispatch) => {
 
 
 export const EditDesignation = (postData) => (dispatch) => {
-	const { legal_title, legal_content, legal_type, id } = postData;
-		
+	const { emp_id,
+		designation,
+		description,policy_id } = postData;
+
 		axios.defaults.baseURL = BASE_URL;
 		axios.defaults.headers.post['Content-Type'] = 'application/json';
 		axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
 		axios
-			.post('', {
-				action: 'edit-legal',
-				id: id,
-				title: legal_title, 
-				content: legal_content, 
-				type: legal_type,
-				currency: localStorage.getItem('currency')
+			.post('/settings/update-designation/'+emp_id, {
+				designation: designation,
+				description: description,
+				policy_id: policy_id,
 			})
 			.then((res) => {
 				const status = parseInt(res.data.status);
 				if (status === 200) {
 					const responseString = JSON.parse(JSON.stringify(res.data));
-					let sdks = responseString.data;
+					let designations = responseString.data;
 					dispatch({
-						type: Actions.ADD,
-						payload: sdks
+						type: Actions.ADD_DESIGNATION,
+						payload: designations
 					})
 				}else{
 					dispatch({
-						type: Actions.VIEW,
+						type: Actions.VIEW_DESIGNATIONS,
 						payload: []
 					})
 				}
@@ -338,6 +334,51 @@ export const NewPolicy= (postData) => (dispatch) => {
 };
 
 
+
+export const EditPolicy= (postData) => (dispatch) => {
+
+	const { policy_id, policy,
+		portal_access,
+		app_access,
+		track_user,
+		add_user,
+		view_user,
+		add_task,
+		view_task,
+		reports  } = postData;
+		
+		axios.defaults.baseURL = BASE_URL;
+		axios.defaults.headers.post['Content-Type'] = 'application/json';
+		axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
+		axios
+			.post('/settings/update-policy/'+policy_id, {
+					policy: policy,
+					portal_access: portal_access,
+					app_access: app_access,
+					track_user: track_user,
+					add_user: add_user,
+					view_user: view_user,
+					add_task: add_task,
+					view_task: view_task,
+					reports: reports,
+			})
+			.then((res) => {
+				const status = parseInt(res.data.status);
+				if (status === 200) {
+					const responseString = JSON.parse(JSON.stringify(res.data));
+					let policies = responseString.data;
+					dispatch({
+						type: Actions.ADD_POLICY,
+						payload: policies
+					})
+				}else{
+					dispatch({
+						type: Actions.VIEW_POLICY,
+						payload: []
+					})
+				}
+		});
+};
 
 export const RemovePolicy = (postData) => (dispatch) => {
 

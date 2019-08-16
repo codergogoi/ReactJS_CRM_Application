@@ -1,7 +1,13 @@
 
 import React, { Component } from 'react';
-import GoogleMapReact from 'google-map-react';
+import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
+
+
+// export class MapContainer extends React.Component {}
  
+
+
+
 
 const styles = {
 	
@@ -24,65 +30,137 @@ const styles = {
         margin: '0',
         backgroundColor: '#c14436',
     },
-    mapsize:{
-        width: '100%',
-        height: '800px'
-        
-    }
+    mapSizeSmall:{
+        width: '40%',
+        height: '60%'
+    },
+    mapSizeBig:{
+      width: '90%',
+      height: 790
+      
+  }
 
 };
- 
-const AnyReactComponent = ({ text }) => <div>{text}</div>;
-
- 
-const MapMarker = (props) => {
-    return (
-        <div style={styles.marker} onClick={props.onClickMarker}>
-            <div style={styles.name}>{props.text}</div>
-            <img style={styles.img} src={`${process.env.PUBLIC_URL}/loc.png`} />
-        </div>
-    );
-}
-
- 
-class GMap extends Component {
-  static defaultProps = {
-    center: {
-      lat: 10.0222465,
-      lng: 76.3028131
-      
-    },
-    zoom: 15
-  };
-
   
-  onTapMarker = (person) =>{
+class GMap extends Component {
 
-    alert('Yes working');
+ 
+  constructor(props){
+    super(props);
+
+    this.state = {
+      locations: [{
+        lat(){ return props.current_lat},
+        lng(){ return props.current_lng}
+      }],
+      lat: props.current_lat,
+      lng: props.current_lng ,
+      current_place: '',
+      showingInfoWindow: false,
+      activeMarker: null,
+    }
+ 
+  }
+
+  displayMarkers = (places) => {
+    return places.map((store, index) => {
+      return <Marker key={index} id={index} position={{
+       lat: store.latitude,
+       lng: store.longitude
+     }}
+     onClick={() => console.log("You clicked me!")} />
+    })
+  }
+
+
+  mapClicked = (mapProps, map, clickEvent)  => {
+    
+    if(this.props.isTracking){
+
+      return;
+    }
+
+
+    const location = clickEvent.latLng;
+
+    this.setState({
+      locations: [location]
+    })
+
+    map.panTo(location);
+    const latitude = location.lat();
+    const longitude = location.lng();
+    this.props.onChangeLocation({latitude, longitude});
+      
+  }
+
+
+  onTapMarker = (props, marker, e) => {
+    
+    this.setState({
+        current_place: props,
+        activeMarker: marker,
+        showingInfoWindow: true
+      });
 
   }
-  
+
+  componentWillReceiveProps(nextProps) {
+
+    this.setState({
+      lat: nextProps.current_lat,
+      lng: nextProps.current_lng ,
+    });
+    if(this.props.isTracking){
+
+      this.setState({
+        locations: [{
+          lat(){ return nextProps.current_lat},
+          lng(){ return nextProps.current_lng}
+        }],
+      })
+     
+    }
+      
+
+  }
  
   render() {
+    
+    const { locations} = this.state;
+    
+    const { isTracking } = this.props;
+
     return (
-      // Important! Always set the container height explicitly
-      <div style={styles.mapsize}>
-        <GoogleMapReact
-          bootstrapURLKeys={{ key: 'AIzaSyCRBXIKw3NRIxdR50jnMg2tvK5_YL-flgQ'}}
-          defaultCenter={this.props.center}
-          defaultZoom={this.props.zoom}
+        <Map
+          className={"map"}
+          google={this.props.google}
+          zoom={18}
+          style={ isTracking === true ? styles.mapSizeBig : styles.mapSizeSmall}
+          onClick={this.mapClicked}
+          center={{ lat: this.state.lat, lng: this.state.lng}}
         >
-          <MapMarker
-            lat={10.0222465}
-            lng={76.3028131}
-            onClick={this.onTapMarker}
-            text={"Sales Person"}
-          />
-        </GoogleMapReact>
-      </div>
+          
+          {locations !== undefined && locations.map((location, i) => {
+            return (
+              <Marker
+                key={i}
+                position={{ lat: location.lat(), lng: location.lng() }}
+              />
+            );
+          })}
+
+        </Map>
     );
   }
+
+ 
 }
 
-export default GMap;
+export default GoogleApiWrapper({
+  apiKey: 'AIzaSyCRBXIKw3NRIxdR50jnMg2tvK5_YL-flgQ'
+})(GMap)
+
+
+// export default GMap;
 

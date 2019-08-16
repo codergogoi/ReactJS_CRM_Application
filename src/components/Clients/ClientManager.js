@@ -19,7 +19,7 @@ import CardDiv from '../Common/CardDiv';
 import AddClient from './AddClient';
 
 import { connect } from 'react-redux';
-import { GetClients } from '../../store/actions/ClientActions';
+import { GetClients, RemoveClient } from '../../store/actions/ClientActions';
 
 function TabContainer(props) {
 	return (
@@ -63,7 +63,8 @@ class ClientManager extends Component {
 			clients: [],
 			value: 0,
 			isAddNew: false,
-			isEdit: false
+			isEdit: false,
+			current_client: null
 		};
 	}
 
@@ -73,6 +74,9 @@ class ClientManager extends Component {
 
 	componentWillMount() {
 		this.fetchClients();
+
+
+		
 	}
 
 	fetchClients = () => {
@@ -108,6 +112,17 @@ class ClientManager extends Component {
 		// this.props.UpdateRouting(mode);
 	}
 
+
+	onEditClient = (client) => {
+		
+		console.log(JSON.stringify(client));
+		this.setState({
+			current_client: client,
+			isEdit: true,
+			isAddNew: true
+		})
+	}
+
 	onDeletePaymentMode(mode) {
 		const { id } = mode;
 		this.setState({
@@ -120,18 +135,17 @@ class ClientManager extends Component {
 
 	onExecuteDeleteCommand() {
 		const { id } = this.state;
-		// this.props.RemoveRoutes({id});
-
+		 this.props.RemoveClient({id});
 	}
 
 	render() {
 		const { classes, clients } = this.props;
-		const { value, isAddNew, showAlert, title, msg } = this.state;
+		const { value, isAddNew, showAlert, title, msg, isEdit, current_client } = this.state;
  
 		if (isAddNew) {
 			return (
 				<CardDiv title={'Add Client'} isBack={true} onTapBack={this.onTapBack.bind(this)}>
-					<AddClient  />
+					<AddClient isEdit={isEdit} current_client={current_client} />
 				</CardDiv>
 			);
 		} else {
@@ -149,9 +163,8 @@ class ClientManager extends Component {
 						{value === 0 && (
 							<div>
 								<Table
-									onEditPaymentMode={this.onEditPaymentMode.bind(this)}
+									onEditClient={this.onEditClient.bind(this)}
 									onDeletePaymentMode={this.onDeletePaymentMode.bind(this)}
-									isEdit={true}
 									paymentModes={clients}
 								/>
 							</div>
@@ -182,4 +195,4 @@ const mapToProps = (state) => ({
 	isAddNew: state.clientReducer.isAddNew
 });
 
-export default connect(mapToProps, { GetClients })(withStyles(styles)(ClientManager));
+export default connect(mapToProps, { GetClients, RemoveClient })(withStyles(styles)(ClientManager));

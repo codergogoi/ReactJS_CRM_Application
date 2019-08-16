@@ -64,12 +64,15 @@ class SettingsManager extends Component {
 			value: 0,
 			isAddNew: false,
 			type: '',
-			isEdit: false
+			isEdit: false,
+			current_item : '',
 		};
 	}
 
 	handleChange = (event, value) => {
-		this.setState({ value });
+		
+		this.setState({ value: value, current_item: '', isEdit: false });
+
 		if(value === 2){
 			this.props.GetPolicies('');
 		}if(value === 1){
@@ -89,10 +92,29 @@ class SettingsManager extends Component {
 
 	 
 	onTapAddNew() {
-		this.setState({ isAddNew: true });
+
+		const { value} = this.state;
+
+		if(value === 2){
+			this.setState({
+				type: 'POLICY',
+				isAddNew: true,
+			});
+		}else if(value === 1){
+			this.setState({
+				type: 'DESIGNATION',
+				isAddNew: true,
+			});
+		}else{
+			this.setState({
+				type: 'REGION',
+				isAddNew: true,
+			});
+		}
+
 	}
 
-	onTapBack() {
+	onTapBack = () => {
 		this.setState({ isAddNew: false, isEdit: false, type: '' });
 		if(this.state.value === 2){
 			this.props.GetPolicies('');
@@ -137,70 +159,45 @@ class SettingsManager extends Component {
 		}
 	}
 
-	//Region
-	onTapAddNewRegion = () => {
-		this.setState({
-			type: 'REGION',
-			isAddNew: true,
-		});
-	}
-	
-	onTapEditRegion = () => {
+	onEdit = (item) =>{
 
+		const { value} = this.state;
 
-
-	}
-
-	onTapDeleteRegion = () => {
-
-
-	}
-
-	 
-
-	//Designation
-	onTapAddNewDesignation = () => {
-		this.setState({
-			type: 'DESIGNATION',
-			isAddNew: true,
-		});
-	}
-
-	onTapEditDesignation = () => {
-		
-	}
-
-	onTapDeleteDesignation = () => {
-
+		if(value === 2){
+			this.setState({
+				type: 'POLICY',
+				isAddNew: true,
+				current_item: item,
+				isEdit: true,
+			});
+		}else if(value === 1){
+			this.setState({
+				type: 'DESIGNATION',
+				isAddNew: true,
+				current_item: item,
+				isEdit: true,
+			});
+		}else{
+			this.setState({
+				type: 'REGION',
+				isAddNew: true,
+				current_item: item,
+				isEdit: true,
+			});
+		}
+ 
 
 	}
-
-	//Policy
-	onTapAddNewPolicy = () => {
-		this.setState({
-			type: 'POLICY',
-			isAddNew: true,
-		});
-	}
-
-
-	onTapEditDesignation = () => {
-		
-	}
-
-	onTapDeleteDesignation = () => {
-
-
-	}
+  
 
 	render() {
 		const { classes, regions, designations, policies } = this.props;
-		const { value, isAddNew, isEdit, currentLegal, showAlert, title, msg, type } = this.state;
+		const { value, isAddNew, isEdit, currentLegal, showAlert, title, msg, type, current_item } = this.state;
 
 		if (isAddNew) {
 			return (
-				<CardDiv title={'Add New '+ type}>
-					<AddSettings type={type} onTapBack={this.onTapBack.bind(this)} />
+				<CardDiv title={'Add New '+ type } isBack={true} onTapBack={this.onTapBack.bind(this)}>
+					<AddSettings isEdit={isEdit} type={type} current_item={current_item} />
 				</CardDiv>
 			);
 		} else {
@@ -214,7 +211,7 @@ class SettingsManager extends Component {
 						msg={msg}
 					/>
 
-					<CardDiv title={'Settings'}>
+					<CardDiv title={'Settings'} isAdd={true} onTapAdd={this.onTapAddNew.bind(this)}>
 								
 						<Tabs
 							value={value}
@@ -231,16 +228,8 @@ class SettingsManager extends Component {
 
 						{value === 0 && (
 							<TabContainer>
-								<Button
-									variant="extendedFab"
-									color="secondary"
-									className={classes.btnRightA}
-									onClick={ this.onTapAddNewRegion}
-								>
-								Add <AddOffersIcon className={classes.rightIcon} />
-							</Button>
 							{regions !== undefined && (<RegionTable
-								onEditFields={this.onTapEditRegion.bind(this)}
+								onEditItem={this.onEdit.bind(this)}
 								onDeleteRegion={this.onDeleteItem.bind(this)}
 								data={regions}
 							/>)}
@@ -248,17 +237,8 @@ class SettingsManager extends Component {
 						)}
 						{value === 1 && (
 							<TabContainer>
-								<Button
-									variant="extendedFab"
-									color="secondary"
-									className={classes.btnRightA}
-									onClick={this.onTapAddNewDesignation}
-
-								>
-								Add <AddOffersIcon className={classes.rightIcon} />
-							</Button>
 							{designations !== undefined && (<DesignationTable
-								onEditFields={this.onTapEditDesignation.bind(this)}
+								onEditItem={this.onEdit.bind(this)}
 								onDeleteDesignation={this.onDeleteItem.bind(this)}
 								data={designations}
 							/>)}
@@ -266,17 +246,8 @@ class SettingsManager extends Component {
 						)}
 						{value === 2 && (
 							<TabContainer>
-								<Button
-									variant="extendedFab"
-									color="secondary"
-									className={classes.btnRightA}
-									onClick={this.onTapAddNewPolicy.bind(this)}
-
-								>
-								Add <AddOffersIcon className={classes.rightIcon} />
-							</Button>
 							{policies !== undefined && (<PolicyTable
-								onEditFields={this.onTapEditDesignation.bind(this)}
+								onEditItem={this.onEdit.bind(this)}
 								onDeletePolicy={this.onDeleteItem.bind(this)}
 								data={policies}
 							/>)}

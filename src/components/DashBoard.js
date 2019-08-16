@@ -63,6 +63,7 @@ const drawerWidth = 240;
 
 //Style Sheet
 const styles = (theme) => ({
+	
 	root: {
 		flexGrow: 1,
 		zIndex: 1,
@@ -324,7 +325,7 @@ class Dashboard extends Component {
 								<MenuIcon />
 							</IconButton>
 							<Typography variant="title" color="inherit" className={classes.flex}>
-								SALES APP TRACKER
+								SALES APP TRACKER : Alpha 1.0
 							</Typography>
 							<Avatar
 								alt="country"

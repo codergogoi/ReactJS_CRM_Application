@@ -32,12 +32,12 @@ function getSorting(order, orderBy) {
 }
 
 const columnData = [
-	{ id: 'designation', numeric: false, disablePadding: true, label: 'Designation' },
-	{ id: 'designation_desc', numeric: false, disablePadding: true, label: 'Description' },
-	{ id: 'policy', numeric: false, disablePadding: true, label: 'Access Policy' },
-	{ id: 'created', numeric: false, disablePadding: true, label: 'Created Date' },
-    { id: 'created_by', numeric: false, disablePadding: true, label: 'Created By' },
-	{ id: 'delete', numeric: false, disablePadding: true, label: 'Action' }
+	{ id: 'designation', numeric: false, disablePadding: false, label: 'Designation' },
+	{ id: 'designation_desc', numeric: false, disablePadding: false, label: 'Description' },
+	{ id: 'policy', numeric: false, disablePadding: false, label: 'Access Policy' },
+	{ id: 'created', numeric: false, disablePadding: false, label: 'Created Date' },
+    { id: 'created_by', numeric: false, disablePadding: false, label: 'Created By' },
+	{ id: 'delete', numeric: false, disablePadding: false, label: 'Action' }
 ];
 
 class DesignationTableHeader extends React.Component {
@@ -234,7 +234,7 @@ class DesignationTable extends React.Component {
 	};
 
 	onCloneClick = (offer) => {
-		this.props.onCloneClick(offer);
+		this.props.onEditItem(offer);
 	};
 
 	handleDelete = (item) => {
@@ -270,7 +270,6 @@ class DesignationTable extends React.Component {
 
 		return (
 			<Paper className={classes.root}>
-				<EnhancedTableToolbar numSelected={selected.length} />
 				<div className={classes.tableWrapper}>
 					<Table className={classes.table} aria-labelledby="tableTitle">
 						<DesignationTableHeader

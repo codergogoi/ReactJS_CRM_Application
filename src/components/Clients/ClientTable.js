@@ -22,6 +22,7 @@ import little from '@material-ui/core/colors/deepOrange';
 //Icons
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import EditIcon from '@material-ui/icons/Edit';
 
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
@@ -33,7 +34,6 @@ function getSorting(order, orderBy) {
 		? (a, b) => (b[orderBy] < a[orderBy] ? -1 : 1)
 		: (a, b) => (a[orderBy] < b[orderBy] ? -1 : 1);
 }
-
 
 const columnData = [
 	{ id: 'client_name', numeric: false, disablePadding: false, label: 'Client Name' },
@@ -252,6 +252,10 @@ class ClientTable extends React.Component {
 		this.props.onDeletePaymentMode(mode);
 	};
 
+	onEditClient = (client) => {
+		this.props.onEditClient(client);
+	}
+
 	handleChangePage = (event, page) => {
 		this.setState({ page });
 	};
@@ -269,20 +273,7 @@ class ClientTable extends React.Component {
 		}
 	};
 
-	handleiOS = (mode) => (event) => {
-		mode.ios = mode.ios !== 0 ? 0 : 1;
-		this.props.onEditPaymentMode(mode);
-	};
-
-	handleAndroid = (mode) => (event) => {
-		mode.android = mode.android !== 0 ? 0 : 1;
-		this.props.onEditPaymentMode(mode);
-	};
-
-	handleMsite = (mode) => (event) => {
-		mode.msite = mode.msite !== 0 ? 0 : 1;
-		this.props.onEditPaymentMode(mode);
-	};
+	 
 
 	isSelected = (id) => this.state.selected.indexOf(id) !== -1;
 
@@ -331,6 +322,15 @@ class ClientTable extends React.Component {
 												 {n.email}
 											</TableCell>
 											<TableCell>
+											<IconButton
+													className={classes.button}
+													mini
+													aria-label="Edit"
+													onClick={(event) => this.onEditClient(n)}
+												>
+													<EditIcon />
+												</IconButton>
+
 												<IconButton
 													className={classes.button}
 													mini

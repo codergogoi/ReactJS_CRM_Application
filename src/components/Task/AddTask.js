@@ -9,6 +9,7 @@ import TextField from '@material-ui/core/TextField';
 import Grid from '@material-ui/core/Grid';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import CardBoard from '../Common/CardBoard';
 
 // Icons
 import BackIcon from '@material-ui/icons/ArrowBack';
@@ -16,7 +17,7 @@ import BackIcon from '@material-ui/icons/ArrowBack';
 // App Classes
 import Alert from '../Common/Alert';
 
-import { NewTask, DismissAlert, GetTaskUtility } from '../../store/actions/TaskActions';
+import { NewTask, DismissAlert, GetTaskUtility, UpdateTask } from '../../store/actions/TaskActions';
 import { connect } from 'react-redux';
 import { NativeSelect } from '@material-ui/core';
 import { AsyncSeriesWaterfallHook } from 'tapable';
@@ -24,72 +25,41 @@ import { AsyncSeriesWaterfallHook } from 'tapable';
 // CSS Module
 const styles = (theme) => ({
 	root: {
+		display: 'flex',
 		width: '90%'
 	},
-	groupForm: {
-		width: '100%',
-		flexDirection: 'column'
-	},
-	formContent: {
-		width: '45%',
-		backgroundColor: '#66ffcc',
-		display: 'flex'
-	},
-	button: {
-		marginTop: theme.spacing.unit * 5,
-		marginRight: theme.spacing.unit
-	},
-
-	input: {
-		display: 'none'
-	},
-	actionsContainer: {
-		marginTop: 30,
-		marginBottom: theme.spacing.unit * 2
-	},
-	resetContainer: {
-		padding: theme.spacing.unit * 3
-	},
 	formControl: {
-		width: '50%',
-		backgroundColor: '#663354',
+		width: '100%',
 		display: 'flex',
-		margin: theme.spacing.unit
+		flexDirection: 'column',
+		alignContent: 'flex-start',
+		
 	},
-	textField: {
-		marginLeft: theme.spacing.unit,
-		marginRight: theme.spacing.unit,
-		width: 300
+	textFields:{
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'flex-start',
+		padding: 10,
+		paddingBottom: 5,
+		paddingTop: 5,
+		marginBottom: 20,
 	},
-	formInputs: {
-		width: '90%',
-		backgroundColor: '#FF3322',
-		flexDirection: 'row'
+	mapContent:{
+		display: 'flex',
+		flexDirection: 'row',
+		alignItems: 'flex-start',
+		height: 500,
+		padding: 5,
 	},
-	groupInputs: {
-		width: '90%',
-		backgroundColor: '#dd6655'
-	},
-	selectEmpty: {
-		marginTop: theme.spacing.unit * 2,
-		marginLeft: 10
-	},
-	rightIcon: {
-		marginLeft: theme.spacing.unit
-	},
-	btnRightA: {
-		position: 'absolute',
-		top: theme.spacing.unit * 20,
-		right: theme.spacing.unit * 10
-	}
 });
 
 class AddTask extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			title: '',
-			client_id: '',
+				task_id: '',
+				title: '',
+				client_id: '',
 				company_address: '',
 				contact_person_name: '',
 				company_phone: '',
@@ -114,6 +84,33 @@ class AddTask extends React.Component {
 
 	componentWillMount(){
 		this.props.GetTaskUtility('');
+
+		if(this.props.isEdit){
+			const {
+				id,title,appointment_date, assigned_emp,emp_id,client_name,client_id,client_address,contact_person, company_phone,description,remarks,assign_lat,assign_lng
+			} = this.props.current_task;
+
+			this.setState({
+				task_id: id,
+				title: title,
+				client_id: client_id,
+				company_address: client_address,
+				contact_person_name: contact_person,
+				company_phone: company_phone,
+				task_description: description,
+				employee_id: emp_id,
+				task_priority: 0,
+				meeting_date: appointment_date,
+				employee_name: assigned_emp,
+				client_name: client_name,
+				client_address: client_address,
+				remarks: remarks,
+				assign_lat: assign_lat,
+				assign_lng: assign_lng,
+			})
+		}
+
+
 	}
 
 	onChangeAndroid = () => {
@@ -198,6 +195,7 @@ class AddTask extends React.Component {
 	onTapAddNewTask() {
 
 		const { 
+			task_id,
 			title,
 			client_id,
 			contact_person_name,
@@ -213,19 +211,39 @@ class AddTask extends React.Component {
 			assign_lng,
 		 } = this.state;
  
-		this.props.NewTask({ title,
-			client_id,
-			contact_person_name,
-			company_phone,
-			task_description,
-			employee_id,
-			task_priority,
-			location,
-			meeting_date,
-			client_address,
-			remarks,
-			assign_lat,
-			assign_lng, });
+		 if(this.props.isEdit){
+			this.props.UpdateTask({ 
+				task_id,
+				title,
+				client_id,
+				contact_person_name,
+				company_phone,
+				task_description,
+				employee_id,
+				task_priority,
+				location,
+				meeting_date,
+				client_address,
+				remarks,
+				assign_lat,
+				assign_lng, });
+		 }else{
+			this.props.NewTask({ 
+				title,
+				client_id,
+				contact_person_name,
+				company_phone,
+				task_description,
+				employee_id,
+				task_priority,
+				location,
+				meeting_date,
+				client_address,
+				remarks,
+				assign_lat,
+				assign_lng, });
+		 }
+		
 	}
 
 	handleTextChanges = (event) => {
@@ -247,7 +265,6 @@ class AddTask extends React.Component {
 		}else if (event.target.id === 'remarks') {
 			this.setState({ remarks: event.target.value });
 		}
-		
 	};
 
 	onHandleClient = (event) => {
@@ -258,8 +275,12 @@ class AddTask extends React.Component {
 			client_id: client.id,
 			client_address: client.address,
 			company_phone: client.contact_number,
-
+			assign_lat: client.lat,
+			assign_lng: client.lng
 		});
+
+		console.log('Selected Data '+ JSON.stringify(client));
+
 	}
 
 	onHandleEmployee = (event) => {
@@ -278,8 +299,14 @@ class AddTask extends React.Component {
 		});
 	}
 	
-	//Add Partner
-	addNewTaskUI = () => {
+	onOkayForError = () =>{
+		this.setState({ showAlert: false });
+	}
+
+
+
+	displayTextContent = () => {
+
 		const { classes, employee, clients } = this.props;
 		const { title,
 				contact_person_name,
@@ -290,27 +317,90 @@ class AddTask extends React.Component {
 				employee_designation,
 				client_address,
 				remarks,
+				
 				} = this.state;
 
-		return (
-			<Grid container spacing={24}>
-				<Grid item xs={6}>
-					<FormControl>
-						<TextField
-							id="title"
-							label="Task Title"
-							className={classes.textField}
-							type="text"
-							required="true"
-							margin="normal"
-							onChange={this.handleTextChanges.bind(this)}
-							value={title}
-						/>
 
+		return(<view className={classes.formControl}>
+					<view className={classes.textFields}>
+						<NativeSelect
+							style={{width: 220, height: 48, marginTop: 0, marginRight: 20}}
+							required="true"
+							onChange={this.onHandleClient.bind(this)}
+						>
+							<option value="" disabled selected>
+								Select Client Name
+							</option>
+							{clients !== undefined && clients.map( (item) => {
+								return (<option value={item.id}>{item.name}</option>);
+							})}
+
+						</NativeSelect>
+						</view>
+
+						<view className={classes.textFields}>
+
+							<TextField
+								id="client_address"
+								label="Company Address"
+								style={{ width: '100%',marginTop: 0}}
+								rows="2"
+								type="text"
+								required="true"
+								margin="normal"
+								onChange={this.handleTextChanges.bind(this)}
+								value={client_address}
+							/>
+						
+						</view>
+
+						<view className={classes.textFields}>
+							<TextField
+								id="company_phone"
+								label="Company Phone"
+								style={{width: 180,  marginTop: 0, marginRight: 20}}
+								type="text"
+								required="true"
+								margin="normal"
+								onChange={this.handleTextChanges.bind(this)}
+								value={company_phone}
+							/>
+
+							<TextField
+								id="contact_person_name"
+								label="Contact Person"
+								style={{width: 220, marginTop: 0, marginRight: 20}}
+								type="text"
+								required="true"
+								margin="normal"
+								onChange={this.handleTextChanges.bind(this)}
+								value={contact_person_name}
+							/>
+
+						
+					</view>	
+
+					<view className={classes.textFields}>
+
+						<TextField
+								id="title"
+								label="Task Title"
+								style={{ width: '100%',marginTop: 0}}
+								rows="2"
+								type="text"
+								required="true"
+								margin="normal"
+								onChange={this.handleTextChanges.bind(this)}
+								value={title}
+							/>
+						</view>	
+					
+					<view className={classes.textFields}>
 						<TextField
 							id="task_description"
 							label="Description"
-							className={classes.textField}
+							style={{ width: '100%',marginTop: 0}}
+							rows="4"
 							type="text"
 							multiline
 							required="true"
@@ -318,106 +408,41 @@ class AddTask extends React.Component {
 							onChange={this.handleTextChanges.bind(this)}
 							value={task_description}
 						/> 
-
-						<TextField
-							id="meeting_date"
-							label="Meeting Date"
-							className={classes.textField}
-							type="text"
-							required="true"
-							margin="normal"
-							onChange={this.handleTextChanges.bind(this)}
-							value={meeting_date}
-						/>
-
 						
+					</view>
 
-						<NativeSelect
-							className={classes.selectEmpty}
-							required="true"
-							onChange={this.onHandleClient.bind(this)}
-						>
-							<option value="" disabled selected>
-								Select Client
-							</option>
-							{clients !== undefined && clients.map( (item) => {
-								return (<option value={item.id}>{item.name}</option>);
-							})}
+					<view className={classes.textFields}>
+							<TextField
+								id="remarks"
+								label="Remarks"
+								style={{ width: '100%',marginTop: 0}}
+								rows="2"
+								type="text"
+								multiline
+								required="true"
+								margin="normal"
+								onChange={this.handleTextChanges.bind(this)}
+								value={remarks}
+							/> 
+					</view>
 
-						</NativeSelect>
-						
 
-						<TextField
-							id="client_address"
-							label="Company Address"
-							className={classes.textField}
-							type="text"
-							required="true"
-							margin="normal"
-							onChange={this.handleTextChanges.bind(this)}
-							value={client_address}
-						/>
-
-						<TextField
-							id="company_phone"
-							label="Company Phone"
-							className={classes.textField}
-							type="text"
-							required="true"
-							margin="normal"
-							onChange={this.handleTextChanges.bind(this)}
-							value={company_phone}
-						/>
-
-						<TextField
-							id="contact_person_name"
-							label="Contact Person"
-							className={classes.textField}
-							type="text"
-							required="true"
-							margin="normal"
-							onChange={this.handleTextChanges.bind(this)}
-							value={contact_person_name}
-						/>
- 
- 						<TextField
-							id="location"
-							label="location"
-							className={classes.textField}
-							type="text"
-							required="true"
-							margin="normal"
-							onChange={this.handleTextChanges.bind(this)}
-							value={location}
-						/> 
-
-						<NativeSelect
-							className={classes.selectEmpty}
-							required="true"
-							onChange={this.onHandleEmployee.bind(this)}
-						>
-							<option value="" disabled selected>
-								Select Assign To
-							</option>
-							{employee !== undefined && employee.map( (item) => {
-								
-								return (<option value={item.id}>{item.name+' ['+ item.emp_id+']'}</option>);
-							})}
-
-						</NativeSelect>
-
-						<TextField
-							id="designation"
-							disabled
-							className={classes.textField}
-							type="text"
-							value={employee_designation}
-						/> 
-						<NativeSelect
-							className={classes.selectEmpty}
-							required="true"
-							onChange={this.onHandlePriority.bind(this)}
-						>
+					<view className={classes.textFields}>
+							<TextField
+								id="meeting_date"
+								label="Meeting Date"
+								style={{width: 160,  marginTop: 0, marginRight: 20}}
+								type="date"
+								required="true"
+								margin="normal"
+								onChange={this.handleTextChanges.bind(this)}
+								value={meeting_date}
+							/>
+							<NativeSelect
+								style={{width: 200,height: 48,  marginTop: 0, marginRight: 20}}
+								required="true"
+								onChange={this.onHandlePriority.bind(this)}
+							>
 							<option value="" disabled selected>
 								Select Priority
 							</option>
@@ -425,22 +450,25 @@ class AddTask extends React.Component {
 							<option value="1">Medium</option>
 							<option value="2">High</option>
 							<option value="3">Urgent</option>
+						</NativeSelect>
+
+						<NativeSelect
+								style={{width: 200,height: 48 , marginTop: 0, marginRight: 20}}
+								required="true"
+							onChange={this.onHandleEmployee.bind(this)}
+						>
+							<option value="" disabled selected>
+								Assign To
+							</option>
+							{employee !== undefined && employee.map( (item) => {
+								return (<option value={item.id}>{item.name+' ['+ item.emp_id+']'}</option>);
+							})}
 
 						</NativeSelect>
 
-						<TextField
-							id="remarks"
-							label="Remarks"
-							className={classes.textField}
-							type="text"
-							multiline
-							required="true"
-							margin="normal"
-							onChange={this.handleTextChanges.bind(this)}
-							value={remarks}
-						/> 
- 
-
+					</view>
+					
+					<view className={classes.textFields}>
 						<Button
 							variant="contained"
 							color="primary"
@@ -449,11 +477,12 @@ class AddTask extends React.Component {
 						>
 							Add Task
 						</Button>
-					</FormControl>
-				</Grid>
-			</Grid>
-		);
-	};
+					</view>
+
+
+			</view>);
+	}
+
 
 	render() {
 		const { classes } = this.props;
@@ -461,32 +490,38 @@ class AddTask extends React.Component {
 
 		return (
 			<div className={classes.root}>
-				<Button
-					variant="extendedFab"
-					color="secondary"
-					className={classes.btnRightA}
-					onClick={this.onTapBack.bind(this)}
-				>
-					Back <BackIcon className={classes.rightIcon} />
-				</Button>
-
+				 
 				<Alert
 					open={this.props.isAdded}
 					onCancel={this.onOkay.bind(this)}
 					onOkay={this.onOkay.bind(this)}
 					title={"Add New Task"}
-					msg={"Successfully Added Task"}
+					msg={"Task Added Successfully!"}
 				/>
+
 
 				<Alert
 					open={showAlert}
-					onCancel={this.onOkay.bind(this)}
-					onOkay={this.onOkay.bind(this)}
+					onCancel={this.onOkayForError.bind(this)}
+					onOkay={this.onOkayForError.bind(this)}
 					title={title}
 					msg={msg}
 				/>
+				
+				<Grid container spacing={24}>
+					<Grid item xs={3}>
+					</Grid>
 
-				{this.addNewTaskUI()}
+					<Grid item xs={6}>
+						<CardBoard>
+							{this.displayTextContent()}
+						</CardBoard>
+					</Grid>
+					<Grid item xs={3}>
+					</Grid>
+					 
+				</Grid>
+
 			</div>
 		);
 	}
@@ -502,4 +537,4 @@ const mapStateToProps = (state) => ({
 	clients: state.taskReducer.utilities.clients
 });
 
-export default connect(mapStateToProps, { NewTask, DismissAlert, GetTaskUtility }) (withStyles(styles)(AddTask));
+export default connect(mapStateToProps, { NewTask, DismissAlert, GetTaskUtility, UpdateTask }) (withStyles(styles)(AddTask));

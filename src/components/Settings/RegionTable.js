@@ -32,11 +32,11 @@ function getSorting(order, orderBy) {
 }
 
 const columnData = [
-	{ id: 'region', numeric: false, disablePadding: true, label: 'Region' },
-	{ id: 'region_desc', numeric: false, disablePadding: true, label: 'Region Description' },
-    { id: 'created', numeric: false, disablePadding: true, label: 'Created Date' },
-    { id: 'created_by', numeric: false, disablePadding: true, label: 'Created By' },
-	{ id: 'delete', numeric: false, disablePadding: true, label: 'Action' }
+	{ id: 'region', numeric: false, disablePadding: false, label: 'Region' },
+	{ id: 'region_desc', numeric: false, disablePadding: false, label: 'Region Description' },
+    { id: 'created', numeric: false, disablePadding: false, label: 'Created Date' },
+    { id: 'created_by', numeric: false, disablePadding: false, label: 'Created By' },
+	{ id: 'delete', numeric: false, disablePadding: false, label: 'Action' }
 ];
 
 class RegionTableHeader extends React.Component {
@@ -233,7 +233,7 @@ class RegionTable extends React.Component {
 	};
 
 	onCloneClick = (offer) => {
-		this.props.onCloneClick(offer);
+		this.props.onEditItem(offer);
 	};
 
 	handleDelete = (item) => {
@@ -269,7 +269,6 @@ class RegionTable extends React.Component {
 
 		return (
 			<Paper className={classes.root}>
-				<EnhancedTableToolbar numSelected={selected.length} />
 				<div className={classes.tableWrapper}>
 					<Table className={classes.table} aria-labelledby="tableTitle">
 						<RegionTableHeader

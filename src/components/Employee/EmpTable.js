@@ -28,6 +28,8 @@ import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+import EditIcon from '@material-ui/icons/Edit';
+
 
 function getSorting(order, orderBy) {
 	return order === 'desc'
@@ -249,6 +251,10 @@ class EmpTable extends React.Component {
 		this.props.onDeleteEmp(emp);
 	};
 
+	onTapEditEmp = (emp) => {
+		this.props.onEditEmp(emp);
+	}
+
 	handleChangePage = (event, page) => {
 		this.setState({ page });
 	};
@@ -312,6 +318,15 @@ class EmpTable extends React.Component {
 											<TableCell>{n.mobile}</TableCell>
 											<TableCell>{n.email}</TableCell>
 											<TableCell>
+												<IconButton
+													className={classes.button}
+													mini
+													aria-label="Edit"
+													onClick={(event) => this.onTapEditEmp(n)}
+												>
+													<EditIcon />
+												</IconButton>
+
 												<IconButton
 													className={classes.button}
 													mini
