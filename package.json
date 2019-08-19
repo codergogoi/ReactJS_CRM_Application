@@ -2,6 +2,7 @@
 	"name": "sales_admin",
 	"version": "0.1.0",
 	"private": true,
+	"homepage": "http://salesapp.benzyinfotech.com/",
 	"dependencies": {
 		"@material-ui/core": "^3.1.1",
 		"@material-ui/icons": "^1.1.0",
