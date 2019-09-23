@@ -39,12 +39,11 @@ function getSorting(order, orderBy) {
 
 const columnData = [
 	{ id: 'title', numeric: false, disablePadding: false, label: 'Title' },
-	{ id: 'appointment_date', numeric: false, disablePadding: false, label: 'Appointment Date' },
+	{ id: 'deadline', numeric: false, disablePadding: false, label: 'Completion Date' },
 	{ id: 'client_name', numeric: false, disablePadding: false, label: 'Client Name' },
 	{ id: 'contact_person', numeric: false, disablePadding: false, label: 'Contact Person' },
 	{ id: 'emp_name', numeric: false, disablePadding: false, label: 'Assigned To' },
-	{ id: 'location', numeric: false, disablePadding: false, label: 'Location' },
-	{ id: 'statu', numeric: false, disablePadding: false, label: 'Status' },
+	{ id: 'status', numeric: false, disablePadding: false, label: 'Status' },
 	{ id: 'more', numeric: false, disablePadding: false, label: 'Action' }
 ];
 
@@ -213,6 +212,14 @@ const styles = (theme) => ({
 	},
 	tableWrapper: {
 		overflowX: 'auto'
+	},
+	chipGroup:{
+		margin: 5,
+		backgroundColor: '#AEB6BF'
+	},
+	chipSelf:{
+		margin: 5,
+		backgroundColor: '#DC7633'
 	}
 });
 
@@ -313,9 +320,19 @@ class TaskTable extends React.Component {
 									return (
  
 										<TableRow hover role="checkbox" tabIndex={-1} key={n.id}>
-											<TableCell>{n.title}</TableCell>
+											<TableCell>
+											{ n.title}
+											{n.grouped == true && <Chip
+													label="Group Task"
+													className={classes.chipGroup}
+												/>}
+											{n.self_task == true && <Chip
+													label="Self Task"
+													className={classes.chipSelf}
+												/>}	
+											</TableCell>
 
-											<TableCell>{moment(n.appointment_date).format('Do MMM YYYY') }</TableCell>
+											<TableCell>{moment(n.deadline).format('Do MMM YYYY') }</TableCell>
 											<TableCell>
 												{n.client_name}
 											</TableCell>
@@ -325,12 +342,12 @@ class TaskTable extends React.Component {
 											<TableCell>
 												{n.assigned_emp}
 											</TableCell>
+											 
 											<TableCell>
-												{n.assign_lat +','+n.assign_lng}
-											</TableCell>
-											<TableCell>
-												{n.status == 2 && <Chip label="Completed" className={classes.chip}  color="secondary" /> }
-												{n.status == 1 && <Chip label="On Progress" className={classes.chip} color="default" /> }
+												{n.status == 4 && <Chip label="Later Followup" className={classes.chip}  color="default" /> }
+												{n.status == 3 && <Chip label="Completed" className={classes.chip}  color="secondary" /> }
+												{n.status == 2 && <Chip label="On Progress" className={classes.chip} color="default" /> }
+												{n.status == 1 && <Chip label="Pending" className={classes.chip} color="primary" /> }
 												{n.status == 0 && <Chip label="Pending" className={classes.chip} color="primary" /> }
 
 											</TableCell>

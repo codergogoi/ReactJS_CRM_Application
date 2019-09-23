@@ -39,8 +39,8 @@ function getSorting(order, orderBy) {
 
 const columnData = [
 	{ id: 'emp_id', numeric: false, disablePadding: false, label: 'ID' },
-	{ id: 'first_name', numeric: false, disablePadding: false, label: 'Name' },
-	{ id: 'designation', numeric: false, disablePadding: false, label: 'Designation' },
+	{ id: 'name', numeric: false, disablePadding: false, label: 'Name' },
+	{ id: 'description', numeric: false, disablePadding: false, label: 'Designation' },
 	{ id: 'region', numeric: false, disablePadding: false, label: 'Region' },
 	{ id: 'mobile', numeric: false, disablePadding: false, label: 'Mobile No' },
 	{ id: 'email', numeric: false, disablePadding: false, label: 'Email ID' },
@@ -312,8 +312,8 @@ class EmpTable extends React.Component {
 									return (
 										<TableRow hover role="checkbox" tabIndex={-1} key={n.id}>
 											<TableCell>{n.emp_id}</TableCell>
-											<TableCell>{n.first_name+' '+ n.last_name}</TableCell>
-											<TableCell>{n.designation}</TableCell>
+											<TableCell>{n.name}</TableCell>
+											<TableCell>{n.description}</TableCell>
 											<TableCell>{n.region}</TableCell>
 											<TableCell>{n.mobile}</TableCell>
 											<TableCell>{n.email}</TableCell>

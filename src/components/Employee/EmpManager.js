@@ -208,7 +208,7 @@ class EmpManager extends Component {
 						msg={msg}
 					/>
 
-					<CardDiv title={'Employees'} isAdd={true} onTapAdd={this.onTapAdd.bind(this)}>
+					<CardDiv title={'Employees'} isAdd={false} onTapAdd={this.onTapAdd.bind(this)}>
 						{value === 0 && (
 							<div>								
 								{this.onDisplaySearchView()}

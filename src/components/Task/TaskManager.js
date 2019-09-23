@@ -102,7 +102,7 @@ class TaskManager extends Component {
 		this.setState({
 			sdks: modes
 		});
-		// this.props.UpdateChanges(mode);
+	
 	}
 
 	onDeleteSDK(sdk) {
@@ -145,8 +145,8 @@ class TaskManager extends Component {
 
 		if (isAddNew) {
 			return (
-				<CardDiv title={'Add Task'} isBack={true} onTapBack={this.onTapBack.bind(this)}>
-					<AddTask  isEdit={isEdit} current_task={current_task} />
+				<CardDiv title={ isEdit !== true ? 'Add Task' : 'Edit Task'} isBack={true} onTapBack={this.onTapBack.bind(this)}>
+					<AddTask  isEdit={isEdit} current_task={current_task} onTapBack={this.onTapBack.bind(this)} />
 				</CardDiv>
 			);
 		} else {

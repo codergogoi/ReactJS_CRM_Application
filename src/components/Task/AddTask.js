@@ -10,17 +10,46 @@ import Grid from '@material-ui/core/Grid';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
 import CardBoard from '../Common/CardBoard';
+import chroma from 'chroma-js';
 
-// Icons
-import BackIcon from '@material-ui/icons/ArrowBack';
+import Select from 'react-select';
 
 // App Classes
 import Alert from '../Common/Alert';
+import CardDiv from '../Common/CardDiv';
+import EmployeeIcon from '@material-ui/icons/SupervisorAccount';
 
-import { NewTask, DismissAlert, GetTaskUtility, UpdateTask } from '../../store/actions/TaskActions';
+
+import { NewTask, DismissAlert, GetTaskUtility, UpdateTask, GetTaskCity, GetTaskLocation, GetGroupTaskClients, keepLoading , NewGroupTask, UpdateGroupTask} from '../../store/actions/TaskActions';
 import { connect } from 'react-redux';
 import { NativeSelect } from '@material-ui/core';
 import { AsyncSeriesWaterfallHook } from 'tapable';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Typography from '@material-ui/core/Typography';
+
+import FormLabel from '@material-ui/core/FormLabel';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Checkbox from '@material-ui/core/Checkbox';
+
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+ 
+
+//Tab Container
+function TabContainer(props) {
+	return (
+	  <Typography component="div" style={{ padding: 8 * 3 }}>
+		{props.children}
+	  </Typography>
+	);
+  }
+  
+  TabContainer.propTypes = {
+	children: PropTypes.node.isRequired,
+  };
 
 // CSS Module
 const styles = (theme) => ({
@@ -44,20 +73,55 @@ const styles = (theme) => ({
 		paddingTop: 5,
 		marginBottom: 20,
 	},
+	selectView: {
+		paddingTop: 20,
+		width: 400,
+		marginLeft: 10
+	},
+	selectCityView: {
+		display: 'flex',
+		flexDirection: 'row',
+		paddingTop: 20,
+		width: '100%',
+		marginLeft: 10,
+		marginBottom: 20,
+	},
+	miniSelection:{
+		paddingTop: 20,
+		width: 220,
+		marginRight: 10
+	},
+	clientSelection:{
+		paddingTop: 20,
+		width: 320,
+		marginRight: 10
+	},
+	clientView:{
+		paddingTop: 10,
+		marginLeft: 10,
+		marginRight: 10
+	},
 	mapContent:{
 		display: 'flex',
 		flexDirection: 'row',
 		alignItems: 'flex-start',
 		height: 500,
 		padding: 5,
-	},
+	}, 
+	group:{
+		display: 'flex',
+		flexDirection: 'column',
+		width: 300,
+	}
 });
 
 class AddTask extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+				value: 0,
 				task_id: '',
+				group_id: '',
 				title: '',
 				client_id: '',
 				company_address: '',
@@ -65,9 +129,12 @@ class AddTask extends React.Component {
 				company_phone: '',
 				task_description: '',
 				employee_id: '',
-				task_priority: 0,
+				employee_code: '',
+				task_priority: "0",
 				location: '',
-				meeting_date: '',
+				meeting_date: Date.now(),
+				start_date: Date.now(),
+				end_date: Date.now(),
 				pp_date: '',
 				employee_name: '',
 				employee_designation: '',
@@ -77,17 +144,24 @@ class AddTask extends React.Component {
 				remarks: '',
 				assign_lat: '1',
 				assign_lng: '1',
-			 
+				selectedOption: null,
+				selectedCity: null,
+				city_id: '',
+				selectedRepresentative: null,
+				available_clients: null,
+				current_clients: null,
+				isReset: false,
+				grouped: false,
 		};
 	}
 
-
 	componentWillMount(){
-		this.props.GetTaskUtility('');
+
+		this.props.GetTaskCity('');
 
 		if(this.props.isEdit){
 			const {
-				id,title,appointment_date, assigned_emp,emp_id,client_name,client_id,client_address,contact_person, company_phone,description,remarks,assign_lat,assign_lng
+				id,title,appointment_date, assigned_emp,emp_id,client_name,client_id,client_address,contact_person, company_phone,description,remarks, group_id, grouped
 			} = this.props.current_task;
 
 			this.setState({
@@ -105,34 +179,74 @@ class AddTask extends React.Component {
 				client_name: client_name,
 				client_address: client_address,
 				remarks: remarks,
-				assign_lat: assign_lat,
-				assign_lng: assign_lng,
+				group_id: group_id,
+				grouped: grouped
 			})
 		}
 
-
 	}
+	
+	handleChange = selectedOption => {
+		this.setState({ selectedOption });
 
-	onChangeAndroid = () => {
-		const value = this.state.android !== true ? true : false;
-		this.setState({
-			android: value
-		});
-	};
+		const { id } = selectedOption;
 
-	onChangeiOS = () => {
-		const value = this.state.ios !== true ? true : false;
-		this.setState({
-			ios: value
-		});
-	};
+		const { clients } = this.props;
+		let client = clients.find(u => u.id === id);
 
-	onChangeMsite = () => {
-		const value = this.state.msite !== true ? true : false;
 		this.setState({
-			msite: value
+			client_id: client.id,
+			client_address: client.primary_address,
+			company_phone: client.phone,
+			contact_person_name: client.contact_person,
+			assign_lat: client.lat,
+			assign_lng: client.lng,
+			employee_id: client.emp_id,
+			employee_name: client.emp_name,
+			employee_code: client.emp_id
 		});
-	};
+	  };
+
+	  handleCityChange = selectedCity => {
+		
+		this.props.keepLoading();
+		
+		const { id, label } = selectedCity;
+		this.setState({ selectedCity, city_id: id, current_clients: null, available_clients: null });
+		if(this.state.value > 0){
+			this.props.GetGroupTaskClients({id: id})
+		}else{
+			this.props.GetTaskUtility({id : id});
+		}
+	  };
+
+ 
+	  handleTabChange = (event, value) => {
+		this.setState({ value });
+	  };
+
+	  handleChangeRepresentative = selectedRepresentative => {
+
+		this.setState({ available_clients: null });
+
+		const available_clients =  selectedRepresentative.clients;
+		const employee_id = selectedRepresentative.emp_id;
+
+		this.setState({ selectedRepresentative,available_clients, employee_id});
+
+	  };
+
+	  handleMultipleSelect = multipleSelect => {
+
+		this.setState({current_clients: multipleSelect});
+
+	  };
+
+	  handleCheckChange = name => event => {
+		this.setState({ [name]: event.target.checked });
+	  };
+	  
+	  
 
 	//ALERT
 	onDismiss = () => {
@@ -159,6 +273,10 @@ class AddTask extends React.Component {
 				showAlert: false
 		});
 		this.props.DismissAlert();
+
+		if(this.props.isEdit){
+			this.props.onTapBack();
+		}
 	};
 
 	onOkay = () => {
@@ -169,7 +287,6 @@ class AddTask extends React.Component {
 			contact_person_name: '',
 			company_phone: '',
 			task_description: '',
-			employee_id: '',
 			task_priority: 0,
 			location: '',
 			meeting_date: '',
@@ -182,10 +299,17 @@ class AddTask extends React.Component {
 			remarks: '',
 			assign_lat: '1',
 			assign_lng: '1',
-			showAlert: false
+			showAlert: false,
+			available_clients: null,
+			current_clients: null ,
+			selectedRepresentative: null 
+
 		}));
 		
 		this.props.DismissAlert();
+		if(this.props.isEdit){
+			this.props.onTapBack();
+		}
 	};
 
 	onTapBack = () => {
@@ -198,52 +322,73 @@ class AddTask extends React.Component {
 			task_id,
 			title,
 			client_id,
-			contact_person_name,
-			company_phone,
 			task_description,
 			employee_id,
 			task_priority,
-			location,
 			meeting_date,
-			client_address,
-			remarks,
-			assign_lat,
-			assign_lng,
+			city_id,
+			grouped,
+			group_id
 		 } = this.state;
  
 		 if(this.props.isEdit){
-			this.props.UpdateTask({ 
-				task_id,
-				title,
-				client_id,
-				contact_person_name,
-				company_phone,
-				task_description,
-				employee_id,
-				task_priority,
-				location,
-				meeting_date,
-				client_address,
-				remarks,
-				assign_lat,
-				assign_lng, });
+			 if(grouped){
+				this.props.UpdateGroupTask({
+					title,
+					group_id,
+					task_description,
+					task_priority,
+					meeting_date,
+				});
+			 }else{
+				this.props.UpdateTask({ 
+					task_id,
+					title,
+					client_id,
+					city_id,
+					task_description,
+					employee_id,
+					task_priority,
+					meeting_date,
+					});
+			 }
+			
 		 }else{
 			this.props.NewTask({ 
 				title,
 				client_id,
-				contact_person_name,
-				company_phone,
+				city_id,
 				task_description,
 				employee_id,
 				task_priority,
-				location,
 				meeting_date,
-				client_address,
-				remarks,
-				assign_lat,
-				assign_lng, });
+			 });
 		 }
 		
+	}
+
+	onTapAddNewGroupTask() {
+
+		const { 
+			title,
+			task_description,
+			employee_id,
+			task_priority,
+			start_date,
+			end_date,
+			current_clients
+		 } = this.state;
+ 
+		this.props.NewGroupTask({ 
+			title,
+			task_description,
+			employee_id,
+			task_priority,
+			start_date,
+			end_date,
+			current_clients
+			});
+ 		
 	}
 
 	handleTextChanges = (event) => {
@@ -260,6 +405,10 @@ class AddTask extends React.Component {
 			this.setState({ location: event.target.value });
 		}else if (event.target.id === 'meeting_date') {
 			this.setState({ meeting_date: event.target.value });
+		}else if (event.target.id === 'start_date') {
+			this.setState({ start_date: event.target.value });
+		}else if (event.target.id === 'end_date') {
+			this.setState({ end_date: event.target.value });
 		}else if (event.target.id === 'client_address') {
 			this.setState({ client_address: event.target.value });
 		}else if (event.target.id === 'remarks') {
@@ -279,19 +428,8 @@ class AddTask extends React.Component {
 			assign_lng: client.lng
 		});
 
-		console.log('Selected Data '+ JSON.stringify(client));
-
-	}
-
-	onHandleEmployee = (event) => {
-
-		const { employee } = this.props;
-		let user = employee.find(u => u.id === event.target.value);
-		this.setState({
-			employee_id: user.id,
-			employee_designation: user.designation
-		});
-	}
+	} 
+ 
 	
 	onHandlePriority = (event) => {
 		this.setState({
@@ -307,7 +445,10 @@ class AddTask extends React.Component {
 
 	displayTextContent = () => {
 
-		const { classes, employee, clients } = this.props;
+		const { classes, employee, clients, cities } = this.props;
+
+		const { selectedOption, selectedCity, employee_id, employee_name , employee_code } = this.state;
+
 		const { title,
 				contact_person_name,
 				company_phone,
@@ -320,29 +461,39 @@ class AddTask extends React.Component {
 				
 				} = this.state;
 
-
+		const assigned_emp = employee_id !== null ? `${employee_code} ${employee_name}` : "Not Available for This Client"
+ 
 		return(<view className={classes.formControl}>
-					<view className={classes.textFields}>
-						<NativeSelect
-							style={{width: 220, height: 48, marginTop: 0, marginRight: 20}}
-							required="true"
-							onChange={this.onHandleClient.bind(this)}
-						>
-							<option value="" disabled selected>
-								Select Client Name
-							</option>
-							{clients !== undefined && clients.map( (item) => {
-								return (<option value={item.id}>{item.name}</option>);
-							})}
 
-						</NativeSelect>
-						</view>
+						{this.props.isEdit !== true && (
+								<view className={classes.selectCityView}>
+									<view className={classes.miniSelection}>
+										<Select
+												
+												value={selectedCity}
+												onChange={this.handleCityChange}
+												options={cities}
+										/>
+									</view>
+
+									<view className={classes.clientSelection}>
+
+									<Select
+											
+											value={selectedOption}
+											onChange={this.handleChange}
+											options={clients}
+									/>
+									</view>
+								</view>
+						)}
 
 						<view className={classes.textFields}>
 
 							<TextField
 								id="client_address"
 								label="Company Address"
+								disabled
 								style={{ width: '100%',marginTop: 0}}
 								rows="2"
 								type="text"
@@ -358,6 +509,7 @@ class AddTask extends React.Component {
 							<TextField
 								id="company_phone"
 								label="Company Phone"
+								disabled
 								style={{width: 180,  marginTop: 0, marginRight: 20}}
 								type="text"
 								required="true"
@@ -368,6 +520,7 @@ class AddTask extends React.Component {
 
 							<TextField
 								id="contact_person_name"
+								disabled
 								label="Contact Person"
 								style={{width: 220, marginTop: 0, marginRight: 20}}
 								type="text"
@@ -377,14 +530,29 @@ class AddTask extends React.Component {
 								value={contact_person_name}
 							/>
 
+							<TextField
+								id="title"
+								disabled
+								label="Representative Assigned"
+								style={{ width: 240,marginTop: 0}}
+								rows="2"
+								type="text"
+								required="true"
+								margin="normal"
+								value={assigned_emp}
+							/>
+
 						
 					</view>	
+
+					 
 
 					<view className={classes.textFields}>
 
 						<TextField
 								id="title"
 								label="Task Title"
+								disabled = {employee_id == null}
 								style={{ width: '100%',marginTop: 0}}
 								rows="2"
 								type="text"
@@ -399,6 +567,7 @@ class AddTask extends React.Component {
 						<TextField
 							id="task_description"
 							label="Description"
+							disabled = {employee_id == null}
 							style={{ width: '100%',marginTop: 0}}
 							rows="4"
 							type="text"
@@ -411,24 +580,11 @@ class AddTask extends React.Component {
 						
 					</view>
 
-					<view className={classes.textFields}>
-							<TextField
-								id="remarks"
-								label="Remarks"
-								style={{ width: '100%',marginTop: 0}}
-								rows="2"
-								type="text"
-								multiline
-								required="true"
-								margin="normal"
-								onChange={this.handleTextChanges.bind(this)}
-								value={remarks}
-							/> 
-					</view>
-
+				 
 
 					<view className={classes.textFields}>
 							<TextField
+								disabled = {employee_id == null}
 								id="meeting_date"
 								label="Meeting Date"
 								style={{width: 160,  marginTop: 0, marginRight: 20}}
@@ -438,7 +594,173 @@ class AddTask extends React.Component {
 								onChange={this.handleTextChanges.bind(this)}
 								value={meeting_date}
 							/>
+
+
+								<FormLabel component="legend">Priority</FormLabel>
+								<RadioGroup
+									aria-label="priority"
+									name="priority"
+									className={classes.group}
+									value={this.state.task_priority}
+									onChange={this.onHandlePriority.bind(this)}
+								>
+								<FormControlLabel value="0" control={<Radio selected />} label="Low" />
+								<FormControlLabel value="1" control={<Radio />} label="Medium" />
+								<FormControlLabel value="2" control={<Radio />} label="High" />
+								<FormControlLabel value="3" control={<Radio />} label="Urgent" />
+									 
+								</RadioGroup>
+ 
+					</view>
+					
+					<view className={classes.textFields}>
+						<Button
+							variant="contained"
+							color="primary"
+							disabled = {employee_id == null}
+							onClick={this.onTapAddNewTask.bind(this)}
+							className={classes.button}
+						>
+							Add Task
+						</Button>
+					</view>
+
+
+			</view>);
+	}
+
+
+	groupTaskAddUI = () => {
+
+		const { classes, employee, clients, cities, group_clients } = this.props;
+
+		const { selectedOption, selectedCity, employee_id, employee_name ,isReset, employee_code,selectedRepresentative, available_clients, start_date, end_date } = this.state;
+
+		// console.log(available_clients);
+
+		const { title,
+				contact_person_name,
+				company_phone,
+				task_description,
+				location,
+				meeting_date,
+				employee_designation,
+				client_address,
+				remarks,
+				
+				} = this.state;
+
+		const assigned_emp = employee_id !== null ? `${employee_code} ${employee_name}` : "Not Available for This Client"
+ 
+		return(<view className={classes.formControl}>
+
+
+						<view className={classes.selectCityView}>
+							<div className={classes.miniSelection}>
+								<Select
+									
+									value={selectedCity}
+									onChange={this.handleCityChange}
+									onMenuOpen={() => {
+										this.setState({selectedRepresentative: null});  
+									}}
+									
+									options={cities}
+								/>
+							</div>
+							{group_clients !== null && 
+								<div className={classes.miniSelection}>
+									<Select
+										
+										value={selectedRepresentative}
+										onChange={this.handleChangeRepresentative}
+										onMenuOpen={() => {
+											this.setState({available_clients: null, current_clients: null});  
+										}}
+										options={group_clients}
+									/>
+								</div>
+							}
+							
+						</view>
+						 
+						{available_clients !== null && (
+								<view className={classes.clientView}>
+
+								<Select
+									closeMenuOnSelect={false}
+									defaultValue={[]}
+									onChange={this.handleMultipleSelect}
+									isMulti
+									options={available_clients}
+								/>
+	
+							</view>	
+						)}
+						
+ 
+					<view className={classes.textFields}>
+
+						<TextField
+								id="title"
+								label="Task Title"
+								disabled = {employee_id == null}
+								style={{ width: '100%',marginTop: 0}}
+								rows="2"
+								type="text"
+								required="true"
+								margin="normal"
+								onChange={this.handleTextChanges.bind(this)}
+								value={title}
+							/>
+						</view>	
+					
+					<view className={classes.textFields}>
+						<TextField
+							id="task_description"
+							label="Description"
+							disabled = {employee_id == null}
+							style={{ width: '100%',marginTop: 0}}
+							rows="4"
+							type="text"
+							multiline
+							required="true"
+							margin="normal"
+							onChange={this.handleTextChanges.bind(this)}
+							value={task_description}
+						/> 
+						
+					</view>
+
+				 
+
+					<view className={classes.textFields}>
+							<TextField
+								disabled = {employee_id == null}
+								id="start_date"
+								label="Start Date"
+								style={{width: 160,  marginTop: 0, marginRight: 20}}
+								type="date"
+								required="true"
+								margin="normal"
+								onChange={this.handleTextChanges.bind(this)}
+								value={start_date}
+							/>
+
+							<TextField
+								disabled = {employee_id == null}
+								id="end_date"
+								label="End Date"
+								style={{width: 160,  marginTop: 0, marginRight: 20}}
+								type="date"
+								required="true"
+								margin="normal"
+								onChange={this.handleTextChanges.bind(this)}
+								value={end_date}
+							/>
+
 							<NativeSelect
+								disabled = {employee_id == null}
 								style={{width: 200,height: 48,  marginTop: 0, marginRight: 20}}
 								required="true"
 								onChange={this.onHandlePriority.bind(this)}
@@ -452,27 +774,15 @@ class AddTask extends React.Component {
 							<option value="3">Urgent</option>
 						</NativeSelect>
 
-						<NativeSelect
-								style={{width: 200,height: 48 , marginTop: 0, marginRight: 20}}
-								required="true"
-							onChange={this.onHandleEmployee.bind(this)}
-						>
-							<option value="" disabled selected>
-								Assign To
-							</option>
-							{employee !== undefined && employee.map( (item) => {
-								return (<option value={item.id}>{item.name+' ['+ item.emp_id+']'}</option>);
-							})}
-
-						</NativeSelect>
-
+					 
 					</view>
 					
 					<view className={classes.textFields}>
 						<Button
 							variant="contained"
 							color="primary"
-							onClick={this.onTapAddNewTask.bind(this)}
+							disabled = {employee_id == null}
+							onClick={this.onTapAddNewGroupTask.bind(this)}
 							className={classes.button}
 						>
 							Add Task
@@ -486,10 +796,11 @@ class AddTask extends React.Component {
 
 	render() {
 		const { classes } = this.props;
-		const { showAlert, title, msg } = this.state;
+		const { showAlert, title, msg , value } = this.state;
 
 		return (
-			<div className={classes.root}>
+			<div>
+				
 				 
 				<Alert
 					open={this.props.isAdded}
@@ -499,7 +810,6 @@ class AddTask extends React.Component {
 					msg={"Task Added Successfully!"}
 				/>
 
-
 				<Alert
 					open={showAlert}
 					onCancel={this.onOkayForError.bind(this)}
@@ -507,21 +817,66 @@ class AddTask extends React.Component {
 					title={title}
 					msg={msg}
 				/>
-				
-				<Grid container spacing={24}>
-					<Grid item xs={3}>
-					</Grid>
 
-					<Grid item xs={6}>
-						<CardBoard>
-							{this.displayTextContent()}
-						</CardBoard>
-					</Grid>
-					<Grid item xs={3}>
-					</Grid>
-					 
-				</Grid>
+				{this.props.isEdit !== true ? (
+						<div>
+								<Tabs
+								value={value}
+								onChange={this.handleTabChange}
+								scrollable
+								scrollButtons="on"
+								indicatorColor="secondary"
+								textColor="secondary"
+								>
+								<Tab label="Add Task" icon={<EmployeeIcon />} />
+								<Tab label="Add Group Task" icon={<EmployeeIcon />} />
+								</Tabs>
 
+								{value === 0 && (
+								<TabContainer>
+									<Grid container spacing={24}>
+										<Grid item xs={3}>
+										</Grid>
+										<Grid item xs={6}>
+											<CardBoard>
+												{this.displayTextContent()}
+											</CardBoard>
+										</Grid>
+										<Grid item xs={3}>
+										</Grid>
+									</Grid>
+								</TabContainer>
+								)}
+								{value === 1 && ( 
+								<TabContainer>
+									<Grid container spacing={24}>
+										<Grid item xs={3}>
+										</Grid>
+										<Grid item xs={6}>
+											<CardBoard>
+												{this.groupTaskAddUI()}
+											</CardBoard>
+										</Grid>
+										<Grid item xs={3}>
+										</Grid>
+									</Grid>
+								</TabContainer>
+								)}
+						</div>
+				) : (
+					<Grid container spacing={24}>
+						<Grid item xs={3}>
+						</Grid>
+						<Grid item xs={6}>
+							<CardBoard>
+								{this.displayTextContent()}
+							</CardBoard>
+						</Grid>
+						<Grid item xs={3}>
+						</Grid>
+					</Grid>
+				)}
+ 
 			</div>
 		);
 	}
@@ -534,7 +889,20 @@ AddTask.propTypes = {
 const mapStateToProps = (state) => ({
 	isAdded: state.taskReducer.isAdded,
 	employee : state.taskReducer.utilities.employee,
-	clients: state.taskReducer.utilities.clients
+	clients: state.taskReducer.utilities.clients,
+	cities: state.taskReducer.cities,
+	group_clients: state.taskReducer.group_clients
 });
 
-export default connect(mapStateToProps, { NewTask, DismissAlert, GetTaskUtility, UpdateTask }) (withStyles(styles)(AddTask));
+export default connect(mapStateToProps, { 
+	NewTask, 
+	DismissAlert, 
+	GetTaskUtility, 
+	UpdateTask,
+	GetTaskCity, 
+	GetTaskLocation, 
+	GetGroupTaskClients, 
+	keepLoading,
+	NewGroupTask,
+	UpdateGroupTask
+ }) (withStyles(styles)(AddTask));

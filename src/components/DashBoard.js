@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Link, Redirect,  } from 'react-router-dom';
 
 //Common UI
 import Button from '@material-ui/core/Button';
@@ -325,7 +325,7 @@ class Dashboard extends Component {
 								<MenuIcon />
 							</IconButton>
 							<Typography variant="title" color="inherit" className={classes.flex}>
-								SALES APP TRACKER : Alpha 1.0
+								Sales Companion : Beta 1.0.1
 							</Typography>
 							<Avatar
 								alt="country"
@@ -349,11 +349,11 @@ class Dashboard extends Component {
 									open={Boolean(anchorEl)}
 									onClose={this.handleClose}
 								>
-									<MenuItem onClick={this.onSwitchCountry.bind(this)}>
+									{/* <MenuItem onClick={this.onSwitchCountry.bind(this)}>
 										<Link className="linkName" to={`${process.env.PUBLIC_URL}/dashboard`}>
 											Switch Country
 										</Link>
-									</MenuItem>
+									</MenuItem> */}
 									
 									<MenuItem onClick={this.showAlert}>Logout</MenuItem>
 								</Menu>

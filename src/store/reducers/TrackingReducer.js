@@ -2,7 +2,9 @@ import Actions from '../actions/Actions';
 
 const initialState = {
 	users: [],
-	isAdded: false
+	details: [],
+	isAdded: false,
+	isFound: false
 };
 
 export default function(state = initialState, action) {
@@ -13,10 +15,18 @@ export default function(state = initialState, action) {
 				users: action.payload
 			};
 		 ;
+		case Actions.VIEW_TRACK_DETAILS:
+			return {
+				...state,
+				details: action.payload,
+				isFound: true
+			};
+		 ; 
 		case Actions.DISMISS:
 			return {
 				...state,
-				isAdded: false
+				isAdded: false,
+				isFound: false
 			}
 		default:
 			return state;

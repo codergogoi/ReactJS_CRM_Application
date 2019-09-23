@@ -16,10 +16,9 @@ const Actions = {
 	//EMPLOYEE
 	GET_ATTRIBUTES: 'GET_EMP_ATTRIBUTES',
 
-
 	//Tracking Users
 	VIEW_TRACKING: 'view_ytracking_users',
-	
+	VIEW_TRACK_DETAILS: 'view_track_details',
 
 	//Common Mdata
 	VIEW: 'fetch_data',
@@ -28,9 +27,15 @@ const Actions = {
 	DELETE: 'delete_data',
 	DISMISS: 'dismiss_alert',
 
+	//Loading
+	LOADING: 'loading',
+
 	//Task
 	VIEW_TASK_UtiLITY: 'VIEW_TASK_UTILITY',
 	ADD_TASK: 'ADD_TASK',
+	VIEW_CITY: 'view_city',
+	VIEW_LOCATION: 'view_location',
+	VIEW_GROUP_TASK_CLIENTS: 'group_task_clients',
 
 	VIEW_CLIENT_REGIONS: 'VIEW_CLIENT_REGIONS',
 	ADD_CLIENT: 'ADD_CLIENTS',

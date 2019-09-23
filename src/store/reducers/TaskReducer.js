@@ -3,6 +3,9 @@ import Actions from '../actions/Actions';
 const initialState = {
 	tasks: [],
 	utilities: [],
+	cities: [],
+	locations: [],
+	group_clients: [],
 };
 
 export default function(state = initialState, action) {
@@ -16,13 +19,29 @@ export default function(state = initialState, action) {
 			return {
 				...state,
 				utilities: action.payload
+			};
+		case Actions.VIEW_CITY:
+			return {
+				...state,
+				group_clients: null,
+				cities: action.payload
 			};	
+		case Actions.VIEW_LOCATION:
+			return {
+				...state,
+				locations: action.payload
+			};			
 		case Actions.ADD_TASK:
 			return {
 				...state,
 				isAdded: true,
 				utilities: action.payload
 			}
+		case Actions.VIEW_GROUP_TASK_CLIENTS:
+			return {
+				...state,
+				group_clients: action.payload
+			};		
 
 		case Actions.ADD:
 			return {
@@ -39,7 +58,14 @@ export default function(state = initialState, action) {
 			return {
 				...state,
 				tasks: action.payload
-			}			
+			}
+		case Actions.LOADING:
+			return{
+				...state,
+				group_clients: [],
+
+			}	
+			
 		default:
 			return state;
 	}

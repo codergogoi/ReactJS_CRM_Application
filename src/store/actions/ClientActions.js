@@ -37,6 +37,7 @@ export const GetRegions = (postData) => (dispatch) => {
 	axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
 	axios
 		.post('/client/view-regions', {
+			currency: localStorage.getItem('currency')
 		})
 		.then((res) =>
 			{
@@ -84,7 +85,8 @@ export const NewClient = (postData) => (dispatch) => {
 			mobile: mobile,
 			email: email,
 			latitude: latitude,
-			longitude: longitude
+			longitude: longitude,
+			currency: localStorage.getItem('currency')
 		})
 		.then((res) =>
 			{

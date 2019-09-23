@@ -5,12 +5,13 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
 
 // Icons
 import EmployeeIcon from '@material-ui/icons/SupervisorAccount';
 import AddOffersIcon from '@material-ui/icons/CardGiftcard';
 import Table from './TrackUserTable';
-import Alert from '../Common/Alert';
+import Alert from '../Common/AlertWithData';
 
 import InputBase from '@material-ui/core/InputBase';
 import Divider from '@material-ui/core/Divider';
@@ -18,110 +19,18 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 
-
-import deburr from 'lodash/deburr';
-import Autosuggest from 'react-autosuggest';
-import match from 'autosuggest-highlight/match';
-import parse from 'autosuggest-highlight/parse';
-import TextField from '@material-ui/core/TextField';
-import Paper from '@material-ui/core/Paper';
-import MenuItem from '@material-ui/core/MenuItem';
-import Popper from '@material-ui/core/Popper';
-
+import Select from 'react-select';
+ 
  
 //App Classes
 import CardDiv from '../Common/CardDiv';
 
 import { connect } from 'react-redux';
-import { GetUsers } from '../../store/actions/TrackingActions';
+import { GetUsers, GetTrackDetails, DismissAlert } from '../../store/actions/TrackingActions';
 
 import Map from './GMap';
 
-
-const suggestions = [
-	{ label: '' }
-  ];
-  
-
-  function renderInputComponent(inputProps) {
-	const { classes, inputRef = () => {}, ref, ...other } = inputProps;
-  
-	return (
-	  <TextField
-		fullWidth
-		InputProps={{
-		  inputRef: node => {
-			ref(node);
-			inputRef(node);
-		  },
-		  classes: {
-			input: classes.input,
-		  },
-		}}
-		{...other}
-	  />
-	);
-  }
-  
-  function renderSuggestion(suggestion, { query, isHighlighted }) {
-	const matches = match(suggestion.label, query);
-	const parts = parse(suggestion.label, matches);
-  
-	return (
-	  <MenuItem selected={isHighlighted} component="div">
-		<div>
-		  {parts.map((part, index) =>
-			part.highlight ? (
-			  <span key={String(index)} style={{ fontWeight: 500 }}>
-				{part.text}
-			  </span>
-			) : (
-			  <strong key={String(index)} style={{ fontWeight: 300 }}>
-				{part.text}
-			  </strong>
-			),
-		  )}
-		</div>
-	  </MenuItem>
-	);
-  }
-  
-  function getSuggestions(value) {
-	const inputValue = deburr(value.trim()).toLowerCase();
-	const inputLength = inputValue.length;
-	let count = 0;
-  
-	return inputLength === 0
-	  ? []
-	  : suggestions.filter(suggestion => {
-		  const keep =
-			count < 5 && suggestion.label.slice(0, inputLength).toLowerCase() === inputValue;
-  
-		  if (keep) {
-			count += 1;
-		  }
-  
-		  return keep;
-		});
-  }
-  
-  function getSuggestionValue(suggestion) {
-	return suggestion.label;
-  }
-
-
-
-function TabContainer(props) {
-	return (
-		<Typography component="div" style={{ padding: 8 * 3 }}>
-			{props.children}
-		</Typography>
-	);
-}
-
-TabContainer.propTypes = {
-	children: PropTypes.node.isRequired
-};
+ 
 
 const styles = (theme) => ({
 	root: {
@@ -150,9 +59,7 @@ const styles = (theme) => ({
 		marginLeft: 200,
 		zIndex: 100,
 		width: 320,
-		display: 'flex',
 		flexDirection: 'row',
-		backgroundColor: '#FFF',
 		padding: 5,
 		borderRadius: 10,
 	},
@@ -191,7 +98,12 @@ const styles = (theme) => ({
 		  width: '100%',
 		  height: 800,
 		  display: 'flex',
-	  }
+	  },
+	  selectView: {
+		paddingTop: 20,
+		width: 400,
+		marginLeft: 10
+	},
 });
 
   
@@ -204,6 +116,7 @@ class TrackManager extends Component {
 			currentOffer: '',
 			value: 0,
 			isAddNew: false,
+			showAlert: false,
 			isEdit: false,
 			inputValue: '',
 		  	selectedItem: '',
@@ -211,47 +124,32 @@ class TrackManager extends Component {
 			popper: '',
 			users: [],
 			current_lat: 10.0188428,
-			current_lng: 76.3059224
+			current_lng: 76.3059224,
+			selectedUser: null,
+			locations: [],
+			from: '2019-09-05',
+			to: '2020-12-01'
 		};
 	}
 
-	handleSuggestionsFetchRequested = ({ value }) => {
-		this.setState({
-		  users: getSuggestions(value),
-		});
-	  };
-	
-	  handleSuggestionsClearRequested = () => {
-		this.setState({
-		  users: [],
-		});
-	  };
-	
-	  handleChange = name => (event, { newValue }) => {
-
+	handleUserChange = selectedUser => {
 		
-
-		let index = this.props.users.findIndex((x) => x.label === newValue);
-		let selectedUser = this.props.users[index];
-
-		if(selectedUser !== undefined){
+		const { lat, lng, locations, id } = selectedUser;
+		this.setState({ selectedUser, locations: locations , id: id});
+ 	
+		if(lat !== undefined && lng !== undefined){
 			this.setState({
-				current_lat: selectedUser.lat,
-				current_lng: selectedUser.lng
+				current_lat: lat,
+				current_lng: lng
 			});
-
 		}
 
-		this.setState({
-			single: newValue,
-		});
 	  };
 
 	componentWillMount() {
 		this.props.GetUsers('');
 	}
-
-	 
+ 
 	onTapAddNew() {
 		this.setState({ isAddNew: true });
 	}
@@ -287,61 +185,21 @@ class TrackManager extends Component {
 		this.props.RemoveOffers({ id });
 	}
 
-	onSelectUser = (event) => {
-
-		// let { selectedItem } = this.state;	
-		// let index = this.props.subCategories.findIndex((x) => x.name === item);
-		// let selectedCategory = this.props.subCategories[index];
-
-		// this.setState({
-		//   inputValue: selectedCategory.id,
-		//   selectedItem: item,
-		// });
+	trackThisUser = () => {
+		const { from, to, id } = this.state;
+		this.props.GetTrackDetails({ from, to , id})
 
 	}
 
- 
 
-	onDisplaySearchView = () => {
+	handleTextChanges = (event) => {
 
-		const { classes } = this.props;
-
-		const autosuggestProps = {
-		renderInputComponent,
-		suggestions: this.props.users,
-		onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
-		onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
-		getSuggestionValue,
-		renderSuggestion,
-		};
-
-		return (
-			<div className={classes.searchView}>
-					
-					<Autosuggest
-						{...autosuggestProps}
-						inputProps={{
-							classes,
-							placeholder: 'Search Employee',
-							value: this.state.single,
-							onChange: this.handleChange('single'),
-						}}
-						theme={{
-							container: classes.container,
-							suggestionsContainerOpen: classes.suggestionsContainerOpen,
-							suggestionsList: classes.suggestionsList,
-							suggestion: classes.suggestion,
-						}}
-						renderSuggestionsContainer={options => (
-							<Paper {...options.containerProps} square>
-							{options.children}
-							</Paper>
-						)}
-						/>
-						<SearchIcon />
-			</div>
-		);
-	}
+		if (event.target.id === 'from') {
+			this.setState({ from: event.target.value });
+		}else if (event.target.id === 'to') {
+			this.setState({ to: event.target.value });
+		} 
+	};
 
 
 	displyaDateView = () =>{
@@ -352,10 +210,11 @@ class TrackManager extends Component {
 			<div className={classes.dateView}>
 
 				<TextField
-					id="date"
+					id="from"
 					label="From Date"
 					type="date"
-					defaultValue="2017-05-24"
+					defaultValue="2019-09-05"
+					onChange={this.handleTextChanges.bind(this)}
 					className={classes.textField}
 					InputLabelProps={{
 					shrink: true,
@@ -363,15 +222,18 @@ class TrackManager extends Component {
 				/>
 
 				<TextField
-					id="date"
+					id="to"
 					label="To Date"
 					type="date"
-					defaultValue="2017-05-24"
+					defaultValue="2019-09-05"
 					className={classes.textField}
+					onChange={this.handleTextChanges.bind(this)}
 					InputLabelProps={{
 					shrink: true,
 					}}
 				/>
+
+				<button onClick={this.trackThisUser.bind(this)}> Search </button>
 
 			</div>
 		);
@@ -379,8 +241,8 @@ class TrackManager extends Component {
 
 
 	render() {
-		const { classes, users } = this.props;
-		const {  isAddNew, showAlert, title, msg, current_lat, current_lng } = this.state;
+		const { classes, users, details, isFound } = this.props;
+		const {  isAddNew, showAlert, title, msg, current_lat, current_lng, selectedUser, locations } = this.state;
 			
 		const center = {
 			lat: current_lat,
@@ -389,17 +251,26 @@ class TrackManager extends Component {
 
 		return (
 				<div>
+					
 					<Alert
-						open={showAlert}
-						onCancel={this.onDismiss.bind(this)}
+						open={isFound}
+						onCancel={this.onOkay.bind(this)}
 						onOkay={this.onOkay.bind(this)}
-						title={title}
-						msg={msg}
+						title={"Last Visited Places"}
+						locations={details}
+						msg={""}
 					/>
 
 					<CardDiv title={'Track Live Users'}>
 						<div className={classes.mapContainer}>
-							{this.onDisplaySearchView()}
+							<view className={classes.searchView}>
+								<Select
+										value={selectedUser}
+										onChange={this.handleUserChange}
+										options={users}
+								/>
+							</view>
+
 							{this.displyaDateView()}
 
 							<Map 
@@ -408,7 +279,7 @@ class TrackManager extends Component {
 								current_lat={current_lat} 
 								current_lng={current_lng}
 								currentPlace = {""}
-								markers={[{latitide: current_lat, longitude: current_lng}]}
+								markers={ locations.length > 0 ? locations : [{latitide: current_lat, longitude: current_lng}] }
 								 />
 
 						</div>
@@ -420,13 +291,12 @@ class TrackManager extends Component {
 
 	//ALERT
 	onDismiss = () => {
-		this.setState({ showAlert: false });
+		this.props.DismissAlert();
 	};
 
 	onOkay = () => {
-		this.setState({ showAlert: false });
-		this.onExecuteDeleteCommand();
-	};
+		this.props.DismissAlert();
+ 	};
 
 }
 
@@ -435,7 +305,9 @@ TrackManager.propTypes = {
 };
 
 const mapToProps = (state) => ({
-	users: state.trackingReducer.users
+	users: state.trackingReducer.users,
+	details: state.trackingReducer.details,
+	isFound: state.trackingReducer.isFound
 });
 
-export default connect(mapToProps, { GetUsers })(withStyles(styles)(TrackManager));
+export default connect(mapToProps, { GetUsers, GetTrackDetails, DismissAlert })(withStyles(styles)(TrackManager));

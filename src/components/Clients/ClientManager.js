@@ -159,7 +159,7 @@ class ClientManager extends Component {
 						msg={msg}
 					/>
 
-					<CardDiv title={'Manage Clients'} isAdd={true} onTapAdd={this.onTapRegister.bind(this)}>
+					<CardDiv title={'Manage Clients'} isAdd={false} onTapAdd={this.onTapRegister.bind(this)}>
 						{value === 0 && (
 							<div>
 								<Table

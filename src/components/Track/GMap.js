@@ -2,12 +2,7 @@
 import React, { Component } from 'react';
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 
-
-// export class MapContainer extends React.Component {}
  
-
-
-
 
 const styles = {
 	
@@ -48,6 +43,7 @@ class GMap extends Component {
   constructor(props){
     super(props);
 
+
     this.state = {
       locations: [{
         lat(){ return props.current_lat},
@@ -55,28 +51,26 @@ class GMap extends Component {
       }],
       lat: props.current_lat,
       lng: props.current_lng ,
-      current_place: '',
+      current_emp: 'Loading...',
+      last_visited: 'Loading...',
       showingInfoWindow: false,
       activeMarker: null,
+      bounds: []
     }
  
   }
-
-  displayMarkers = (places) => {
-    return places.map((store, index) => {
-      return <Marker key={index} id={index} position={{
-       lat: store.latitude,
-       lng: store.longitude
-     }}
-     onClick={() => console.log("You clicked me!")} />
-    })
-  }
-
+  
 
   mapClicked = (mapProps, map, clickEvent)  => {
     
     if(this.props.isTracking){
 
+      if (this.state.showingInfoWindow) {
+        this.setState({
+          showingInfoWindow: false,
+          activeMarker: null
+        })
+      }
       return;
     }
 
@@ -91,19 +85,28 @@ class GMap extends Component {
     const latitude = location.lat();
     const longitude = location.lng();
     this.props.onChangeLocation({latitude, longitude});
+
+    
       
   }
 
 
   onTapMarker = (props, marker, e) => {
     
+
+    console.log(props.title);
+    
+
     this.setState({
+        current_emp: props.title,
+        last_visited: props.name,
         current_place: props,
         activeMarker: marker,
         showingInfoWindow: true
       });
 
   }
+ 
 
   componentWillReceiveProps(nextProps) {
 
@@ -114,41 +117,55 @@ class GMap extends Component {
     if(this.props.isTracking){
 
       this.setState({
-        locations: [{
-          lat(){ return nextProps.current_lat},
-          lng(){ return nextProps.current_lng}
-        }],
+        locations: nextProps.markers
       })
      
     }
-      
 
   }
  
-  render() {
-    
-    const { locations} = this.state;
-    
-    const { isTracking } = this.props;
+ 
 
+  render() {
+        
+    const { isTracking, markers } = this.props;
+ 
+    
     return (
         <Map
           className={"map"}
           google={this.props.google}
-          zoom={18}
+          zoom={14}
           style={ isTracking === true ? styles.mapSizeBig : styles.mapSizeSmall}
           onClick={this.mapClicked}
           center={{ lat: this.state.lat, lng: this.state.lng}}
         >
-          
-          {locations !== undefined && locations.map((location, i) => {
+
+        {markers.map((loc, i) => {
+
+            let latitude = loc.latitude;
+            let longitude = loc.longitude;
+
             return (
               <Marker
-                key={i}
-                position={{ lat: location.lat(), lng: location.lng() }}
+              key={i}
+              title={loc.name}
+              name={loc.visited}
+              position={{lat: latitude, lng: longitude}} 
+              onClick={this.onTapMarker.bind(this)}
               />
             );
-          })}
+
+        })}
+
+      <InfoWindow
+          marker={this.state.activeMarker}
+          visible={this.state.showingInfoWindow}>
+            <div>
+              <h2>{this.state.current_emp}</h2>
+              <h3>{this.state.last_visited}</h3>
+            </div>
+        </InfoWindow>
 
         </Map>
     );

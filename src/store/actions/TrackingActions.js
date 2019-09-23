@@ -37,6 +37,44 @@ export const GetUsers = (postData) => (dispatch) => {
 		.catch((error) => console.log(' Error Encountered'));
 };
 
+
+export const GetTrackDetails = (postData) => (dispatch) => {
+
+	const { from, to, id } = postData;
+
+	axios.defaults.baseURL = BASE_URL;
+	axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
+	axios
+		.post('user/track-details/'+ id, {
+			from: from,
+			to: to
+		})
+		.then((res) =>{
+
+			console.log('Receiving Response: '+ JSON.stringify(res));
+
+				const status = parseInt(res.data.status);
+
+				if (status === 200) {
+					const responseString = JSON.parse(JSON.stringify(res.data));
+					let users = responseString.data;
+					console.log(JSON.stringify(users));
+					dispatch({
+						type: Actions.VIEW_TRACK_DETAILS,
+						payload: users
+					})
+				}else{
+					dispatch({
+						type: Actions.VIEW_TRACK_DETAILS,
+						payload: []
+					})
+				}
+			}
+			
+		)
+		.catch((error) => console.log(' Error Encountered'));
+};
+
  
 export const DismissAlert = () => (dispatch) => {
 	dispatch({

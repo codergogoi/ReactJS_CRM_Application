@@ -34,6 +34,9 @@ const styles = (theme) => ({
 		backgroundColor: '#FFFF',
 		width: '100%',
 		borderRadius: 10,
+		padding: 10,
+		paddingLeft: 20,
+		paddingRight: 20,
 		
 	},
 	 

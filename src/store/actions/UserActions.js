@@ -20,7 +20,7 @@ export const DoLogin = (postData) => (dispatch) => {
 					let user = responseString.data;
 					localStorage.setItem('app_token', user.token);
 					localStorage.setItem('current_user', JSON.stringify(user));
-
+					localStorage.setItem('currency', user.currency);
 					dispatch({
 						type: Actions.LOGIN,
 						payload: user
@@ -119,7 +119,7 @@ export const NewUser = (postData) => (dispatch) => {
 			email: email,
 			password: password,
 			type: isAdmin,
-			currency: currency
+			currency: localStorage.getItem('currency')
 		})
 		.then((res) =>
 			{

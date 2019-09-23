@@ -12,7 +12,6 @@ import { connect } from 'react-redux';
 import { DoLogin, DoLogout } from '../src/store/actions/UserActions';
 import { BASE_URL } from '../src/store/actions/AppConst';
 
-
 class App extends Component {
 	constructor(props) {
 		super(props);
@@ -53,12 +52,14 @@ class App extends Component {
 				}
 			});
 	};
-	 
+	
+
 	didLogout() {
 		localStorage.setItem('app_token', null);
 		this.setState({ isLogin: false });
 		this.props.DoLogout();
 	}
+
 
 	onIsLogin = (userInfo) => {
 		const responseString = JSON.parse(JSON.stringify(userInfo.data));
@@ -69,12 +70,12 @@ class App extends Component {
 		});
 	};
 
+	
+
 	render() {
 		const { showAlert, title, msg, isLogin, currentUser } = this.state;
 
 		const { users } = this.props;
-
-		console.log('Users'+ JSON.stringify(users));
 
 		if (isLogin) {
 			return <Dashboard onLogout={this.didLogout} currentUser={currentUser} />;

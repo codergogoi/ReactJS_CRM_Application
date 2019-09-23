@@ -19,6 +19,7 @@ import moment from 'moment';
 import Avatar from '@material-ui/core/Avatar';
 import tiny from '@material-ui/core/colors/green';
 import little from '@material-ui/core/colors/deepOrange';
+
 //Icons
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
@@ -37,9 +38,11 @@ function getSorting(order, orderBy) {
 
 const columnData = [
 	{ id: 'client_name', numeric: false, disablePadding: false, label: 'Client Name' },
-	{ id: 'address', numeric: false, disablePadding: false, label: 'Address' },
-	{ id: 'area', numeric: false, disablePadding: false, label: 'Area' },
-	{ id: 'city', numeric: false, disablePadding: false, label: 'City' },
+	{ id: 'primary_address', numeric: false, disablePadding: false, label: 'Address' },
+	{ id: 'region', numeric: false, disablePadding: true, label: 'Region' },
+	{ id: 'state', numeric: false, disablePadding: true, label: 'State' },
+	{ id: 'city', numeric: false, disablePadding: true, label: 'City' },
+	{ id: 'location', numeric: false, disablePadding: true, label: 'Location' },
 	{ id: 'mobile', numeric: false, disablePadding: false, label: 'Contact Number' },
 	{ id: 'email', numeric: false, disablePadding: false, label: 'Email ID' },
 	{ id: 'more', numeric: false, disablePadding: false, label: 'Action' }
@@ -306,14 +309,22 @@ class ClientTable extends React.Component {
 								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 								.map((n) => {
 									return (
+
+
 										<TableRow hover role="checkbox" tabIndex={-1} key={n.id}>
 											<TableCell>{n.client_name}</TableCell>
-											<TableCell>{n.address +', '+n.state +', '+n.pin+' ('+n.country+')'}</TableCell>
+											<TableCell>{n.primary_address +' '+ n.secondary_address}</TableCell>
 											<TableCell>
-												{n.area}
+												{n.region}
+											</TableCell>
+											<TableCell>
+												{n.state}
 											</TableCell>
 											<TableCell>
 												{n.city}
+											</TableCell>
+											<TableCell>
+												{n.location}
 											</TableCell>
 											<TableCell>
 												 {n.mobile}

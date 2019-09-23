@@ -2,8 +2,6 @@ import Actions from './Actions';
 import { BASE_URL } from './AppConst';
 import axios from 'axios';
 
-
-
 export const GetEmployees = (postData) => (dispatch) => {
 	axios.defaults.baseURL = BASE_URL;
 	axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
@@ -35,15 +33,13 @@ export const GetEmployees = (postData) => (dispatch) => {
 		.catch((error) => console.log(' Error Encountered'));
 };
 
-
-
 export const GetAttributes = (postData) => (dispatch) => {
 
 	axios.defaults.baseURL = BASE_URL;
 	axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
 	axios
 		.post('/user/attributes', {
-			
+			currency: localStorage.getItem('currency')
 		})
 		.then((res) =>{
 
@@ -67,7 +63,6 @@ export const GetAttributes = (postData) => (dispatch) => {
 		)
 		.catch((error) => console.log(' Error Encountered'));
 };
-
 
 export const UpdateEmp = (postData) => (dispatch) => {
 
@@ -175,7 +170,8 @@ export const NewEmp = (postData) => (dispatch) => {
 			mobile: mobile,
 			region: region,
 			designation: designation,
-			email: email
+			email: email,
+			currency: localStorage.getItem('currency')
 		})
 		.then((res) => {
 			
