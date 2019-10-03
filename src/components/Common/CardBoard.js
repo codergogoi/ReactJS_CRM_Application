@@ -30,7 +30,7 @@ const styles = (theme) => ({
 		display: 'flex',
 		flexDirection: 'row',
 		justifyContent: 'flex-start',
-		minHeight: 600,
+		minHeight: 300,
 		backgroundColor: '#FFFF',
 		width: '100%',
 		borderRadius: 10,

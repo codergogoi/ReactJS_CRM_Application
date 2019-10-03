@@ -2,6 +2,37 @@ import Actions from './Actions';
 import { BASE_URL } from './AppConst';
 import axios from 'axios';
 
+
+
+export const ExportDatabase = (postData) => (dispatch) => {
+	axios.defaults.baseURL = BASE_URL;
+	axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
+	axios
+		.post('/export', {
+			
+		})
+		.then((res) =>
+			{
+				const status = parseInt(res.data.status);
+				if (status === 200) {
+					const responseString = JSON.parse(JSON.stringify(res.data));
+					let export_data = responseString.data;
+					dispatch({
+						type: Actions.EXPORT_DB,
+						payload: export_data
+					})
+				}else{
+					dispatch({
+						type: Actions.EXPORT_DB,
+						payload: []
+					})
+				}
+			}
+		)
+		.catch((error) => console.log(' Error Encountered'));
+};
+
+
 export const GetRegions = (postData) => (dispatch) => {
 	axios.defaults.baseURL = BASE_URL;
 	axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
@@ -30,6 +61,34 @@ export const GetRegions = (postData) => (dispatch) => {
 		.catch((error) => console.log(' Error Encountered'));
 };
 
+
+export const GetManagers = (postData) => (dispatch) => {
+	axios.defaults.baseURL = BASE_URL;
+	axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
+	axios
+		.post('/settings/view-managers', {
+			
+		})
+		.then((res) =>
+			{
+				const status = parseInt(res.data.status);
+				if (status === 200) {
+					const responseString = JSON.parse(JSON.stringify(res.data));
+					let managers = responseString.data;
+					dispatch({
+						type: Actions.VIEW_MANAGERS,
+						payload: managers
+					})
+				}else{
+					dispatch({
+						type: Actions.VIEW_MANAGERS,
+						payload: []
+					})
+				}
+			}
+		)
+		.catch((error) => console.log(' Error Encountered'));
+};
 
 
 export const NewRegion= (postData) => (dispatch) => {

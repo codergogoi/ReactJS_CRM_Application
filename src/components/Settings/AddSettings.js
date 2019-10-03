@@ -60,6 +60,10 @@ class AddSettings extends React.Component {
 		this.state = {
 			region_id: '',
 			region_name: '',
+			region_manager: '', 
+			login_email: '',
+			login_password: '',
+			region_name: '',
 			description: '',
 			emp_id: '12',
 			designation: '', 
@@ -215,15 +219,11 @@ class AddSettings extends React.Component {
 	}
 
 	handleTextChanges = (event) => {
-		if (event.target.id === 'region_name') {
-			this.setState({ region_name: event.target.value });
-		}else if (event.target.id === 'description') {
-			this.setState({ description: event.target.value });
-        }else if (event.target.id === 'designation') {
-			this.setState({ designation: event.target.value });
-        }else if (event.target.id === 'policy') {
-			this.setState({ policy: event.target.value });
-        }
+
+		const value = event.target.value;
+		this.setState({
+			[event.target.name] : value
+		});
 	};
 
 	handlePolicyChanges = (event) => {
@@ -294,40 +294,83 @@ class AddSettings extends React.Component {
 	addNewRegionUI = () => {
 		const { classes } = this.props;
 		const { region_name,
-		description } = this.state;
+		region_id, region_manager, login_email, login_password } = this.state;
 		
 
 		return(<view className={classes.formControl}>
 				<view className={classes.textFields}>
 				
-						<TextField
-								id="region_name"
-								label="Region Name"
-								style={{width: 180,  marginTop: 0, marginRight: 20}}
-								type="text"
-								required="true"
-								margin="normal"
-								onChange={this.handleTextChanges.bind(this)}
-								value={region_name}
-							/>
+					<TextField
+							name="region_name"
+							label="Region Name"
+							style={{width: 180,  marginTop: 0, marginRight: 20}}
+							type="text"
+							required="true"
+							margin="normal"
+							onChange={this.handleTextChanges.bind(this)}
+							value={region_name}
+						/>
 							
 				</view>
 
 				<view className={classes.textFields}>
-
-						<TextField
-								id="description"
-								label="Region Description"
-								style={{ width: '100%',marginTop: 0}}
-								rows="2"
-								required="true"
-								margin="normal"
-								onChange={this.handleTextChanges.bind(this)}
-								value={description}
-							/>
-							
-							
 				
+					<TextField
+							name="region_id"
+							label="Region ID"
+							style={{width: 180,  marginTop: 0, marginRight: 20}}
+							type="text"
+							required="true"
+							margin="normal"
+							onChange={this.handleTextChanges.bind(this)}
+							value={region_id}
+						/>
+							
+				</view>
+
+				<view className={classes.textFields}>
+				
+					<TextField
+							name="region_manager"
+							label="Region Manager Name"
+							style={{width: 180,  marginTop: 0, marginRight: 20}}
+							type="text"
+							required="true"
+							margin="normal"
+							onChange={this.handleTextChanges.bind(this)}
+							value={region_manager}
+						/>
+							
+				</view>
+
+				<view className={classes.textFields}>
+				
+					<TextField
+							name="login_email"
+							label="Login Email ID"
+							style={{width: 180,  marginTop: 0, marginRight: 20}}
+							type="text"
+							required="true"
+							margin="normal"
+							onChange={this.handleTextChanges.bind(this)}
+							value={login_email}
+						/>
+							
+				</view>
+
+				<view className={classes.textFields}>
+				
+					<TextField
+							name="login_password"
+							label="Login Password"
+							style={{width: 180,  marginTop: 0, marginRight: 20}}
+							type="text"
+							required="true"
+							margin="normal"
+							onChange={this.handleTextChanges.bind(this)}
+							value={login_password}
+						/>
+							
 				</view>
 
 				<view className={classes.textFields}>
@@ -337,7 +380,7 @@ class AddSettings extends React.Component {
 								onClick={this.onTapAddNewRegion.bind(this)}
 								className={classes.button}
 							>
-								Add Region
+								Add Region Manager
 							</Button>
 			
 				</view>	
@@ -357,7 +400,7 @@ class AddSettings extends React.Component {
 			return(<view className={classes.formControl}>
 				<view className={classes.textFields}>
 						<TextField
-							id="designation"
+							name="designation"
 							label="Designation"
 							style={{width: 180,  marginTop: 0, marginRight: 20}}
 							type="text"
@@ -372,7 +415,7 @@ class AddSettings extends React.Component {
 				<view className={classes.textFields}>
 
 						<TextField
-							id="description"
+							name="description"
 							label="Description"
 							style={{ width: '100%',marginTop: 0}}
 							type="text"
@@ -438,7 +481,7 @@ class AddSettings extends React.Component {
 				<view className={classes.textFields}>
 
 					<TextField
-						id="policy"
+						name="policy"
 						label="Policy Title"
 						style={{width: 320,  marginTop: 0, marginRight: 20}}
 						type="text"

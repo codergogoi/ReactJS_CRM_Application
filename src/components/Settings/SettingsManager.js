@@ -13,6 +13,7 @@ import AddOffersIcon from '@material-ui/icons/CardGiftcard';
 import DesignationTable from './DesignationTable';
 import RegionTable from './RegionTable';
 import PolicyTable from './PolicyTable';
+import AdminSettings from './AdminSettings';
 
 import AddSettings from './AddSettings';
 
@@ -97,17 +98,17 @@ class SettingsManager extends Component {
 
 		if(value === 2){
 			this.setState({
-				type: 'POLICY',
+				type: 'REGION',
 				isAddNew: true,
 			});
 		}else if(value === 1){
 			this.setState({
-				type: 'DESIGNATION',
+				type: 'POLICY',
 				isAddNew: true,
 			});
 		}else{
 			this.setState({
-				type: 'REGION',
+				type: 'DESIGNATION',
 				isAddNew: true,
 			});
 		}
@@ -164,32 +165,32 @@ class SettingsManager extends Component {
 		const { value} = this.state;
 
 		if(value === 2){
-			this.setState({
-				type: 'POLICY',
-				isAddNew: true,
-				current_item: item,
-				isEdit: true,
-			});
-		}else if(value === 1){
-			this.setState({
-				type: 'DESIGNATION',
-				isAddNew: true,
-				current_item: item,
-				isEdit: true,
-			});
-		}else{
+
 			this.setState({
 				type: 'REGION',
 				isAddNew: true,
 				current_item: item,
 				isEdit: true,
 			});
+
+		}else if(value === 1){
+			this.setState({
+				type: 'POLICY',
+				isAddNew: true,
+				current_item: item,
+				isEdit: true,
+			});
+		}else{
+			this.setState({
+				type: 'DESIGNATION',
+				isAddNew: true,
+				current_item: item,
+				isEdit: true,
+			});
 		}
- 
 
 	}
   
-
 	render() {
 		const { classes, regions, designations, policies } = this.props;
 		const { value, isAddNew, isEdit, currentLegal, showAlert, title, msg, type, current_item } = this.state;
@@ -221,42 +222,39 @@ class SettingsManager extends Component {
 							indicatorColor="secondary"
 							textColor="secondary"
 						>
-							<Tab label="Region Settings" icon={<EmployeeIcon />} />
-							<Tab label="Designation Settings" icon={<EmployeeIcon />} />
+							<Tab label="Designation Settings" icon={<EmployeeIcon />} />							
 							<Tab label="Policy Settings" icon={<EmployeeIcon />} />
+							<Tab label="Admin Settings" icon={<EmployeeIcon />} />
+
 						</Tabs>
 
 						{value === 0 && (
 							<TabContainer>
-							{regions !== undefined && (<RegionTable
-								onEditItem={this.onEdit.bind(this)}
-								onDeleteRegion={this.onDeleteItem.bind(this)}
-								data={regions}
-							/>)}
+								{designations !== undefined && (<DesignationTable
+									onEditItem={this.onEdit.bind(this)}
+									onDeleteDesignation={this.onDeleteItem.bind(this)}
+									data={designations}
+								/>)}
 							</TabContainer>
 						)}
+
 						{value === 1 && (
-							<TabContainer>
-							{designations !== undefined && (<DesignationTable
-								onEditItem={this.onEdit.bind(this)}
-								onDeleteDesignation={this.onDeleteItem.bind(this)}
-								data={designations}
-							/>)}
-							</TabContainer>
-						)}
-						{value === 2 && (
 							<TabContainer>
 							{policies !== undefined && (<PolicyTable
 								onEditItem={this.onEdit.bind(this)}
 								onDeletePolicy={this.onDeleteItem.bind(this)}
 								data={policies}
 							/>)}
-							
 							</TabContainer>
 						)}
-
-								
+						{value === 2 && (
+							<TabContainer>
+								<AdminSettings />
+							</TabContainer>
+						)}
+	
 					</CardDiv>
+
 				</div>
 			);
 		}

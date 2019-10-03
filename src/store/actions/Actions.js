@@ -53,6 +53,10 @@ const Actions = {
 	ADD_REGION: 'ADD_REGION',
 	DELETE_REGION: 'DELETE_REGION',
 
+	//Managers
+	VIEW_MANAGERS: 'VIEW_MANAGERS',
+	EXPORT_DB: 'export_data_base',
+
 	//Expenses
 	APPROVE_EXPENSE: 'APPROVED_EXPENSES',
 

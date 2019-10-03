@@ -4,6 +4,8 @@ const initialState = {
 	regions: [],
 	designations: [],
 	policies: [],
+	managers: [],
+	isExported: false
 };
 
 export default function(state = initialState, action) {
@@ -14,6 +16,16 @@ export default function(state = initialState, action) {
 				...state,
 				regions: action.payload
 			};
+		case Actions.EXPORT_DB:
+			return {
+				...state,
+				isExported: true
+			};	
+		case Actions.VIEW_MANAGERS:
+			return {
+				...state,
+				managers: action.payload
+			};	
 		case Actions.ADD_REGION:
 			return {
 				...state,
@@ -58,7 +70,8 @@ export default function(state = initialState, action) {
 		
 		case Actions.DISMISS:
 			return {
-				isAdded: false
+				isAdded: false,
+				exported: false
 			}
 				
 		default:
