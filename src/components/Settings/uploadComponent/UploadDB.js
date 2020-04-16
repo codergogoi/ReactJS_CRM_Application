@@ -13,7 +13,7 @@ import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import { Grid, CircularProgress, LinearProgress } from '@material-ui/core';
 import axios from 'axios';
-import { BASE_URL } from '../../../store/actions/AppConst'
+import { UPLOAD_URL } from '../../../store/actions/AppConst'
 import { connect } from 'react-redux';
 import Alert from '../../Common/Alert';
 
@@ -119,7 +119,7 @@ async uploadFile(file){
 
   formData.append('file',file)
 
-  return  await axios.post(BASE_URL+'upload-db', formData,{
+  return  await axios.post(UPLOAD_URL+'upload-db', formData,{
       headers: {
           'Authorization':  app_token,
           'content-type': 'multipart/form-data'

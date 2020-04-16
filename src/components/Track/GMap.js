@@ -2,8 +2,6 @@
 import React, { Component } from 'react';
 import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
 
- 
-
 const styles = {
 	
     marker: {
@@ -175,7 +173,7 @@ class GMap extends Component {
 }
 
 export default GoogleApiWrapper({
-  apiKey: 'AIzaSyCRBXIKw3NRIxdR50jnMg2tvK5_YL-flgQ'
+  apiKey: 'AIzaSyDOsCY0VM3PTppPhHBqhrqXRX-JUaexPbs'
 })(GMap)
 
 

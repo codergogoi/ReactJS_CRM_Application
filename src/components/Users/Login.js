@@ -199,6 +199,7 @@ class Login extends Component {
 		const { classes } = this.props;
 
 		const { isForgot, email, password, showAlert, title, msg, reset_email } = this.state;
+		
 
 		if (isForgot) {
 			return (

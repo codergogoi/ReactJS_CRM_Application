@@ -31,6 +31,33 @@ export const GetClients = (postData) => (dispatch) => {
 };
 
 
+export const GetNewClients = (postData) => (dispatch) => {
+	axios.defaults.baseURL = BASE_URL;
+	axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
+	axios
+		.post('/client/view-all-new', {
+		})
+		.then((res) =>
+			{
+				const status = parseInt(res.data.status);
+				if (status === 200) {
+					const responseString = JSON.parse(JSON.stringify(res.data));
+					let clients = responseString.data;
+					dispatch({
+						type: Actions.VIEW_NEW_CLIENTS,
+						payload: clients
+					})
+				}else{
+					dispatch({
+						type: Actions.VIEW_NEW_CLIENTS,
+						payload: []
+					})
+				}
+			}
+		)
+		.catch((error) => console.log(' Error Encountered'));
+};
+
 
 export const GetRegions = (postData) => (dispatch) => {
 	axios.defaults.baseURL = BASE_URL;
@@ -135,12 +162,12 @@ export const RemoveClient = (postData) => (dispatch) => {
 					const responseString = JSON.parse(JSON.stringify(res.data));
 					let clients = responseString.data;
 					dispatch({
-						type: Actions.VIEW,
+						type: Actions.VIEW_NEW_CLIENTS,
 						payload: clients
 					})
 				}else{
 					dispatch({
-						type: Actions.VIEW,
+						type: Actions.VIEW_NEW_CLIENTS,
 						payload: []
 					})
 				}

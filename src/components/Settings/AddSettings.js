@@ -150,15 +150,13 @@ class AddSettings extends React.Component {
 	};
 
 	onTapAddNewRegion() {
-
-		const { emp_id, region_id, region_name, description, designation } = this.state;
+ 
+		const { region_id, region_manager, login_email, login_password } = this.state;
 
 		if(this.props.isEdit){
-			this.props.EditRegion({ region_id, region_name,
-				description  });
+			this.props.EditRegion({  region_id, region_manager, login_email, login_password  });
 		}else{
-			this.props.NewRegion({ region_name, description,
-				emp_id  });
+			this.props.NewRegion({  region_id, region_manager, login_email, login_password  });
 		}
 		
 	}
@@ -179,6 +177,7 @@ class AddSettings extends React.Component {
 	}
 
 	onTapAddNewPolicy() {
+
 		const { policy_id ,policy,
 		portal_access,
 		app_access,
@@ -189,7 +188,6 @@ class AddSettings extends React.Component {
 		view_task,
 		reports,
 		emp_id} = this.state;
-
 
 		if(this.props.isEdit){
 			this.props.EditPolicy({ 
@@ -215,7 +213,6 @@ class AddSettings extends React.Component {
 				reports, emp_id });
 		}
 
-		
 	}
 
 	handleTextChanges = (event) => {
@@ -287,6 +284,9 @@ class AddSettings extends React.Component {
 			reports: value
 		});
 	}
+	
+
+
 	
 
 
@@ -497,26 +497,37 @@ class AddSettings extends React.Component {
 				<view className={classes.textFields}>
 							<FormControlLabel
 								control={
-									<Switch checked={portal_access} onChange={this.onChangePortalAccess.bind(this)} value={portal_access} />
+									<Switch checked={this.state.portal_access} onChange={ () =>
+										this.setState({
+											portal_access: !this.state.portal_access
+										})
+									} value={this.state.portal_access} />
 								}
 								label="Portal Access"
 							/>
 
 							<FormControlLabel
 								control={
-									<Switch checked={app_access} onChange={this.onChangeAppAccess.bind(this)} value={app_access} />
+									<Switch checked={this.state.app_access} onChange={ () =>
+										this.setState({
+											app_access: !this.state.app_access
+										})
+									} value={this.state.app_access} />
 								}
 								label="App Access"
 							/>
 
 							<FormControlLabel
 								control={
-									<Switch checked={track_user} onChange={this.onChangeTrackUser.bind(this)} value={track_user} />
+									<Switch checked={this.state.track_user} onChange={ () =>
+										this.setState({
+											track_user: !this.state.track_user
+										})
+									} value={this.state.track_user} />
 								}
-								label="Track User Access"
+								label="Track User"
 							/>
 
-							
 
 						</view>
 
@@ -524,21 +535,44 @@ class AddSettings extends React.Component {
 
 							<FormControlLabel
 								control={
-									<Switch checked={add_user} onChange={this.onChangeAddUser.bind(this)} value={add_user} />
+									<Switch checked={this.state.add_user} onChange={ () =>
+										this.setState({
+											add_user: !this.state.add_user
+										})
+									} value={this.state.add_user} />
 								}
-								label="Add User Access"
+								label="Add User"
 							/>
 
 							<FormControlLabel
 								control={
-									<Switch checked={view_user} onChange={this.onChangeViewUser.bind(this)} value={view_user} />
+									<Switch checked={this.state.view_user} onChange={ () =>
+										this.setState({
+											view_user: !this.state.view_user
+										})
+									} value={this.state.view_user} />
 								}
-								label="View User Access"
+								label="View User"
+							/>
+
+							<FormControlLabel
+								control={
+									<Switch checked={this.state.delete_user} onChange={() => {
+										this.setState({
+											delete_user: !this.state.delete_user
+										})
+									}} value={this.state.delete_user} />
+								}
+								label="Delete User"
 							/>
 							
 							<FormControlLabel
 								control={
-									<Switch checked={add_task} onChange={this.onChangeAddTask.bind(this)} value={add_task} />
+									<Switch checked={this.state.add_task} onChange={ () =>
+										this.setState({
+											add_task: !this.state.add_task
+										})
+									} value={this.state.add_task} />
 								}
 								label="Add Task Access"
 							/>
@@ -548,14 +582,22 @@ class AddSettings extends React.Component {
 
 							<FormControlLabel
 								control={
-									<Switch checked={view_task} onChange={this.onChangeViewTask.bind(this)} value={view_task} />
+									<Switch checked={this.state.view_task} onChange={ () =>
+										this.setState({
+											view_task: !this.state.view_task
+										})										
+									} value={this.state.view_task} />
 								}
 								label="View Task Access"
 							/>
 
 							<FormControlLabel
 								control={
-									<Switch checked={reports} onChange={this.onChangeReports.bind(this)} value={reports} />
+									<Switch checked={this.state.reports} onChange={ () =>
+										this.setState({
+											reports: !this.state.reports
+										})
+									} value={this.state.reports} />
 								}
 								label="Report Access"
 							/>

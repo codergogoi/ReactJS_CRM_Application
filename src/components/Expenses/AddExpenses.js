@@ -8,6 +8,10 @@ import Grid from '@material-ui/core/Grid';
 import NativeSelect from '@material-ui/core/NativeSelect';
 import CardBoard from '../Common/CardBoard';
 import moment from 'moment';
+import Fab from '@material-ui/core/Fab';
+import Icon from '@material-ui/core/Icon';
+import DownloadIcon from '@material-ui/icons/CloudDownload'
+
 
 
 // Icons
@@ -20,6 +24,7 @@ import Alert from '../Common/Alert';
 import { connect } from 'react-redux';
 import { GetExpenses, DismissAlert, ApproveExpenses } from '../../store/actions/ExpensesActions';
 import { Chip } from '@material-ui/core';
+import { BASE_URL } from '../../store/actions/AppConst';
 
 // CSS Module
 const styles = (theme) => ({
@@ -83,8 +88,13 @@ const styles = (theme) => ({
 		height: 40,
 		margin: 10,
 		backgroundColor: '#338241'
+	},
+	attachmentImage: {
+		display:'flex',
+		width: 400,
+		margin: 5,
+		borderRadius: 10,
 	}
-
 
 });
 
@@ -96,7 +106,8 @@ class AddExtension extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {	
-			id:0,		
+			id:0,	
+			task_id: '',	
 			task_title: '',
 			description: '',
 			expense_date: '',
@@ -113,10 +124,13 @@ class AddExtension extends React.Component {
 
 		if(this.props.isEdit){
 
-			const { id,title,description,date,cost,emp_name,client_name, status, currency} = this.props.current_item;
+			console.log(JSON.stringify(this.props.current_item));
+
+			const { id,task_id,title,description,date,cost,emp_name,client_name, status, currency} = this.props.current_item;
 
 			this.setState({
 				id:id,
+				task_id: task_id,
 				task_title: title,
 				description: description,
 				expense_date: date,
@@ -274,6 +288,21 @@ class AddExtension extends React.Component {
 
 			</view>);
 	}
+
+
+	onDisplayAttachment = ()  => {
+ 
+		const { classes} = this.props;
+
+		return(
+			<div>
+				<a href={`${BASE_URL+'uploads/evidence_'+this.state.task_id+'.jpg'}`} target="_blank" download>
+					<img className={classes.attachmentImage} src={`${BASE_URL+'uploads/evidence_'+this.state.task_id+'.jpg'}`}/>
+				 </a>
+			</div>
+		);
+
+	}
 	
 
 
@@ -303,15 +332,19 @@ class AddExtension extends React.Component {
 				/>
 
 				<Grid container spacing={24}>
-					<Grid item xs={3}>
+					<Grid item xs={2}>
 					</Grid>
-
-					<Grid item xs={6}>
+					<Grid item xs={5}>
 						<CardBoard>
 							{this.displayTextContent()}
 						</CardBoard>
 					</Grid>
-					<Grid item xs={3}>
+					<Grid item xs={1}>
+					</Grid>
+					<Grid item xs={4}>
+						<CardBoard>
+						{this.onDisplayAttachment()}
+						</CardBoard>
 					</Grid>
 					 
 				</Grid>

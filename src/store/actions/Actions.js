@@ -30,14 +30,20 @@ const Actions = {
 	//Loading
 	LOADING: 'loading',
 
+	VIEW_USER_ATTENDANCE: 'view_user_attendance',
+	DOWNLOAD_ATTENDANCE: 'download_attendance',
+
 	//Task
 	VIEW_TASK_UtiLITY: 'VIEW_TASK_UTILITY',
 	ADD_TASK: 'ADD_TASK',
 	VIEW_CITY: 'view_city',
 	VIEW_LOCATION: 'view_location',
 	VIEW_GROUP_TASK_CLIENTS: 'group_task_clients',
-
+	VIEW_ALL_GROUP_TASK: 'view_all_group_task',
+	VIEW_PROGRESS_RATIO: 'view_progress_ratio',
+	
 	VIEW_CLIENT_REGIONS: 'VIEW_CLIENT_REGIONS',
+	VIEW_NEW_CLIENTS: 'VIEW_NEW_CLIENTS',
 	ADD_CLIENT: 'ADD_CLIENTS',
 	DELETE_CLIENT: 'DELETE_CLIENT',
 
@@ -52,6 +58,7 @@ const Actions = {
 	VIEW_REGIONS: 'VIEW_REGION',
 	ADD_REGION: 'ADD_REGION',
 	DELETE_REGION: 'DELETE_REGION',
+	ADD_REGION_MANAGER: 'ADD_REGION_MANAGER',
 
 	//Managers
 	VIEW_MANAGERS: 'VIEW_MANAGERS',

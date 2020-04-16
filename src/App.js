@@ -73,9 +73,7 @@ class App extends Component {
 	
 
 	render() {
-		const { showAlert, title, msg, isLogin, currentUser } = this.state;
-
-		const { users } = this.props;
+		const { showAlert, title, msg, isLogin, currentUser } = this.state;		
 
 		if (isLogin) {
 			return <Dashboard onLogout={this.didLogout} currentUser={currentUser} />;

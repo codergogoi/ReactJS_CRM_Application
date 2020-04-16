@@ -69,20 +69,39 @@ class Applications extends Component {
 		const { classes } = this.props;
 		const { user_type } = this.state;
 
+		const { access } = this.props;
+
+/*
+"track": false,
+            "user_add": true,
+            "user_view": true,
+            "task_add": false,
+            "task_view": false,
+            "report": false,
+            "view_attendance": true,
+            "download_attendance": true,
+            "edit_user": true,
+            "delete_user": true,
+			"accounts": false
+			*/		
+
+
 		return (
 			<div className={classes.root}>
 				<Grid container spacing={12}>
-						<Grid item xs={4}>
-							<li>
-								<Link to={`${process.env.PUBLIC_URL}/track`}>
-									<Button className={classes.paper}>
-										<TrackingIcon  className={classes.leftIcon}/> Track User
-									</Button>
-								</Link>
-							</li>
-						</Grid>
+						{access.track && 
+							<Grid item xs={4}>
+								<li>
+									<Link to={`${process.env.PUBLIC_URL}/track`}>
+										<Button className={classes.paper}>
+											<TrackingIcon  className={classes.leftIcon}/> Track User
+										</Button>
+									</Link>
+								</li>
+							</Grid>
+						}
 					 
-					<Grid item xs={4}>
+					{access.task_view && <Grid item xs={4}>
 						<li>
 							<Link to={`${process.env.PUBLIC_URL}/task`}>
 								<Button className={classes.paper}>
@@ -90,9 +109,9 @@ class Applications extends Component {
 								</Button>
 							</Link>
 						</li>
-					</Grid>
+					</Grid>}
 
-					<Grid item xs={4}>
+					{access.task_view && <Grid item xs={4}>
 						<li>
 							<Link to={`${process.env.PUBLIC_URL}/clients`}>
 								<Button className={classes.paper} onClick={this.onTapOptions}>
@@ -101,11 +120,11 @@ class Applications extends Component {
 								</Button>
 							</Link>
 						</li>
-					</Grid>
+					</Grid>}
 					 
  
 					
-					<Grid item xs={4}>
+					{access.user_view && <Grid item xs={4}>
 						<li>
 							<Link to={`${process.env.PUBLIC_URL}/employee`}>
 								<Button className={classes.paper}>
@@ -114,10 +133,10 @@ class Applications extends Component {
 								</Button>
 							</Link>
 						</li>
-					</Grid>
+					</Grid>}
 
 				 
-					<Grid item xs={4}>
+					{access.report && <Grid item xs={4}>
 						<li>
 							<Link to={`${process.env.PUBLIC_URL}/reports`}>
 								<Button className={classes.paper}>
@@ -125,9 +144,9 @@ class Applications extends Component {
 								</Button>
 							</Link>
 						</li>
-					</Grid>
+					</Grid>}
 
-					<Grid item xs={4}>
+					{access.accounts && <Grid item xs={4}>
 						<li>
 							<Link to={`${process.env.PUBLIC_URL}/expenses`}>
 								<Button className={classes.paper}>
@@ -135,9 +154,9 @@ class Applications extends Component {
 								</Button>
 							</Link>
 						</li>
-					</Grid>
+					</Grid>}
 
-					<Grid item xs={4}>
+					{access.is_admin && <Grid item xs={4}>
 						<li>
 							<Link to={`${process.env.PUBLIC_URL}/settings`}>
 								<Button className={classes.paper}>
@@ -145,18 +164,12 @@ class Applications extends Component {
 								</Button>
 							</Link>
 						</li>
-					</Grid>
+					</Grid>}
 
 					 
 				</Grid>
 
-				<Switch>
-					{/* <Route
-						exact
-						path="/manage_task"
-						render={(props) => <ManageTask onLoadMenu={this.onCollapseMenu} {...props} />}
-					/> */}
-				</Switch>
+				
 			</div>
 		);
 	};

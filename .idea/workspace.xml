@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="cb124160-665c-497e-bab9-84c9e0cb76e8" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Clients/ClientManager.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Clients/ClientManager.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Common/AlertWithData.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Common/AlertWithData.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/DashBoard.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/DashBoard.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Employee/AddEmp.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Employee/AddEmp.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Employee/EmpManager.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Employee/EmpManager.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Expenses/AddExpenses.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Expenses/AddExpenses.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Reports/ReportManager.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Reports/ReportManager.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Reports/ReportTable.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Reports/ReportTable.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Settings/AddSettings.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Settings/AddSettings.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Settings/AdminSettings.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Settings/AdminSettings.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Settings/RegionManagerTable.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Settings/RegionManagerTable.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Settings/SettingsManager.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Settings/SettingsManager.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Settings/uploadComponent/UploadDB.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Settings/uploadComponent/UploadDB.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Task/TaskManager.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Task/TaskManager.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Task/TaskTable.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Task/TaskTable.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Track/GMap.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Track/GMap.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/Track/TrackManeger.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Track/TrackManeger.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/actions/Actions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/actions/Actions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/actions/AppConst.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/actions/AppConst.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/actions/ClientActions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/actions/ClientActions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/actions/EmployeeActions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/actions/EmployeeActions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/actions/ReportActions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/actions/ReportActions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/actions/SettingsActions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/actions/SettingsActions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/actions/TaskActions.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/actions/TaskActions.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/reducers/ClientReducer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/reducers/ClientReducer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/reducers/EmployeeReducer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/reducers/EmployeeReducer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/reducers/ReportReducer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/reducers/ReportReducer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/reducers/SettingsReducer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/reducers/SettingsReducer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/reducers/TaskReducer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/reducers/TaskReducer.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/store/reducers/UserReducer.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/store/reducers/UserReducer.js" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings">
+    <execution>
+      <executable />
+    </execution>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1TBdjQEEJ2SbFJnWtZJIpkdiHDd" />
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="cb124160-665c-497e-bab9-84c9e0cb76e8" name="Default Changelist" comment="" />
+      <created>1572937556578</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1572937556578</updated>
+      <workItem from="1572937557772" duration="23000" />
+    </task>
+    <servers />
+  </component>
+</project>

@@ -1,36 +1,28 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-
-// Icons
-import EmployeeIcon from '@material-ui/icons/SupervisorAccount';
-import AddOffersIcon from '@material-ui/icons/CardGiftcard';
-import Table from './TrackUserTable';
 import Alert from '../Common/AlertWithData';
-
-import InputBase from '@material-ui/core/InputBase';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+ 
 import SearchIcon from '@material-ui/icons/Search';
 
 import Select from 'react-select';
- 
- 
+import { MAPKEY } from '../../store/actions/AppConst';
+import { Map, GoogleApiWrapper, Marker, InfoWindow } from 'google-maps-react';
+
+import Fab from '@material-ui/core/Fab';
+
+import DatePicker from "react-datepicker";
+
+import "react-datepicker/dist/react-datepicker.css";
+
 //App Classes
 import CardDiv from '../Common/CardDiv';
 
 import { connect } from 'react-redux';
 import { GetUsers, GetTrackDetails, DismissAlert } from '../../store/actions/TrackingActions';
-
-import Map from './GMap';
-
- 
+import moment from 'moment';
+import { isArray } from 'util';
 
 const styles = (theme) => ({
 	root: {
@@ -63,19 +55,7 @@ const styles = (theme) => ({
 		padding: 5,
 		borderRadius: 10,
 	},
-	dateView:{
-		position: 'absolute',
-		marginTop: 10,
-		marginLeft: 550,
-		zIndex: 100,
-		width: 320,
-		height: 50,
-		display: 'flex',
-		flexDirection: 'row',
-		backgroundColor: '#FFF',
-		padding: 5,
-		borderRadius: 10,
-	},
+	
 	  suggestionsContainerOpen: {
 		position: 'absolute',
 		zIndex: 1,
@@ -104,6 +84,74 @@ const styles = (theme) => ({
 		width: 400,
 		marginLeft: 10
 	},
+	marker: {
+        width: 120,
+        height: 80,
+        textAlign: 'center'
+
+    },
+    img:{
+        width: 28,
+        height: 36,
+        margin: '0',
+    },
+    name:{
+        width: '100%',
+        borderRadius: 10,
+        padding: 5,
+        fontSize: 12,
+        margin: '0',
+        backgroundColor: '#c14436',
+    },
+    mapSizeSmall:{
+        width: '40%',
+        height: '60%'
+    },
+    mapSizeBig:{
+      width: '90%',
+      height: 790
+      
+  },
+  dateView:{
+	position: 'absolute',
+	marginTop: 10,
+	marginLeft: 550,
+	zIndex: 100,
+	width: 260,
+	display: 'flex',
+	flexDirection: 'row',
+	backgroundColor: '#FFF',
+	padding: 2,
+	paddingLeft: 5,
+	borderRadius: 8,
+	alignItems: 'center'
+},
+  dateInput: {
+	  display:'flex',
+	  width: 80,
+	  borderRadius: 15,
+	  backgroundColor: '#FAC286',
+	  marginRight:10,
+	  marginLeft: 10,
+	  borderWidth: 0,
+	  textAlign: 'center',
+	  fontSize: 15,
+	  color: '#FFF'
+  },
+  dateText:{
+		fontSize: 10,
+		color: '#979797',
+		textAlign: 'center',
+		alignItems: 'center',
+		justifyContent: 'center'
+  },
+  
+margin: {
+	margin: theme.spacing.unit,
+	marginLeft: 10
+  },
+
+
 });
 
   
@@ -112,9 +160,12 @@ class TrackManager extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
+			startDate: new Date(),
+			endDate: new Date(),
 			id: '',
 			currentOffer: '',
 			value: 0,
+			isViewMore: false,
 			isAddNew: false,
 			showAlert: false,
 			isEdit: false,
@@ -123,18 +174,85 @@ class TrackManager extends Component {
 		  	single: '',
 			popper: '',
 			users: [],
-			current_lat: 10.0188428,
-			current_lng: 76.3059224,
+			current_lat: 20.5937,
+			current_lng: 78.9629,
 			selectedUser: null,
 			locations: [],
 			from: '2019-09-05',
-			to: '2020-12-01'
+			to: '2020-12-01',
+			locations: [{
+				lat(){ return props.current_lat},
+				lng(){ return props.current_lng}
+			  }],
+			lat: props.current_lat,
+			lng: props.current_lng ,
+			current_emp: 'Loading...',
+			last_visited: 'Loading...',
+			showingInfoWindow: false,
+			activeMarker: null,
+			bounds: [],
+			isMapClicked: false,
 		};
 	}
 
+	//MAP
+
+
+
+
+	mapClicked = (mapProps, map, clickEvent)  => {
+    
+		if(this.props.isTracking){
+	
+		  if (this.state.showingInfoWindow) {
+			this.setState({
+			  showingInfoWindow: false,
+			  activeMarker: null
+			})
+		  }
+		  return;
+		}
+	
+	
+		const location = clickEvent.latLng;
+	
+		this.setState({
+		  locations: [location]
+		})
+	
+		map.panTo(location);
+
+	 
+	  }
+	
+	
+	  onTapMarker = (props, marker, e) => {
+		
+		const { name } = props;
+
+		if(isArray(name)){
+			this.setState({
+				current_emp: name,
+				activeMarker: marker,
+				last_visited: name,
+				showingInfoWindow: true,
+		  });
+		}else{
+			this.setState({
+				current_emp: name.label,
+				activeMarker: marker,
+				last_visited: name.visited,
+				showingInfoWindow: true,
+		  });
+		}
+		
+	
+	  }
+	 
 	handleUserChange = selectedUser => {
 		
 		const { lat, lng, locations, id } = selectedUser;
+
 		this.setState({ selectedUser, locations: locations , id: id});
  	
 		if(lat !== undefined && lng !== undefined){
@@ -154,8 +272,13 @@ class TrackManager extends Component {
 		this.setState({ isAddNew: true });
 	}
 
+	componentWillReceiveProps(){
+		this.setState({ isAddNew: false, isEdit: false, isViewMore: false });
+	}
+
+
 	onTapBack() {
-		this.setState({ isAddNew: false, isEdit: false });
+		this.setState({ isAddNew: false, isEdit: false, isViewMore: true });
 	}
 
 	onCloneClick(offer) {
@@ -186,117 +309,296 @@ class TrackManager extends Component {
 	}
 
 	trackThisUser = () => {
-		const { from, to, id } = this.state;
-		this.props.GetTrackDetails({ from, to , id})
+		this.setState({
+			isFind:true
+		})
+		const { startDate, endDate, id } = this.state;
+		this.props.GetTrackDetails({ startDate, endDate, id})
 
 	}
 
 
-	handleTextChanges = (event) => {
+	handleStartDateChange = date => {
+		this.setState({
+		  startDate: date
+		});
+	  };
 
-		if (event.target.id === 'from') {
-			this.setState({ from: event.target.value });
-		}else if (event.target.id === 'to') {
-			this.setState({ to: event.target.value });
-		} 
+	handleEndDateChange = date => {
+	this.setState({
+		endDate: date
+	});
 	};
-
-
+ 
 	displyaDateView = () =>{
 
 		const {classes } = this.props; 
 
 		return (
 			<div className={classes.dateView}>
+				
+					<div>
+						<div className={classes.dateText}>
+							From Date
+						</div>
+						<DatePicker
+							className={classes.dateInput}
+							selected={this.state.startDate}
+							onChange={this.handleStartDateChange}
+						/>
+					</div>
 
-				<TextField
-					id="from"
-					label="From Date"
-					type="date"
-					defaultValue="2019-09-05"
-					onChange={this.handleTextChanges.bind(this)}
-					className={classes.textField}
-					InputLabelProps={{
-					shrink: true,
-					}}
-				/>
-
-				<TextField
-					id="to"
-					label="To Date"
-					type="date"
-					defaultValue="2019-09-05"
-					className={classes.textField}
-					onChange={this.handleTextChanges.bind(this)}
-					InputLabelProps={{
-					shrink: true,
-					}}
-				/>
-
-				<button onClick={this.trackThisUser.bind(this)}> Search </button>
+					<div>
+						<div className={classes.dateText}>
+							To Date
+						</div>
+						<DatePicker
+							className={classes.dateInput}
+							selected={this.state.endDate}
+							onChange={this.handleEndDateChange}
+						/>
+					</div>
+					
+					<Fab size="small" color="secondary"  aria-label="Add" className={classes.fab} onClick={this.trackThisUser.bind(this)}>
+						<SearchIcon />
+					</Fab>
 
 			</div>
 		);
 	}
+ 
+	
 
+	getValidLocations = (user, specifiedUser) => {
+
+		let markers = [];
+
+		if(user === undefined || user === null) return;
+
+		let locations = user;
+
+		if(!specifiedUser){
+
+			locations = user.filter((user) => {
+				return user.lat !== 0 && user.lng !== 0
+			})
+
+			if(locations.length > 0){
+
+				{ locations.map((lat,lng, label, i) => {
+
+					markers.push(
+						<Marker
+						key={i}
+						title={label}
+						name={label}
+						position={{lat: lat, lng: lng}} 
+						onClick={this.onTapMarker.bind(this)}
+						/>
+					);
+
+				})}
+			}
+
+		}else{
+
+			if(locations.length > 0){
+
+				{ locations.map((loc, i) => {
+
+					let latitude = loc.latitude;
+					let longitude = loc.longitude;
+
+					markers.push(
+						<Marker
+						key={i}
+						title={loc.name}
+						name={loc.visited}
+						position={{lat: latitude, lng: longitude}} 
+						onClick={this.onTapMarker.bind(this)}
+						/>
+					);
+
+				})}
+			}
+
+		}
+		 
+
+		
+		return [...markers];
+
+	}
 
 	render() {
 		const { classes, users, details, isFound } = this.props;
-		const {  isAddNew, showAlert, title, msg, current_lat, current_lng, selectedUser, locations } = this.state;
+		const {  isViewMore, showAlert, title, msg, current_lat, current_lng, selectedUser, locations, isFind } = this.state;
+
+
 			
 		const center = {
 			lat: current_lat,
 			lng: current_lng,
 		}
 
-		return (
+		if(details !== undefined &&  details.length > 0 && isViewMore){
+
+			const NewCenter = {
+				lat: details[0].latitude,
+				lng: details[0].longitude,
+			}
+
+			return (
 				<div>
 					
-					<Alert
-						open={isFound}
-						onCancel={this.onOkay.bind(this)}
-						onOkay={this.onOkay.bind(this)}
-						title={"Last Visited Places"}
-						locations={details}
-						msg={""}
-					/>
-
-					<CardDiv title={'Track Live Users'}>
+					<CardDiv title={'User Statistics'}>
 						<div className={classes.mapContainer}>
-							<view className={classes.searchView}>
-								<Select
-										value={selectedUser}
-										onChange={this.handleUserChange}
-										options={users}
-								/>
-							</view>
 
-							{this.displyaDateView()}
+							  
+							{<Map
+									className={"newmap"}
+									google={this.props.google}
+									zoom={15}
+									style={  styles.mapSizeBig }
+									onClick={this.mapClicked}
+									initialCenter={NewCenter}
+									center={NewCenter}
+									>
+										
+									{ details.map((item, i) => {
 
-							<Map 
-								isTracking={true}
-								center = {center}
-								current_lat={current_lat} 
-								current_lng={current_lng}
-								currentPlace = {""}
-								markers={ locations.length > 0 ? locations : [{latitide: current_lat, longitude: current_lng}] }
-								 />
+										return <Marker
+											key={i}
+											title={item}
+											name={item}
+											position={{lat: item.latitude, lng: item.longitude}} 
+											onClick={this.onTapMarker.bind(this)}
+										/>
+										
+									})}
+
+
+									<InfoWindow
+										marker={this.state.activeMarker}
+										visible={this.state.showingInfoWindow}>
+											<div>
+											<h2>{this.state.current_emp}</h2>
+											<h3>{this.state.last_visited}</h3>
+											</div>
+									</InfoWindow>
+									
+									 
+
+								</Map> }
 
 						</div>
 						
 					</CardDiv>
 				</div>
 			);
+
+		}else{
+
+			return (
+				<div>
+					
+					{isFind && details !== undefined &&  details.length > 0 && <Alert
+						open={isFound}
+						onViewOnMap={this.onViewOnMap.bind(this)}
+						onOkay={this.onOkay.bind(this)}
+						title={"Last Visited Places"}
+						locations={details}
+						msg={""}
+					/>}
+					
+					<CardDiv title={'User Statistics'}>
+						<div className={classes.mapContainer}>
+							<view className={classes.searchView}>
+								<Select
+									value={selectedUser}
+									onChange={this.handleUserChange}
+									options={users}
+								/>
+							</view>
+
+							{selectedUser !== null && this.displyaDateView()}
+
+							{<Map
+									className={"map"}
+									google={this.props.google}
+									zoom={5}
+									style={  styles.mapSizeBig }
+									onClick={this.mapClicked}
+									center={{ lat: current_lat, lng: current_lng}}
+									>
+										
+									{this.getValidLocations(users, false)}
+
+									{/* {selectedUser !== null ? this.getValidLocations(this.state.locations, true) : this.getValidLocations(users, false)} */}
+									  
+
+									<InfoWindow
+										marker={this.state.activeMarker}
+										visible={this.state.showingInfoWindow}>
+											<div>
+												<h2> Multiple Users Found!</h2>
+												{isArray(this.state.current_emp) ? 
+												(
+													<div>
+														{this.state.current_emp.map(emp => {
+															return (
+																<div>
+																	<h3>{emp.label}</h3>
+																</div>
+															)
+														})}
+													</div>
+												) 
+												:
+												(<div>
+													<h2>{this.state.current_emp}</h2>
+													<h3>{this.state.last_visited}</h3>
+												</div>
+												)}
+											
+											</div>
+									</InfoWindow>
+
+								</Map> }
+
+						</div>
+						
+					</CardDiv>
+				</div>
+			);
+
+		}
+
+
+		
  	}
 
 	//ALERT
 	onDismiss = () => {
+		this.setState({
+			isFind: false
+		})
 		this.props.DismissAlert();
 	};
 
 	onOkay = () => {
-		this.props.DismissAlert();
- 	};
+		this.setState({
+			isFind: false
+		})
+		 this.props.DismissAlert();
+	 };
+	 
+	onViewOnMap = () => {
+		this.setState({
+			isViewMore: true,
+			isFind: false
+		})
+	}
 
 }
 
@@ -310,4 +612,9 @@ const mapToProps = (state) => ({
 	isFound: state.trackingReducer.isFound
 });
 
-export default connect(mapToProps, { GetUsers, GetTrackDetails, DismissAlert })(withStyles(styles)(TrackManager));
+const WrappedContainer = GoogleApiWrapper({
+	apiKey: MAPKEY
+ })(TrackManager);
+
+
+export default connect(mapToProps, { GetUsers, GetTrackDetails, DismissAlert })(withStyles(styles)(WrappedContainer));

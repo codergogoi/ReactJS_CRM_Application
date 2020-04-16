@@ -232,12 +232,12 @@ class RegionManagerTable extends React.Component {
 		this.setState({ order, orderBy });
 	};
 
-	onCloneClick = (offer) => {
-		this.props.onEditItem(offer);
+	onCloneClick = (item) => {
+		this.props.onEditRegionManager(item);
 	};
 
 	handleDelete = (item) => {
-		this.props.onDeleteRegion(item);
+		this.props.onDeleteRegionManager(item);
 	};
 
 	handleChangePage = (event, page) => {
@@ -300,14 +300,6 @@ class RegionManagerTable extends React.Component {
 													onClick={(event) => this.handleDelete(n)}
 												>
 													<DeleteIcon />
-												</IconButton>
-												<IconButton
-													className={classes.button}
-													mini
-													aria-label="Edit"
-													onClick={(event) => this.onCloneClick(n)}
-												>
-													<EditIcon />
 												</IconButton>
 											</TableCell>
 										</TableRow>

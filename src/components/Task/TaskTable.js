@@ -267,6 +267,11 @@ class TaskTable extends React.Component {
 	};
 
 
+	onTapGroupTaskView = (task) => {
+
+		this.props.onTapGroupTask(task);
+	}
+
 	handleChangePage = (event, page) => {
 		this.setState({ page });
 	};
@@ -284,6 +289,9 @@ class TaskTable extends React.Component {
 		}
 	};
 
+	onTapViewDetails = (task) => {
+		this.props.onTapViewDetails(task);
+	}
 	 
 
 	isSelected = (id) => this.state.selected.indexOf(id) !== -1;
@@ -323,6 +331,7 @@ class TaskTable extends React.Component {
 											<TableCell>
 											{ n.title}
 											{n.grouped == true && <Chip
+													onClick={(event) => this.onTapGroupTaskView(n)}
 													label="Group Task"
 													className={classes.chipGroup}
 												/>}
@@ -345,11 +354,10 @@ class TaskTable extends React.Component {
 											 
 											<TableCell>
 												{n.status == 4 && <Chip label="Later Followup" className={classes.chip}  color="default" /> }
-												{n.status == 3 && <Chip label="Completed" className={classes.chip}  color="secondary" /> }
+												{n.status == 3 && <Chip label="Completed" onClick={(event) => this.onTapViewDetails(n)} className={classes.chip}  color="secondary" /> }
 												{n.status == 2 && <Chip label="On Progress" className={classes.chip} color="default" /> }
-												{n.status == 1 && <Chip label="Pending" className={classes.chip} color="primary" /> }
-												{n.status == 0 && <Chip label="Pending" className={classes.chip} color="primary" /> }
-
+												{n.status == 1 && <Chip label="Pending" className={classes.chip} color="default" /> }
+												{n.status == 0 && <Chip label="Pending" className={classes.chip} color="default" /> }
 											</TableCell>
 											<TableCell>
 												<IconButton
@@ -360,14 +368,15 @@ class TaskTable extends React.Component {
 												>
 													<EditIcon />
 												</IconButton>
-												<IconButton
+												{n.grouped == true ? ("") : (<IconButton
 													className={classes.button}
 													mini
 													aria-label="Edit"
 													onClick={(event) => this.onDeleteSDK(n)}
 												>
 													<DeleteIcon />
-												</IconButton>
+												</IconButton>)}
+												
 											</TableCell>
 										</TableRow>
 									);

@@ -58,6 +58,10 @@ class ExpensesManager extends Component {
 		};
 	}
 
+	componentWillReceiveProps(){
+		this.setState({ isAddNew: false, isEdit: false });
+	}
+
 	handleChange = (event, value) => {
 		this.setState({ value });
 	};

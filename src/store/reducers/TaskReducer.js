@@ -6,6 +6,7 @@ const initialState = {
 	cities: [],
 	locations: [],
 	group_clients: [],
+	groups: [],
 };
 
 export default function(state = initialState, action) {
@@ -41,8 +42,12 @@ export default function(state = initialState, action) {
 			return {
 				...state,
 				group_clients: action.payload
-			};		
-
+			};
+		case Actions.VIEW_ALL_GROUP_TASK:
+			return {
+				...state,
+				groups: action.payload
+			};				
 		case Actions.ADD:
 			return {
 				...state,

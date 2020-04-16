@@ -2,6 +2,10 @@ import Actions from './Actions';
 import { BASE_URL } from './AppConst';
 import axios from 'axios';
 
+
+
+
+
 export const GetEmployees = (postData) => (dispatch) => {
 	axios.defaults.baseURL = BASE_URL;
 	axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
@@ -24,6 +28,70 @@ export const GetEmployees = (postData) => (dispatch) => {
 				}else{
 					dispatch({
 						type: Actions.VIEW,
+						payload: []
+					})
+				}
+			}
+
+		)
+		.catch((error) => console.log(' Error Encountered'));
+};
+
+
+
+export const DownloadAttendance = (postData) => (dispatch) => {
+	axios.defaults.baseURL = BASE_URL;
+	axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
+	axios
+		.post('/user/attendance-download', {})
+		.then((res) =>
+
+			{
+				const status = parseInt(res.data.status);
+
+				if (status === 200) {
+					const responseString = JSON.parse(JSON.stringify(res.data));
+					let employee = responseString.data;	
+					dispatch({
+						type: Actions.DOWNLOAD_ATTENDANCE,
+						payload: employee
+					})
+				}else{
+					dispatch({
+						type: Actions.DOWNLOAD_ATTENDANCE,
+						payload: []
+					})
+				}
+			}
+
+		)
+		.catch((error) => console.log(' Error Encountered'));
+};
+
+
+
+export const GetAttendance = (postData) => (dispatch) => {
+	axios.defaults.baseURL = BASE_URL;
+	axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
+	axios
+		.post('/user/attendance', {
+			action: ''
+		})
+		.then((res) =>
+
+			{
+				const status = parseInt(res.data.status);
+
+				if (status === 200) {
+					const responseString = JSON.parse(JSON.stringify(res.data));
+					let employee = responseString.data;					
+					dispatch({
+						type: Actions.VIEW_USER_ATTENDANCE,
+						payload: employee
+					})
+				}else{
+					dispatch({
+						type: Actions.VIEW_USER_ATTENDANCE,
 						payload: []
 					})
 				}

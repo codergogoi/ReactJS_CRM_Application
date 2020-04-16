@@ -3,6 +3,7 @@ import Actions from '../actions/Actions';
 const initialState = {
 	clients: [],
 	regions: [],
+	new_clients: [],
 	isAdded: false,
 };
 
@@ -13,6 +14,11 @@ export default function(state = initialState, action) {
 				...state,
 				clients: action.payload
 			};
+		case Actions.VIEW_NEW_CLIENTS:
+			return {
+				...state,
+				new_clients: action.payload
+			};		
 		case Actions.DELETE:
 			return {
 				...state,

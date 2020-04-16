@@ -1,5 +1,4 @@
 
-
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -14,6 +13,8 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Geocode from "react-geocode";
+import { MAPKEY } from '../../store/actions/AppConst';
 
 import DialogContentText from '@material-ui/core/DialogContentText';
 
@@ -59,10 +60,49 @@ const DialogActions = withStyles(theme => ({
 }))(MuiDialogActions);
 
 class AlertWithData extends React.Component {
+
+  constructor(props){
+    super(props);
+    this.state = {
+
+    }
+
+    Geocode.setApiKey(MAPKEY);
+ 
+    // set response language. Defaults to english.
+    Geocode.setLanguage("en");
+    
+    // set response region. Its optional.
+    // A Geocoding request with region=es (Spain) will return the Spanish city.
+    Geocode.setRegion("es");
+  }
+
+
+  componentWillMount(){
+
+    
+  }
+
+
+  onCodeToAddress = (lat, lng, i) => {
+
+    Geocode.fromLatLng(lat, lng).then(
+      response => {
+        const address = response.results[0].formatted_address;
+        this.setState({[`place_${i}`]: address});
+      },
+      error => {
+        console.error(error);
+      }
+    );
+
+  }
+
+
 	render() {
 
-		const { locations } = this.props;
-
+    const { locations } = this.props;
+  
 		return (
 			<div>
 				<Dialog
@@ -75,26 +115,31 @@ class AlertWithData extends React.Component {
 					
 					<DialogContent>
 						
-					<Typography gutterBottom>
+            <Typography gutterBottom>
 
-						{locations.map((item, i) => {
-							
-							return (
-								<ListItem button>
-									<ListItemText primary={`${item.visited} - Date: ${item.date}`} />
-							  	</ListItem>
-							);
-						})}
-						
+              {locations.map((item, i) => {
+                return (
+                  <ListItem button>
+                      <ListItemText primary={`${item.visited}`} secondary={this.state[`place_${i}`]}  />
+                      {this.state[`place_${i}`] === undefined && this.onCodeToAddress(item.latitude, item.longitude, i)}
+                  </ListItem>
+                );
+              })}
+              
 						</Typography>
-
 						 
 					</DialogContent>
 
-					<DialogActions>						
+					<DialogActions>		
+
+            <Button onClick={this.props.onViewOnMap} color="primary" >
+							View on Map
+						</Button>
+
 						<Button onClick={this.props.onOkay} color="primary" autoFocus>
 							Close
 						</Button>
+            
 					</DialogActions>
 				</Dialog>
 			</div>

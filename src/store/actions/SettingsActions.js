@@ -93,18 +93,17 @@ export const GetManagers = (postData) => (dispatch) => {
 
 export const NewRegion= (postData) => (dispatch) => {
 
-	const { region_name,
-        description,
-        emp_id  } = postData;
+	const {  region_id, region_manager, login_email, login_password   } = postData;
 		
 		axios.defaults.baseURL = BASE_URL;
 		axios.defaults.headers.post['Content-Type'] = 'application/json';
 		axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
 		axios
 			.post('/settings/add-region', {
-				region_name: region_name,
-				description: description,
-				emp_id: emp_id 
+				region_id: region_id, 
+				region_manager: region_manager, 
+				login_email: login_email,
+				login_password: login_password 
 			})
 			.then((res) => {
 				const status = parseInt(res.data.status);
@@ -112,12 +111,12 @@ export const NewRegion= (postData) => (dispatch) => {
 					const responseString = JSON.parse(JSON.stringify(res.data));
 					let regions = responseString.data;
 					dispatch({
-						type: Actions.ADD_REGION,
+						type: Actions.ADD_REGION_MANAGER,
 						payload: regions
 					})
 				}else{
 					dispatch({
-						type: Actions.VIEW_REGIONS,
+						type: Actions.ADD_REGION_MANAGER,
 						payload: []
 					})
 				}
@@ -171,14 +170,14 @@ export const RemoveRegion = (postData) => (dispatch) => {
 				const status = parseInt(res.data.status);
 				if (status === 200) {
 					const responseString = JSON.parse(JSON.stringify(res.data));
-					let regions = responseString.data;
+					let managers = responseString.data;
 					dispatch({
-						type: Actions.VIEW_REGIONS,
-						payload: regions
+						type: Actions.VIEW_MANAGERS,
+						payload: managers
 					})
 				}else{
 					dispatch({
-						type: Actions.VIEW_REGIONS,
+						type: Actions.VIEW_MANAGERS,
 						payload: []
 					})
 				}

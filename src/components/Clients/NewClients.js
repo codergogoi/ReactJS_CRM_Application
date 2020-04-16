@@ -19,17 +19,16 @@ import moment from 'moment';
 import Avatar from '@material-ui/core/Avatar';
 import tiny from '@material-ui/core/colors/green';
 import little from '@material-ui/core/colors/deepOrange';
+
 //Icons
-import CopyIcon from '@material-ui/icons/ContentCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import EditIcon from '@material-ui/icons/Edit';
 
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
-import EditIcon from '@material-ui/icons/Edit';
-
 
 function getSorting(order, orderBy) {
 	return order === 'desc'
@@ -38,16 +37,17 @@ function getSorting(order, orderBy) {
 }
 
 const columnData = [
-	{ id: 'emp_id', numeric: false, disablePadding: false, label: 'ID' },
-	{ id: 'name', numeric: false, disablePadding: false, label: 'Name' },
-	{ id: 'description', numeric: false, disablePadding: false, label: 'Designation' },
-	{ id: 'region', numeric: false, disablePadding: false, label: 'Region' },
-	{ id: 'mobile', numeric: false, disablePadding: false, label: 'Mobile No' },
-	{ id: 'email', numeric: false, disablePadding: false, label: 'Email ID' },
+	{ id: 'client_name', numeric: false, disablePadding: false, label: 'Client Name' },
+	{ id: 'address', numeric: false, disablePadding: false, label: 'Address' },
+	{ id: 'contact_person', numeric: false, disablePadding: true, label: 'Contact Person' },
+	{ id: 'email_id', numeric: false, disablePadding: true, label: 'Email Id' },
+	{ id: 'mobile', numeric: false, disablePadding: true, label: 'Mobile Number' },
+	{ id: 'phone', numeric: false, disablePadding: false, label: 'Phone Number' },
+	{ id: 'emp', numeric: false, disablePadding: false, label: 'Reffered by' },
 	{ id: 'more', numeric: false, disablePadding: false, label: 'Action' }
 ];
 
-class EmpTableHeader extends React.Component {
+class NewClientTableHeader extends React.Component {
 	createSortHandler = (property) => (event) => {
 		this.props.onRequestSort(event, property);
 	};
@@ -88,7 +88,7 @@ class EmpTableHeader extends React.Component {
 	}
 }
 
-EmpTableHeader.propTypes = {
+NewClientTableHeader.propTypes = {
 	numSelected: PropTypes.number.isRequired,
 	onRequestSort: PropTypes.func.isRequired,
 	onSelectAllClick: PropTypes.func.isRequired,
@@ -215,21 +215,24 @@ const styles = (theme) => ({
 	}
 });
 
-class EmpTable extends React.Component {
+class NewClientTable extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			order: 'desc',
 			orderBy: 'ecb_id',
 			selected: [],
-			paymentModes: [],
+			clients: [],
 			page: 0,
 			rowsPerPage: 5
 		};
 	}
 
 	componentWillMount() {
-		
+		this.setState({
+			clients: this.props.data
+		});
+		console.log('Component will mount ' + JSON.stringify(this.state));
 	}
 
 	handleRequestSort = (event, property) => {
@@ -247,12 +250,12 @@ class EmpTable extends React.Component {
 		this.props.onEditUser(employee);
 	};
 
-	onTapDeleteEmp = (emp) => {
-		this.props.onDeleteEmp(emp);
+	onDeletePaymentMode = (mode) => {
+		this.props.onDeletePaymentMode(mode);
 	};
 
-	onTapEditEmp = (emp) => {
-		this.props.onEditEmp(emp);
+	onEditClient = (client) => {
+		this.props.onEditClient(client);
 	}
 
 	handleChangePage = (event, page) => {
@@ -271,72 +274,66 @@ class EmpTable extends React.Component {
 			return <Avatar className={classes.pendingUser}>P</Avatar>;
 		}
 	};
-
-	handleChecked = (mode) => (event) => {
-		mode.status = mode.status !== 0 ? 0 : 1;
-		this.props.onEditPaymentMode(mode);
-	};
-
+ 
 	isSelected = (id) => this.state.selected.indexOf(id) !== -1;
 
 	selectedMode = (id) => {
-		const { mode } = this.state.paymentModes[id];
+		const { mode } = this.state.clients[id];
 		return mode.value;
 	};
 
 	render() {
-		const { classes, data, access } = this.props;
+		const { classes, clients } = this.props;
 		const { order, orderBy, selected, rowsPerPage, page } = this.state;
 
-		const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+		const emptyRows = rowsPerPage - Math.min(rowsPerPage, clients.length - page * rowsPerPage);
 
 		return (
 			<Paper className={classes.root}>
 				<div className={classes.tableWrapper}>
 					<Table className={classes.table} aria-labelledby="tableTitle">
-						<EmpTableHeader
+						<NewClientTableHeader
 							numSelected={selected.length}
 							order={order}
 							orderBy={orderBy}
 							onSelectAllClick={this.handleSelectAllClick}
 							onRequestSort={this.handleRequestSort}
-							rowCount={data.length}
+							rowCount={clients.length}
 						/>
-
-						 
 						<TableBody>
-							{data
+							{clients
 								.sort(getSorting(order, orderBy))
 								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 								.map((n) => {
 									return (
-										<TableRow hover role="checkbox" tabIndex={-1} key={n.id}>
-											<TableCell>{n.emp_id}</TableCell>
-											<TableCell>{n.name}</TableCell>
-											<TableCell>{n.description}</TableCell>
-											<TableCell>{n.region}</TableCell>
-											<TableCell>{n.mobile}</TableCell>
-											<TableCell>{n.email}</TableCell>
+									<TableRow hover role="checkbox" tabIndex={-1} key={n.id}>
+											<TableCell>{n.client_name}</TableCell>
+											<TableCell>{n.address}</TableCell>
 											<TableCell>
-												{access.edit_user && 
+												{n.contact_person}
+											</TableCell>
+											<TableCell>
+												{n.email}
+											</TableCell>
+											<TableCell>
+												{n.mobile}
+											</TableCell>
+                                            <TableCell>
+												{n.phone}
+											</TableCell>
+											<TableCell>
+												{n.emp}
+											</TableCell>
+											<TableCell>
+										 
 												<IconButton
 													className={classes.button}
 													mini
 													aria-label="Edit"
-													onClick={(event) => this.onTapEditEmp(n)}
-												>
-													<EditIcon />
-												</IconButton>
-												}
-												{access.delete_user && 
-												<IconButton
-													className={classes.button}
-													mini
-													aria-label="Edit"
-													onClick={(event) => this.onTapDeleteEmp(n)}
+													onClick={(event) => this.onDeletePaymentMode(n)}
 												>
 													<DeleteIcon />
-												</IconButton>}
+												</IconButton>
 											</TableCell>
 										</TableRow>
 									);
@@ -351,7 +348,7 @@ class EmpTable extends React.Component {
 				</div>
 				<TablePagination
 					component="div"
-					count={data.length}
+					count={clients.length}
 					rowsPerPage={rowsPerPage}
 					page={page}
 					backIconButtonProps={{
@@ -361,7 +358,6 @@ class EmpTable extends React.Component {
 						'aria-label': 'Next Page'
 					}}
 					onChangePage={this.handleChangePage}
-					a
 					onChangeRowsPerPage={this.handleChangeRowsPerPage}
 				/>
 			</Paper>
@@ -369,8 +365,8 @@ class EmpTable extends React.Component {
 	}
 }
 
-EmpTable.propTypes = {
+NewClientTable.propTypes = {
 	classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(EmpTable);
+export default withStyles(styles)(NewClientTable);

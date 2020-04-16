@@ -232,34 +232,6 @@ class AddNotification extends React.Component {
 
 	sendFile = () => {
 		const { emp_id } = this.state;
-
-		/*
-		axios.defaults.baseURL = baseURL;
-		axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
-		const data = new FormData();
-		data.append('file', this.state.selectedFile, this.state.selectedFile.name);
-		const config = {
-			headers: {
-				'content-type': 'multipart/form-data'
-			}
-		};
-		axios.post('upload.php?emp_id=' + emp_id, data, config).then((res) => {
-			const response = JSON.parse(JSON.stringify(res.data));
-			if (response.status === 200) {
-				this.setState({
-					showAlert: true,
-					msg: 'Profile Picture Updated Successfully!',
-					title: 'Update Profile Picture'
-				});
-			} else {
-				this.setState({
-					showAlert: true,
-					msg: 'Failed to Update Profile Picture!',
-					title: 'Update Profile Picture'
-				});
-			}
-		});
-		*/
 	};
 
 	//Add Notification

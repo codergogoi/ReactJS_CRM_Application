@@ -308,11 +308,45 @@ class Dashboard extends Component {
 			});
 	};
 
+	onViewAccessLinks = (access) => {
+
+		let linkAccess = "";
+		
+		
+
+	}
+
+
+	onViewAccessRoutes = (access) => {
+
+		
+
+
+	}
+
 
 	// render UI
 	render() {
 		const { classes } = this.props;
 		const { anchorEl, country_flag, user_type, country } = this.state;
+
+		const { access  } =  this.props.currentUser;
+
+			/*
+			"track": false,
+            "user_add": true,
+            "user_view": true,
+            "task_add": false,
+            "task_view": false,
+            "report": true,
+            "view_attendance": true,
+            "download_attendance": true,
+            "edit_user": true,
+            "delete_user": true,
+            "accounts": false,
+            "is_admin": false
+			*/		
+
 		return (
 			<Router>
 				<div className={classes.root}>
@@ -325,7 +359,7 @@ class Dashboard extends Component {
 								<MenuIcon />
 							</IconButton>
 							<Typography variant="title" color="inherit" className={classes.flex}>
-								Sales Companion : Beta 1.0.1
+								Sales Companion : 1.0.1
 							</Typography>
 							<Avatar
 								alt="country"
@@ -349,11 +383,7 @@ class Dashboard extends Component {
 									open={Boolean(anchorEl)}
 									onClose={this.handleClose}
 								>
-									{/* <MenuItem onClick={this.onSwitchCountry.bind(this)}>
-										<Link className="linkName" to={`${process.env.PUBLIC_URL}/dashboard`}>
-											Switch Country
-										</Link>
-									</MenuItem> */}
+								
 									
 									<MenuItem onClick={this.showAlert}>Logout</MenuItem>
 								</Menu>
@@ -393,52 +423,58 @@ class Dashboard extends Component {
 								</ListItem>
 							</Link>
 						</List>
-
-						<List to={`${process.env.PUBLIC_URL}/track`}>
+						
+						{access.track  &&  <List to={`${process.env.PUBLIC_URL}/track`}>
 							<Link className="linkName" to={`${process.env.PUBLIC_URL}/track`}>
 								<ListItem button>
 									<ListItemIcon>
 										<TrackingIcon />
 									</ListItemIcon>
-									<ListItemText primary="Track User" />
+									<ListItemText primary="User Statistic" />
 								</ListItem>
 							</Link>
-						</List>
-						 
-						<List to={`${process.env.PUBLIC_URL}/task`}>
-							<Link className="linkName" to={`${process.env.PUBLIC_URL}/task`}>
-								<ListItem button>
-									<ListItemIcon>
-										<TaskIcon />
-									</ListItemIcon>
-									<ListItemText primary="Task" />
-								</ListItem>
-							</Link>
-						</List>
+						</List> }
+						
+						{access.task_view && 
+							<div>
+								<List to={`${process.env.PUBLIC_URL}/task`}>
+								<Link className="linkName" to={`${process.env.PUBLIC_URL}/task`}>
+									<ListItem button>
+										<ListItemIcon>
+											<TaskIcon />
+										</ListItemIcon>
+										<ListItemText primary="Task" />
+									</ListItem>
+								</Link>
+							</List>
 
-						<List to={`${process.env.PUBLIC_URL}/cliens`}>
-							<Link className="linkName" to={`${process.env.PUBLIC_URL}/clients`}>
-								<ListItem button>
-									<ListItemIcon>
-										<ClientIcon />
-									</ListItemIcon>
-									<ListItemText primary="Clients" />
-								</ListItem>
-							</Link>
-						</List>
+								<List to={`${process.env.PUBLIC_URL}/cliens`}>
+									<Link className="linkName" to={`${process.env.PUBLIC_URL}/clients`}>
+										<ListItem button>
+											<ListItemIcon>
+												<ClientIcon />
+											</ListItemIcon>
+											<ListItemText primary="Clients" />
+										</ListItem>
+									</Link>
+							</List>
 
-						<List>
+							</div>
+						 }
+
+						{access.user_view && <List>
 							<Link className="linkName" to={`${process.env.PUBLIC_URL}/employee`}>
-								<ListItem button>
-									<ListItemIcon>
-										<EmployeeIcon />
-									</ListItemIcon>
-									<ListItemText primary="Employee" />
-								</ListItem>
-							</Link>
-						</List>
+									<ListItem button>
+										<ListItemIcon>
+											<EmployeeIcon />
+										</ListItemIcon>
+										<ListItemText primary="Employee" />
+									</ListItem>
+								</Link>
+							</List>
+						}
  
-						<List>
+						{access.report && <List>
 							<Link className="linkName" to={`${process.env.PUBLIC_URL}/reports`}>
 								<ListItem button>
 									<ListItemIcon>
@@ -448,8 +484,9 @@ class Dashboard extends Component {
 								</ListItem>
 							</Link>
 						</List>
+						}
 
-						<List>
+						{access.accounts && <List>
 							<Link className="linkName" to={`${process.env.PUBLIC_URL}/expenses`}>
 								<ListItem button>
 									<ListItemIcon>
@@ -458,10 +495,10 @@ class Dashboard extends Component {
 									<ListItemText primary="Expenses" />
 								</ListItem>
 							</Link>
-						</List>
+						</List>}
 
 						
-						<List>
+						{access.is_admin && <List>
 							<Link className="linkName" to={`${process.env.PUBLIC_URL}/settings`}>
 								<ListItem button>
 									<ListItemIcon>
@@ -471,6 +508,7 @@ class Dashboard extends Component {
 								</ListItem>
 							</Link>
 						</List>
+						}
 
 
 						<List onClick={this.showAlert}>
@@ -487,68 +525,69 @@ class Dashboard extends Component {
 						{this.AlertModel()}
 						{this.countrySelection()}
 						<Switch>
-							<Route
+							{access.task_view && <Route
 								path={`${process.env.PUBLIC_URL}/task`}
 								render={(props) => (
 									<TaskManager user_type={user_type} onLoadMenu={this.onCollapseMenu} {...props} />
 								)}
-							/>
+							/>}
 
-							<Route
+							{access.track  && 	<Route
 								path={`${process.env.PUBLIC_URL}/track`}
 								render={(props) => (
 									<TrackManager user_type={user_type} onLoadMenu={this.onCollapseMenu} {...props} />
 								)}
-							/>
+							/>}
 
-							<Route
+							{access.task_view && <Route
 								path={`${process.env.PUBLIC_URL}/clients`}
 								render={(props) => (
 									<ClientManager user_type={user_type} onLoadMenu={this.onCollapseMenu} {...props} />
 								)}
-							/>
+							/>}
 
 						 
-							<Route
+							{access.user_view && <Route
 								path={`${process.env.PUBLIC_URL}/employee`}
 								render={(props) => (
-									<EmpManager user_type={user_type} onLoadMenu={this.onCollapseMenu} {...props} />
+									<EmpManager user_type={user_type} onLoadMenu={this.onCollapseMenu} access={access} {...props} />
 								)}
-							/>
+							/>}
  
 
-							<Route
+ 							{access.report && <Route
 								path={`${process.env.PUBLIC_URL}/reports`}
 								render={(props) => (
 									<ReportManager user_type={user_type} onLoadMenu={this.onCollapseMenu} {...props} />
 								)}
-							/>
+							/> }
 
-							<Route
+							{access.user_view && <Route
 								path={`${process.env.PUBLIC_URL}/view-users`}
 								render={(props) => (
 									<Users user_type={user_type} onLoadMenu={this.onCollapseMenu} {...props} />
 								)}
-							/>
+							/>}
 							
-							<Route
+							{access.accounts && <Route
 								path={`${process.env.PUBLIC_URL}/expenses`}
 								render={(props) => (
 									<ExpensesManager user_type={user_type} onLoadMenu={this.onCollapseMenu} {...props} />
 								)}
-							/>
+							/>}
 
+							{access.is_admin &&
 							<Route
 								path={`${process.env.PUBLIC_URL}/settings`}
 								render={(props) => (
 									<SettingsManager user_type={user_type} onLoadMenu={this.onCollapseMenu} {...props} />
 								)}
-							/>
+								/> }
 
-							<Route
+							 <Route
 								path="/"
 								render={(props) => (
-									<Applications user_type={user_type} onLoadMenu={this.onCollapseMenu} {...props} />
+									<Applications user_type={user_type} onLoadMenu={this.onCollapseMenu} access={access} {...props} />
 								)}
 							/>
 						</Switch>

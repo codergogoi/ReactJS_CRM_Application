@@ -23,13 +23,13 @@ import little from '@material-ui/core/colors/deepOrange';
 import CopyIcon from '@material-ui/icons/ContentCopy';
 import DeleteIcon from '@material-ui/icons/Delete';
 import FilterListIcon from '@material-ui/icons/FilterList';
+import EditIcon from '@material-ui/icons/Edit';
 
 import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
-import EditIcon from '@material-ui/icons/Edit';
-
+import Chip from '@material-ui/core/Chip';
 
 function getSorting(order, orderBy) {
 	return order === 'desc'
@@ -38,16 +38,16 @@ function getSorting(order, orderBy) {
 }
 
 const columnData = [
-	{ id: 'emp_id', numeric: false, disablePadding: false, label: 'ID' },
-	{ id: 'name', numeric: false, disablePadding: false, label: 'Name' },
-	{ id: 'description', numeric: false, disablePadding: false, label: 'Designation' },
-	{ id: 'region', numeric: false, disablePadding: false, label: 'Region' },
-	{ id: 'mobile', numeric: false, disablePadding: false, label: 'Mobile No' },
-	{ id: 'email', numeric: false, disablePadding: false, label: 'Email ID' },
+	{ id: 'title', numeric: false, disablePadding: false, label: 'Title' },
+	{ id: 'deadline', numeric: false, disablePadding: false, label: 'Completion Date' },
+	{ id: 'client_name', numeric: false, disablePadding: false, label: 'Client Name' },
+	{ id: 'contact_person', numeric: false, disablePadding: false, label: 'Contact Person' },
+	{ id: 'emp_name', numeric: false, disablePadding: false, label: 'Assigned To' },
+	{ id: 'status', numeric: false, disablePadding: false, label: 'Status' },
 	{ id: 'more', numeric: false, disablePadding: false, label: 'Action' }
 ];
 
-class EmpTableHeader extends React.Component {
+class ViewGroupTaskTableHeader extends React.Component {
 	createSortHandler = (property) => (event) => {
 		this.props.onRequestSort(event, property);
 	};
@@ -88,7 +88,7 @@ class EmpTableHeader extends React.Component {
 	}
 }
 
-EmpTableHeader.propTypes = {
+ViewGroupTaskTableHeader.propTypes = {
 	numSelected: PropTypes.number.isRequired,
 	onRequestSort: PropTypes.func.isRequired,
 	onSelectAllClick: PropTypes.func.isRequired,
@@ -212,24 +212,35 @@ const styles = (theme) => ({
 	},
 	tableWrapper: {
 		overflowX: 'auto'
+	},
+	chipGroup:{
+		margin: 5,
+		backgroundColor: '#AEB6BF'
+	},
+	chipSelf:{
+		margin: 5,
+		backgroundColor: '#DC7633'
 	}
 });
 
-class EmpTable extends React.Component {
+class ViewGroupTaskTable extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			order: 'desc',
 			orderBy: 'ecb_id',
 			selected: [],
-			paymentModes: [],
+			groupTaskData: [],
 			page: 0,
 			rowsPerPage: 5
 		};
 	}
 
 	componentWillMount() {
-		
+		this.setState({
+			groupTaskData: this.props.data
+		});
+		console.log('Component will mount ' + JSON.stringify(this.state));
 	}
 
 	handleRequestSort = (event, property) => {
@@ -247,13 +258,13 @@ class EmpTable extends React.Component {
 		this.props.onEditUser(employee);
 	};
 
-	onTapDeleteEmp = (emp) => {
-		this.props.onDeleteEmp(emp);
-	};
+	onDeleteSDK = (sdk) => {
+		
+		console.log(JSON.stringify(sdk));
 
-	onTapEditEmp = (emp) => {
-		this.props.onEditEmp(emp);
-	}
+		this.props.onDeleteSDK(sdk);
+	};
+ 
 
 	handleChangePage = (event, page) => {
 		this.setState({ page });
@@ -272,71 +283,80 @@ class EmpTable extends React.Component {
 		}
 	};
 
-	handleChecked = (mode) => (event) => {
-		mode.status = mode.status !== 0 ? 0 : 1;
-		this.props.onEditPaymentMode(mode);
-	};
 
+	onTapViewDetails = (task) => {
+		this.props.onTapViewDetails(task);
+	}
+	 
 	isSelected = (id) => this.state.selected.indexOf(id) !== -1;
 
 	selectedMode = (id) => {
-		const { mode } = this.state.paymentModes[id];
+		const { mode } = this.state.groupTaskData[id];
 		return mode.value;
 	};
 
+
+	onTapDelete = (item) => {
+		this.props.onDeleteGroupTask(item);
+	}
+
 	render() {
-		const { classes, data, access } = this.props;
+		const { classes, groupTaskData } = this.props;
 		const { order, orderBy, selected, rowsPerPage, page } = this.state;
 
-		const emptyRows = rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
+		const emptyRows = rowsPerPage - Math.min(rowsPerPage, groupTaskData.length - page * rowsPerPage);
 
 		return (
 			<Paper className={classes.root}>
 				<div className={classes.tableWrapper}>
 					<Table className={classes.table} aria-labelledby="tableTitle">
-						<EmpTableHeader
+						<ViewGroupTaskTableHeader
 							numSelected={selected.length}
 							order={order}
 							orderBy={orderBy}
 							onSelectAllClick={this.handleSelectAllClick}
 							onRequestSort={this.handleRequestSort}
-							rowCount={data.length}
+							rowCount={groupTaskData.length}
 						/>
 
-						 
 						<TableBody>
-							{data
+							{groupTaskData
 								.sort(getSorting(order, orderBy))
 								.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
 								.map((n) => {
 									return (
+ 
 										<TableRow hover role="checkbox" tabIndex={-1} key={n.id}>
-											<TableCell>{n.emp_id}</TableCell>
-											<TableCell>{n.name}</TableCell>
-											<TableCell>{n.description}</TableCell>
-											<TableCell>{n.region}</TableCell>
-											<TableCell>{n.mobile}</TableCell>
-											<TableCell>{n.email}</TableCell>
 											<TableCell>
-												{access.edit_user && 
+											{ n.title}
+											</TableCell>
+											<TableCell>{moment(n.deadline).format('Do MMM YYYY') }</TableCell>
+											<TableCell>
+												{n.client_name}
+											</TableCell>
+											<TableCell>
+												{n.contact_person}
+											</TableCell>
+											<TableCell>
+												{n.assigned_emp}
+											</TableCell>
+											<TableCell>
+												{n.status == 4 && <Chip label="Later Followup" className={classes.chip}  color="default" /> }
+												{n.status == 3 && <Chip label="Completed" onClick={(event) => this.onTapViewDetails(n)} className={classes.chip}  color="secondary" /> }
+												{n.status == 2 && <Chip label="On Progress" className={classes.chip} color="default" /> }
+												{n.status == 1 && <Chip label="Pending" className={classes.chip} color="primary" /> }
+												{n.status == 0 && <Chip label="Pending" className={classes.chip} color="primary" /> }
+
+											</TableCell>
+											<TableCell>
 												<IconButton
 													className={classes.button}
 													mini
 													aria-label="Edit"
-													onClick={(event) => this.onTapEditEmp(n)}
-												>
-													<EditIcon />
-												</IconButton>
-												}
-												{access.delete_user && 
-												<IconButton
-													className={classes.button}
-													mini
-													aria-label="Edit"
-													onClick={(event) => this.onTapDeleteEmp(n)}
+													onClick={(event) => this.onTapDelete(n)}
 												>
 													<DeleteIcon />
-												</IconButton>}
+												</IconButton>
 											</TableCell>
 										</TableRow>
 									);
@@ -351,7 +371,7 @@ class EmpTable extends React.Component {
 				</div>
 				<TablePagination
 					component="div"
-					count={data.length}
+					count={groupTaskData.length}
 					rowsPerPage={rowsPerPage}
 					page={page}
 					backIconButtonProps={{
@@ -361,7 +381,6 @@ class EmpTable extends React.Component {
 						'aria-label': 'Next Page'
 					}}
 					onChangePage={this.handleChangePage}
-					a
 					onChangeRowsPerPage={this.handleChangeRowsPerPage}
 				/>
 			</Paper>
@@ -369,8 +388,8 @@ class EmpTable extends React.Component {
 	}
 }
 
-EmpTable.propTypes = {
+ViewGroupTaskTable.propTypes = {
 	classes: PropTypes.object.isRequired
 };
 
-export default withStyles(styles)(EmpTable);
+export default withStyles(styles)(ViewGroupTaskTable);

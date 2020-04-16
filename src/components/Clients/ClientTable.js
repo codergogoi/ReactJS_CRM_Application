@@ -45,7 +45,7 @@ const columnData = [
 	{ id: 'location', numeric: false, disablePadding: true, label: 'Location' },
 	{ id: 'mobile', numeric: false, disablePadding: false, label: 'Contact Number' },
 	{ id: 'email', numeric: false, disablePadding: false, label: 'Email ID' },
-	{ id: 'more', numeric: false, disablePadding: false, label: 'Action' }
+	// { id: 'more', numeric: false, disablePadding: false, label: 'Action' }
 ];
 
 class ClientTableHeader extends React.Component {
@@ -332,25 +332,7 @@ class ClientTable extends React.Component {
 											<TableCell>
 												 {n.email}
 											</TableCell>
-											<TableCell>
-											<IconButton
-													className={classes.button}
-													mini
-													aria-label="Edit"
-													onClick={(event) => this.onEditClient(n)}
-												>
-													<EditIcon />
-												</IconButton>
-
-												<IconButton
-													className={classes.button}
-													mini
-													aria-label="Edit"
-													onClick={(event) => this.onDeletePaymentMode(n)}
-												>
-													<DeleteIcon />
-												</IconButton>
-											</TableCell>
+										
 										</TableRow>
 									);
 								})}

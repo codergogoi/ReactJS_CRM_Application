@@ -12,7 +12,7 @@ import Alert from '../Common/Alert';
 import EmployeeIcon from '@material-ui/icons/SupervisorAccount';
 
 
-import { GetManagers } from '../../store/actions/SettingsActions';
+import { GetManagers, RemoveRegion } from '../../store/actions/SettingsActions';
 import { connect } from 'react-redux';
 import { NativeSelect } from '@material-ui/core';
 import Tabs from '@material-ui/core/Tabs';
@@ -109,6 +109,8 @@ class AdminSettings extends React.Component {
 		super(props);
 		this.state = {
 				value: 0,
+				id: 0,
+				isDelete: false,
 		};
 	}
 
@@ -149,6 +151,9 @@ class AdminSettings extends React.Component {
 	//ALERT
 	onDismiss = () => {
 		
+		this.setState({
+			isDelete: false
+		});
 		this.props.DismissAlert();
 
 		if(this.props.isEdit){
@@ -158,24 +163,61 @@ class AdminSettings extends React.Component {
 
 	onOkay = () => {
 		 
-		this.props.DismissAlert();
 		if(this.props.isEdit){
 			this.props.onTapBack();
 		}
+
+		this.props.DismissAlert();
+
 	};
 
 	onTapBack = () => {
 		this.props.onTapBack();
 	};
  
- 
-  
 	onOkayForError = () =>{
 		this.setState({ showAlert: false });
+		if(this.state.isDelete){
+			this.onExecuteDeleteCommand();
+		}
+
 	}
 
- 
- 
+	onCancelForError = () =>{
+		this.setState({ showAlert: false });
+		
+
+	}
+
+	onEditRegionManager = (item) => {
+		//onEditRegionManager
+
+		console.log('On Edit regin Manager'+ JSON.stringify(item));
+		const { id } = item;
+	}
+
+	onDeleteRegionManager = (item) => {
+		//onDelete Region Manager
+		console.log('On Delete Region Manager'+ JSON.stringify(item));
+		const { id } = item;
+		this.setState({
+			isDelete: true,
+			id: id,
+			showAlert: true,
+			msg: 'Are you sure to delete the selected Employee?',
+			title: 'Delete Confirmation!'
+		});
+	} 
+  
+
+	onExecuteDeleteCommand = () => {
+		this.setState({ isDelete: false});
+		const { id } = this.state;
+		this.props.RemoveRegion({ id });
+		console.log('Working with this id '+ id)
+	}
+
+
 	render() {
 		const { classes, managers } = this.props;
 		const { showAlert, title, msg , value } = this.state;
@@ -194,7 +236,7 @@ class AdminSettings extends React.Component {
 
 				<Alert
 					open={showAlert}
-					onCancel={this.onOkayForError.bind(this)}
+					onCancel={this.onCancelForError.bind(this)}
 					onOkay={this.onOkayForError.bind(this)}
 					title={title}
 					msg={msg}
@@ -216,9 +258,11 @@ class AdminSettings extends React.Component {
 
 								{value === 0 && (
 								<TabContainer>
-									{managers !== undefined && (<RegionManagerTable
-                                       
-                                        data={managers}
+									{managers !== undefined && 
+									(<RegionManagerTable
+										data={managers}
+										onEditRegionManager={this.onEditRegionManager.bind(this)}
+										onDeleteRegionManager={this.onDeleteRegionManager.bind(this)}
                                     />)}
 								</TabContainer>
 								)}
@@ -256,5 +300,6 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, { 
-	 GetManagers
+	 GetManagers,
+	 RemoveRegion
  }) (withStyles(styles)(AdminSettings));

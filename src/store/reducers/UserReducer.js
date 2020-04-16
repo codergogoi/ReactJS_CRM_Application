@@ -2,7 +2,8 @@ import Actions from '../actions/Actions';
 
 const initialState = {
 	users: [],
-	isAdded: false
+	isAdded: false,
+	role: ''
 };
 
 export default function(state = initialState, action) {
@@ -10,7 +11,9 @@ export default function(state = initialState, action) {
 		case Actions.LOGIN:
 			return {
 				...state,
-				users: action.payload
+				users: action.payload,
+				role: action.payload.role
+
 			};
 		
 		case Actions.VIEW:

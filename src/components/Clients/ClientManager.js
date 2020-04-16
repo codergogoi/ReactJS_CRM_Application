@@ -4,22 +4,20 @@ import { withStyles } from '@material-ui/core/styles';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
 
 // Icons
 import EmployeeIcon from '@material-ui/icons/SupervisorAccount';
-import AddOffersIcon from '@material-ui/icons/CardGiftcard';
-import SaveIcon from '@material-ui/icons/Save';
 
 import Table from './ClientTable';
 import Alert from '../Common/Alert';
+import NewClientsTable from './NewClients';
 
 //App Classes
 import CardDiv from '../Common/CardDiv';
 import AddClient from './AddClient';
 
 import { connect } from 'react-redux';
-import { GetClients, RemoveClient } from '../../store/actions/ClientActions';
+import { GetClients, GetNewClients, RemoveClient } from '../../store/actions/ClientActions';
 
 function TabContainer(props) {
 	return (
@@ -70,20 +68,17 @@ class ClientManager extends Component {
 
 	handleChange = (event, value) => {
 		this.setState({ value });
+
 	};
 
 	componentWillMount() {
 		this.fetchClients();
-
-
-		
 	}
 
 	fetchClients = () => {
 		this.props.GetClients(''); // set Currency
+		this.props.GetNewClients('');
 	};
-
-	 
 
 	onTapSaveChanges = () => {
 		this.setState({
@@ -109,7 +104,6 @@ class ClientManager extends Component {
 		this.setState({
 			paymentModes: modes
 		});
-		// this.props.UpdateRouting(mode);
 	}
 
 
@@ -128,7 +122,7 @@ class ClientManager extends Component {
 		this.setState({
 			id: id,
 			showAlert: true,
-			msg: 'Are you sure to delete the selected Payment Mode?',
+			msg: 'Are you sure to delete the selected Client?',
 			title: 'Delete Confirmation!'
 		});
 	}
@@ -139,7 +133,7 @@ class ClientManager extends Component {
 	}
 
 	render() {
-		const { classes, clients } = this.props;
+		const { classes, clients, new_clients } = this.props;
 		const { value, isAddNew, showAlert, title, msg, isEdit, current_client } = this.state;
  
 		if (isAddNew) {
@@ -160,15 +154,41 @@ class ClientManager extends Component {
 					/>
 
 					<CardDiv title={'Manage Clients'} isAdd={false} onTapAdd={this.onTapRegister.bind(this)}>
+						 
+						<Tabs
+							value={value}
+							onChange={this.handleChange}
+							scrollable
+							scrollButtons="on"
+							indicatorColor="secondary"
+							textColor="secondary"
+						>
+							<Tab label="New Clients" icon={<EmployeeIcon />} />							
+							<Tab label="Clients" icon={<EmployeeIcon />} />
+
+						</Tabs>
+
 						{value === 0 && (
-							<div>
+							<TabContainer>
+								{new_clients !== undefined && <NewClientsTable
+									onEditClient={this.onEditClient.bind(this)}
+									onDeletePaymentMode={this.onDeletePaymentMode.bind(this)}
+									clients={new_clients}
+								/>}
+								
+							</TabContainer>
+						)}
+
+						{value === 1 && (
+							<TabContainer>
 								<Table
 									onEditClient={this.onEditClient.bind(this)}
 									onDeletePaymentMode={this.onDeletePaymentMode.bind(this)}
 									paymentModes={clients}
 								/>
-							</div>
+							</TabContainer>
 						)}
+
 					</CardDiv>
 				</div>
 			);
@@ -192,7 +212,8 @@ ClientManager.propTypes = {
 
 const mapToProps = (state) => ({
 	clients: state.clientReducer.clients,
+	new_clients: state.clientReducer.new_clients,
 	isAddNew: state.clientReducer.isAddNew
 });
 
-export default connect(mapToProps, { GetClients, RemoveClient })(withStyles(styles)(ClientManager));
+export default connect(mapToProps, { GetClients, GetNewClients, RemoveClient })(withStyles(styles)(ClientManager));

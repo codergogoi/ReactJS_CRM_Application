@@ -8,17 +8,15 @@ import Button from '@material-ui/core/Button';
 
 // Icons
 import EmployeeIcon from '@material-ui/icons/SupervisorAccount';
-import AddOffersIcon from '@material-ui/icons/CardGiftcard';
 
 import DesignationTable from './DesignationTable';
-import RegionTable from './RegionTable';
 import PolicyTable from './PolicyTable';
 import AdminSettings from './AdminSettings';
 
 import AddSettings from './AddSettings';
 
-import axios from 'axios';
 import Alert from '../Common/Alert';
+import { ROLE } from '../../store/actions/AppConst'
 
 //App Classes
 import CardDiv from '../Common/CardDiv';
@@ -69,15 +67,15 @@ class SettingsManager extends Component {
 			current_item : '',
 		};
 	}
-
+ 
 	handleChange = (event, value) => {
 		
 		this.setState({ value: value, current_item: '', isEdit: false });
 
 		if(value === 2){
-			this.props.GetPolicies('');
-		}if(value === 1){
 			this.props.GetDesignations('');
+		}if(value === 1){
+			this.props.GetPolicies('');
 		}else{
 			this.props.GetRegions('');
 		}
@@ -152,11 +150,11 @@ class SettingsManager extends Component {
 	onExecuteDeleteCommand() {
 		const { id } = this.state;
 		if(this.state.value === 2){
-			this.props.RemovePolicy({id});
-		}if(this.state.value === 1){
-			this.props.RemoveDesignation({id});
-		}else{
 			this.props.RemoveRegion({ id});
+		}if(this.state.value === 1){
+			this.props.RemovePolicy({id});
+		}else{
+			this.props.RemoveDesignation({id});
 		}
 	}
 
@@ -224,7 +222,8 @@ class SettingsManager extends Component {
 						>
 							<Tab label="Designation Settings" icon={<EmployeeIcon />} />							
 							<Tab label="Policy Settings" icon={<EmployeeIcon />} />
-							<Tab label="Admin Settings" icon={<EmployeeIcon />} />
+
+							{ROLE() === 'deny' && <Tab label="Admin Settings" icon={<EmployeeIcon />} />}
 
 						</Tabs>
 

@@ -35,15 +35,19 @@ function getSorting(order, orderBy) {
  
 
 
+
+
 const columnData = [
 	{ id: 'policy', numeric: false, disablePadding: false, label: 'Policy' },
-	{ id: 'portal_access', numeric: false, disablePadding: false, label: 'Portal Access' },
-    { id: 'app_access', numeric: false, disablePadding: false, label: 'App Access' },
-    { id: 'track_user', numeric: false, disablePadding: false, label: 'Track User' },
-    { id: 'add_user', numeric: false, disablePadding: false, label: 'Add User' },
-    { id: 'view_user', numeric: false, disablePadding: false, label: 'View User' },
-    { id: 'reports', numeric: false, disablePadding: false, label: 'Reports' },
-    { id: 'more', numeric: false, disablePadding: false, label: 'Action' }
+	{ id: 'portal_access', numeric: false, disablePadding: true, label: 'Portal Access' },
+    { id: 'app_access', numeric: false, disablePadding: true, label: 'App Access' },
+    { id: 'track_user', numeric: false, disablePadding: true, label: 'Track User' },
+	{ id: 'view_user', numeric: false, disablePadding: true, label: 'View User' },
+	{ id: 'view_attendance', numeric: false, disablePadding: true, label: 'Attendance' },
+	{ id: 'download_attendance', numeric: false, disablePadding: true, label: 'Download Attendance' },
+	{ id: 'reports', numeric: false, disablePadding: true, label: 'Reports' },
+	{ id: 'expenses', numeric: false, disablePadding: true, label: 'Expenses' },
+    { id: 'more', numeric: false, disablePadding: true, label: 'Action' }
     
 ];
 
@@ -287,7 +291,7 @@ class PolicyTable extends React.Component {
 							onRequestSort={this.handleRequestSort}
 							rowCount={data.length}
 						/>
- 
+
 
 						<TableBody>
 							{data
@@ -296,7 +300,9 @@ class PolicyTable extends React.Component {
 								.map((n) => {
 									return (
 										<TableRow hover role="checkbox" tabIndex={-1} key={n.id}>
+											
 											<TableCell>{n.policy}</TableCell>
+											
 											<TableCell>
 												<FormControlLabel
 													control={
@@ -304,6 +310,7 @@ class PolicyTable extends React.Component {
 													}
 												/>
 											</TableCell>
+
 											<TableCell>
 												<FormControlLabel
 													control={
@@ -311,34 +318,58 @@ class PolicyTable extends React.Component {
 													}
 												/>
 											</TableCell>
-                                            <TableCell>
+                                            
+											<TableCell>
 												<FormControlLabel
 													control={
 														<Switch checked={n.track_user} value={n.track_user} />
 													}
 												/>
 											</TableCell>
-                                            <TableCell>
-												<FormControlLabel
-													control={
-														<Switch checked={n.add_user} value={n.add_user} />
-													}
-												/>
-											</TableCell>
-                                            <TableCell>
+                                            
+                                            
+											<TableCell>
 												<FormControlLabel
 													control={
 														<Switch checked={n.view_user} value={n.view_user} />
 													}
 												/>
 											</TableCell>
-                                            <TableCell>
+											
+										 
+											
+											<TableCell>
+												<FormControlLabel
+													control={
+														<Switch checked={n.view_attendance} value={n.view_attendance} />
+													}
+												/>
+											</TableCell>
+											
+											<TableCell>
+												<FormControlLabel
+													control={
+														<Switch checked={n.download_attendance} value={n.download_attendance} />
+													}
+												/>
+											</TableCell>
+                                            
+											<TableCell>
 												<FormControlLabel
 													control={
 														<Switch checked={n.reports} value={n.reports} />
 													}
 												/>
 											</TableCell>
+											
+											<TableCell>
+												<FormControlLabel
+													control={
+														<Switch checked={n.expenses} value={n.expenses} />
+													}
+												/>
+											</TableCell>
+											
 											<TableCell>
 												<IconButton
 													className={classes.button}
@@ -357,6 +388,7 @@ class PolicyTable extends React.Component {
 													<EditIcon />
 												</IconButton>
 											</TableCell>
+
 										</TableRow>
 									);
 								})}

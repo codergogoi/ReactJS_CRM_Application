@@ -36,6 +36,9 @@ import Checkbox from '@material-ui/core/Checkbox';
 
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
+
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
  
 
 //Tab Container
@@ -112,7 +115,40 @@ const styles = (theme) => ({
 		display: 'flex',
 		flexDirection: 'column',
 		width: 300,
-	}
+	},
+	dateView:{
+		position: 'absolute',
+		marginTop: 10,
+		marginLeft: 550,
+		zIndex: 100,
+		width: 260,
+		display: 'flex',
+		flexDirection: 'row',
+		backgroundColor: '#FFF',
+		padding: 2,
+		paddingLeft: 5,
+		borderRadius: 8,
+		alignItems: 'center'
+	},
+	  dateInput: {
+		  display:'flex',
+		  width: 80,
+		  borderRadius: 15,
+		  backgroundColor: '#FAC286',
+		  marginRight:10,
+		  marginLeft: 10,
+		  borderWidth: 0,
+		  textAlign: 'center',
+		  fontSize: 15,
+		  color: '#FFF'
+	  },
+	  dateText:{
+			fontSize: 10,
+			color: '#979797',
+			textAlign: 'center',
+			alignItems: 'center',
+			justifyContent: 'center'
+	  },
 });
 
 class AddTask extends React.Component {
@@ -132,9 +168,9 @@ class AddTask extends React.Component {
 				employee_code: '',
 				task_priority: "0",
 				location: '',
-				meeting_date: Date.now(),
-				start_date: Date.now(),
-				end_date: Date.now(),
+				meeting_date: new Date(),
+				start_date: new Date(),
+				end_date: new Date(),
 				pp_date: '',
 				employee_name: '',
 				employee_designation: '',
@@ -161,9 +197,12 @@ class AddTask extends React.Component {
 
 		if(this.props.isEdit){
 			const {
-				id,title,appointment_date, assigned_emp,emp_id,client_name,client_id,client_address,contact_person, company_phone,description,remarks, group_id, grouped
+				id,title,assigned_emp,emp_id,client_name,client_id,client_address,contact_person, company_phone,description,remarks, group_id, grouped,
+				deadline,
+				priority
 			} = this.props.current_task;
-
+ 
+  
 			this.setState({
 				task_id: id,
 				title: title,
@@ -173,8 +212,8 @@ class AddTask extends React.Component {
 				company_phone: company_phone,
 				task_description: description,
 				employee_id: emp_id,
-				task_priority: 0,
-				meeting_date: appointment_date,
+				task_priority: priority,
+				meeting_date: new Date(deadline),
 				employee_name: assigned_emp,
 				client_name: client_name,
 				client_address: client_address,
@@ -182,6 +221,7 @@ class AddTask extends React.Component {
 				group_id: group_id,
 				grouped: grouped
 			})
+			
 		}
 
 	}
@@ -260,7 +300,6 @@ class AddTask extends React.Component {
 				employee_id: '',
 				task_priority: 0,
 				location: '',
-				meeting_date: '',
 				pp_date: '',
 				employee_name: '',
 				employee_designation: '',
@@ -274,9 +313,7 @@ class AddTask extends React.Component {
 		});
 		this.props.DismissAlert();
 
-		if(this.props.isEdit){
-			this.props.onTapBack();
-		}
+		this.props.onTapBack();
 	};
 
 	onOkay = () => {
@@ -289,7 +326,6 @@ class AddTask extends React.Component {
 			task_description: '',
 			task_priority: 0,
 			location: '',
-			meeting_date: '',
 			pp_date: '',
 			employee_name: '',
 			employee_designation: '',
@@ -307,9 +343,7 @@ class AddTask extends React.Component {
 		}));
 		
 		this.props.DismissAlert();
-		if(this.props.isEdit){
-			this.props.onTapBack();
-		}
+ 		this.props.onTapBack();
 	};
 
 	onTapBack = () => {
@@ -443,6 +477,29 @@ class AddTask extends React.Component {
 
 
 
+	handleMeetingDateChange = date => {
+		this.setState({
+			meeting_date: date
+		});
+	};
+
+
+	handleStartGroupDateChange = date => {
+		this.setState({
+			start_date: date
+		});
+	};
+
+
+	handleEndGroupDateChange = date => {
+		this.setState({
+			end_date: date
+		});
+	};
+
+
+
+
 	displayTextContent = () => {
 
 		const { classes, employee, clients, cities } = this.props;
@@ -461,6 +518,8 @@ class AddTask extends React.Component {
 				
 				} = this.state;
 
+				 
+
 		const assigned_emp = employee_id !== null ? `${employee_code} ${employee_name}` : "Not Available for This Client"
  
 		return(<view className={classes.formControl}>
@@ -469,22 +528,22 @@ class AddTask extends React.Component {
 								<view className={classes.selectCityView}>
 									<view className={classes.miniSelection}>
 										<Select
-												
 												value={selectedCity}
+												onMenuOpen={() => {
+													this.setState({selectedOption: null, selectedCity: null});  
+												}}
 												onChange={this.handleCityChange}
 												options={cities}
 										/>
 									</view>
-
-									<view className={classes.clientSelection}>
-
-									<Select
-											
+									{selectedCity !== null &&  <view className={classes.clientSelection}>
+										<Select
 											value={selectedOption}
 											onChange={this.handleChange}
 											options={clients}
-									/>
-									</view>
+										/>
+									</view>}
+									
 								</view>
 						)}
 
@@ -579,37 +638,35 @@ class AddTask extends React.Component {
 						/> 
 						
 					</view>
-
-				 
+ 
 
 					<view className={classes.textFields}>
-							<TextField
-								disabled = {employee_id == null}
-								id="meeting_date"
-								label="Meeting Date"
-								style={{width: 160,  marginTop: 0, marginRight: 20}}
-								type="date"
-								required="true"
-								margin="normal"
-								onChange={this.handleTextChanges.bind(this)}
-								value={meeting_date}
-							/>
 
-
-								<FormLabel component="legend">Priority</FormLabel>
-								<RadioGroup
-									aria-label="priority"
-									name="priority"
-									className={classes.group}
-									value={this.state.task_priority}
-									onChange={this.onHandlePriority.bind(this)}
-								>
-								<FormControlLabel value="0" control={<Radio selected />} label="Low" />
-								<FormControlLabel value="1" control={<Radio />} label="Medium" />
-								<FormControlLabel value="2" control={<Radio />} label="High" />
-								<FormControlLabel value="3" control={<Radio />} label="Urgent" />
-									 
-								</RadioGroup>
+							<div>
+								<div className={classes.dateText}>
+									Meeting Date
+								</div>
+								<DatePicker
+									className={classes.dateInput}
+									selected={meeting_date}
+									onChange={this.handleMeetingDateChange}
+								/>
+							</div>
+  
+							<FormLabel component="legend">Priority</FormLabel>
+							<RadioGroup
+								aria-label="priority"
+								name="priority"
+								className={classes.group}
+								value={this.state.task_priority}
+								onChange={this.onHandlePriority.bind(this)}
+							>
+							<FormControlLabel value="0" control={<Radio selected />} label="Low" />
+							<FormControlLabel value="1" control={<Radio />} label="Medium" />
+							<FormControlLabel value="2" control={<Radio />} label="High" />
+							<FormControlLabel value="3" control={<Radio />} label="Urgent" />
+									
+							</RadioGroup>
  
 					</view>
 					
@@ -621,12 +678,14 @@ class AddTask extends React.Component {
 							onClick={this.onTapAddNewTask.bind(this)}
 							className={classes.button}
 						>
-							Add Task
+
+							{this.props.isEdit ? 'Edit Task' : 'Add Task'}
+
 						</Button>
 					</view>
 
-
 			</view>);
+
 	}
 
 
@@ -735,30 +794,30 @@ class AddTask extends React.Component {
 				 
 
 					<view className={classes.textFields}>
-							<TextField
-								disabled = {employee_id == null}
-								id="start_date"
-								label="Start Date"
-								style={{width: 160,  marginTop: 0, marginRight: 20}}
-								type="date"
-								required="true"
-								margin="normal"
-								onChange={this.handleTextChanges.bind(this)}
-								value={start_date}
-							/>
 
-							<TextField
-								disabled = {employee_id == null}
-								id="end_date"
-								label="End Date"
-								style={{width: 160,  marginTop: 0, marginRight: 20}}
-								type="date"
-								required="true"
-								margin="normal"
-								onChange={this.handleTextChanges.bind(this)}
-								value={end_date}
-							/>
+							<div>
+								<div className={classes.dateText}>
+									Start Date
+								</div>
+								<DatePicker
+									className={classes.dateInput}
+									selected={start_date}
+									onChange={this.handleStartGroupDateChange}
+								/>
+							</div>
 
+							<div>
+								<div className={classes.dateText}>
+									End Date
+								</div>
+								<DatePicker
+									className={classes.dateInput}
+									selected={end_date}
+									onChange={this.handleEndGroupDateChange}
+								/>
+							</div>
+
+							 
 							<NativeSelect
 								disabled = {employee_id == null}
 								style={{width: 200,height: 48,  marginTop: 0, marginRight: 20}}

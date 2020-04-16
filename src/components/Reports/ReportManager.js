@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
-
 
 import Table from './ReportTable';
 import Alert from '../Common/Alert';
@@ -11,8 +11,12 @@ import Alert from '../Common/Alert';
 //App Classes
 import CardDiv from '../Common/CardDiv';
 
+import EmployeeIcon from '@material-ui/icons/SupervisorAccount';
+
 import { connect } from 'react-redux';
-import { GetReports } from '../../store/actions/ReportActions';
+import { GetReports , GetProgressRatio } from '../../store/actions/ReportActions';
+
+import ProgressReport from './ProgressReport';
 
 function TabContainer(props) {
 	return (
@@ -60,20 +64,28 @@ class ReportManager extends Component {
 	}
 
 	 
+	handleChange = (event, value) => {
+		
+		this.setState({ value: value });
+
+		// if(value === 2){
+		// 	this.props.GetPolicies('');
+		// }if(value === 1){
+		// 	this.props.GetDesignations('');
+		// }else{
+		// 	this.props.GetRegions('');
+		// }
+	};
+
 	componentWillMount() {
+		this.props.GetProgressRatio();
 		this.props.GetReports('');
+
 	} 
 
 	onTapBack() {
 		this.setState({ isAddNew: false, isEdit: false });
 		this.props.GetReports('');
-		/*
-		if(this.state.isCountry){
-			
-		}else{
-			
-		}
-		*/
 	}
 
 	onCloneClick(offer) {
@@ -116,9 +128,10 @@ class ReportManager extends Component {
 
 	render() {
 
-		const { classes, reports } = this.props;
-		const {  showAlert, title, msg } = this.state;
+		const { classes, reports, ratio, task } = this.props;
+		const {  showAlert, title, msg, value } = this.state;
 
+		 
  
 			return (
 				<div>
@@ -132,12 +145,36 @@ class ReportManager extends Component {
 
 					<CardDiv className={classes.root} title={'Reports'}>
 						
-							<Table
-								onEditFields={this.onEditFields.bind(this)}
-								onDeleteOffer={this.onDeleteOffer.bind(this)}
-								data={reports}
-							/>
-						 
+							
+						 <Tabs
+							value={value}
+							onChange={this.handleChange}
+							scrollable
+							scrollButtons="on"
+							indicatorColor="secondary"
+							textColor="secondary"
+						>
+							<Tab label="Progress Report" icon={<EmployeeIcon />} />							
+							<Tab label="User Report" icon={<EmployeeIcon />} />
+
+						</Tabs>
+
+								{value === 0 && (
+									<TabContainer>
+										{task !== undefined && ratio !== undefined && <ProgressReport  ratio={ratio} task={task}/>	}
+									</TabContainer>
+								)}
+
+								{value === 1 && (
+									<TabContainer>
+										{reports !== undefined && <Table
+											onEditFields={this.onEditFields.bind(this)}
+											onDeleteOffer={this.onDeleteOffer.bind(this)}
+											data={reports}
+										/>}
+									</TabContainer>
+								)}
+								
 					</CardDiv>
 				</div>
 			);
@@ -153,17 +190,17 @@ class ReportManager extends Component {
 		this.setState({ showAlert: false });
 		this.onExecuteDeleteCommand();
 	};
-
 }
 
 ReportManager.propTypes = {
 	classes: PropTypes.object.isRequired,
 	theme: PropTypes.object.isRequired,
-
 };
 
 const mapToProps = (state) => ({
 	reports: state.reportReducer.reports,
+	ratio: state.reportReducer.ratio,
+	task: state.reportReducer.task
 });
 
-export default connect(mapToProps, { GetReports })(withStyles(styles,{ withTheme: true })(ReportManager));
+export default connect(mapToProps, { GetReports, GetProgressRatio })(withStyles(styles,{ withTheme: true })(ReportManager));

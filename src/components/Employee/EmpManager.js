@@ -5,11 +5,13 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import Fab from '@material-ui/core/Fab';
 
 // Icons
 import BankIcon from '@material-ui/icons/Payment';
 import AddOffersIcon from '@material-ui/icons/CardGiftcard';
 import SaveIcon from '@material-ui/icons/Save';
+import DownloadIcon from '@material-ui/icons/CloudDownload';
 
 import Table from './EmpTable';
 import axios from 'axios';
@@ -20,7 +22,7 @@ import CardDiv from '../Common/CardDiv';
 import AddEmployee from './AddEmp';
 
 import { connect } from 'react-redux';
-import { GetEmployees, RemoveEmp } from '../../store/actions/EmployeeActions';
+import { GetEmployees, GetAttendance, RemoveEmp, DownloadAttendance } from '../../store/actions/EmployeeActions';
 
 import Paper from '@material-ui/core/Paper';
 import InputBase from '@material-ui/core/InputBase';
@@ -28,7 +30,13 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
+import EmployeeIcon from '@material-ui/icons/SupervisorAccount';
+
 import DirectionsIcon from '@material-ui/icons/Directions';
+import AttendanceTable from './AttendanceTable';
+import ViewTrackingDetails from './ViewTrackingDetails';
+import CsvDownload from 'react-json-to-csv'
+
 
 function TabContainer(props) {
 	return (
@@ -86,6 +94,22 @@ const styles = (theme) => ({
 		height: 28,
 		margin: 4,
 	  },
+	  downloadBtn:{
+		width: 200,
+		display: 'flex',
+		backgroundColor: '#ebeef1',
+		border: 0
+
+	},
+	fab:{
+	  backgroundColor: '#900C3F',
+	  color: '#FFF'
+
+  	},
+	extendedIcon: {
+	  marginRight: theme.spacing.unit,
+	  color: '#FFF'
+	},
 });
 
 class EmpManager extends Component {
@@ -98,8 +122,13 @@ class EmpManager extends Component {
 			value: 0,
 			isAddNew: false,
 			isEdit: false,
-			isSearch: false
+			isSearch: false,
+			isViewLocation: false
 		};
+	}
+
+	componentWillReceiveProps(){
+		this.setState({ isAddNew: false, isEdit: false, isViewLocation: false });
 	}
 
 	handleChange = (event, value) => {
@@ -110,8 +139,12 @@ class EmpManager extends Component {
 		this.fetchEmployee();
 	}
 
+
 	fetchEmployee = () => {
 		this.props.GetEmployees('');
+		this.props.GetAttendance('');
+		this.props.DownloadAttendance('');
+
 	};
 
 	onTapSaveChanges = () => {
@@ -127,8 +160,12 @@ class EmpManager extends Component {
 	}
 
 	onTapBack = () => {
-		this.setState({ isAddNew: false, isEdit: false });
+		this.setState({ isAddNew: false, isEdit: false, isViewLocation: false });
 		this.fetchEmployee();
+	}
+
+	onTapViewLocation = (emp) => {
+		this.setState({ isViewLocation : true});
 	}
 
 	onEditEmp = (emp) => {
@@ -188,10 +225,18 @@ class EmpManager extends Component {
 
 	render() {
 
-		const { classes,employees } = this.props;
-		const { value, isAddNew, showAlert, title, msg , isSearch, isEdit, current_emp} = this.state;
+		const { classes,employees, attendance,  access, attendance_prev } = this.props;
 
-		if (isAddNew) {
+		const { value, isAddNew, showAlert, title, msg , isSearch, isEdit, current_emp, isViewLocation} = this.state;
+
+		if(isViewLocation){
+			return (
+				<CardDiv title={'View Location'} isBack={true} onTapBack={this.onTapBack.bind(this)}>
+					<ViewTrackingDetails
+					  />
+				</CardDiv>
+			);
+		}else if (isAddNew) {
 			return (
 				<CardDiv title={'Add Employee'} isBack={true} onTapBack={this.onTapBack.bind(this)}>
 					<AddEmployee isEdit={isEdit} current_emp={current_emp}  />
@@ -209,17 +254,52 @@ class EmpManager extends Component {
 					/>
 
 					<CardDiv title={'Employees'} isAdd={false} onTapAdd={this.onTapAdd.bind(this)}>
+						 
+						<Tabs
+							value={value}
+							onChange={this.handleChange}
+							scrollable
+							scrollButtons="on"
+							indicatorColor="secondary"
+							textColor="secondary"
+						>
+							<Tab label="Employees" icon={<EmployeeIcon />} />							
+							<Tab label="Attendance Logs" icon={<EmployeeIcon />} />
+							{attendance_prev !== undefined && 
+							<CsvDownload className={classes.downloadBtn} data={attendance_prev}>
+								<Fab variant="extended"  aria-label="Delete" className={classes.fab}>
+									<DownloadIcon className={classes.extendedIcon} />
+										Prev Attendance
+								</Fab>
+							</CsvDownload>}
+						</Tabs>
+
 						{value === 0 && (
-							<div>								
-								{this.onDisplaySearchView()}
+							<TabContainer>
+								<div>								
+								{/* {this.onDisplaySearchView()} */}
 								{employees !== undefined && (<Table
+									access={access}
 									onEditEmp={this.onEditEmp.bind(this)}
 									onDeleteEmp={this.onDeleteEmp.bind(this)}
 									data={employees}
 								/>) }
 								
-							</div>
+								</div>
+							</TabContainer>
 						)}
+
+						{value === 1 && (
+							<TabContainer>
+								{attendance !== undefined && <AttendanceTable
+									data={attendance}
+									onTapViewLocation = {this.onTapViewLocation.bind(this)}
+								/> }
+								
+							</TabContainer>
+						)}
+						 
+
 					</CardDiv>
 				</div>
 			);
@@ -243,7 +323,9 @@ EmpManager.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-	employees: state.employeeReducer.employees
+	employees: state.employeeReducer.employees,
+	attendance: state.employeeReducer.attendance,
+	attendance_prev: state.employeeReducer.attendance_prev,
 });
 
-export default connect(mapStateToProps, { GetEmployees, RemoveEmp })(withStyles(styles)(EmpManager));
+export default connect(mapStateToProps, { GetEmployees, GetAttendance ,RemoveEmp, DownloadAttendance })(withStyles(styles)(EmpManager));

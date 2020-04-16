@@ -2,6 +2,8 @@ import Actions from '../actions/Actions';
 
 const initialState = {
 	reports: [],
+	ratio: [],
+	task: [],
 	isAdded: false
 };
 
@@ -28,6 +30,12 @@ export default function(state = initialState, action) {
 				...state,
 				reports: action.payload
 			};
+		case Actions.VIEW_PROGRESS_RATIO:
+			return {
+				...state,
+				ratio: action.payload.ratio,
+				task: action.payload.task
+			}
 		case Actions.DISMISS:
 			return {
 				...state,

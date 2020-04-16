@@ -61,9 +61,7 @@ class AddEmp extends React.Component {
 		super(props);
 		this.state = {
 			title: '',
-			first_name: '',
-			middle_name: '',
-			last_name: '',
+			name: '',
 			emp_id: '',
 			mobile: '',
 			region: '',
@@ -77,13 +75,11 @@ class AddEmp extends React.Component {
 		this.props.GetAttributes('');
 
 		if(this.props.isEdit){
-			const {id,emp_id,title,first_name,middle_name,last_name,region,designation,mobile,email} = this.props.current_emp;
+			const {id,emp_id,title,name,region,designation,mobile,email} = this.props.current_emp;
 			this.setState({
 				id: id,
 				title: title,
-				first_name: first_name,
-				middle_name: middle_name,
-				last_name: last_name,
+				name: name,
 				emp_id: emp_id,
 				mobile: mobile,
 				region: region,
@@ -182,14 +178,8 @@ class AddEmp extends React.Component {
 	}
 
 	handleTextChanges = (event) => {
-		 if (event.target.id === 'first_name') {
-			this.setState({ first_name: event.target.value });
-		} else if (event.target.id === 'middle_name') {
-			this.setState({ middle_name: event.target.value });
-		} else if (event.target.id === 'last_name') {
-			this.setState({ last_name: event.target.value });
-		} else if (event.target.id === 'emp_id') {
-			this.setState({ emp_id: event.target.value });
+		 if (event.target.id === 'name') {
+			this.setState({ name: event.target.value });
 		}else if (event.target.id === 'mobile') {
 			this.setState({ mobile: event.target.value });
 		}else if (event.target.id === 'email') {
@@ -222,7 +212,7 @@ class AddEmp extends React.Component {
 
 		const { classes, designations, regions } = this.props;
 		
-		const { first_name,middle_name,last_name,emp_id,mobile,email } = this.state;
+		const { name,emp_id,mobile,email } = this.state;
 
 
 		return(<view className={classes.formControl}>
@@ -247,37 +237,16 @@ class AddEmp extends React.Component {
 						<view className={classes.textFields}>
 							
 						<TextField
-							id="first_name"
-							label="First Name"
+							id="name"
+							label="Name"
 							style={{width: 220,  marginTop: 0, marginRight: 20}}
 							type="text"
 							required="true"
 							margin="normal"
 							onChange={this.handleTextChanges.bind(this)}
-							value={first_name}
+							value={name}
 						/>
 
-						<TextField
-							id="middle_name"
-							label="Middle Name"
-							style={{width: 180,  marginTop: 0, marginRight: 20}}
-							type="text"
-							required="true"
-							margin="normal"
-							onChange={this.handleTextChanges.bind(this)}
-							value={middle_name}
-						/>
-						 
-						<TextField
-							id="last_name"
-							label="Last Name"
-							style={{width: 220,  marginTop: 0, marginRight: 20}}
-							type="text"
-							required="true"
-							margin="normal"
-							onChange={this.handleTextChanges.bind(this)}
-							value={last_name}
-						/>
 						 
 					</view>	
 
@@ -290,8 +259,8 @@ class AddEmp extends React.Component {
 								type="text"
 								required="true"
 								margin="normal"
-								onChange={this.handleTextChanges.bind(this)}
 								value={emp_id}
+								disabled
 							/>
 
 							<NativeSelect
@@ -307,21 +276,7 @@ class AddEmp extends React.Component {
 								})}
 
 							</NativeSelect>
-
-							<NativeSelect
-							style={{width: 200,height: 48,  marginTop: 0, marginRight: 20}}
-							required="true"
-							onChange={this.handleRegion.bind(this)}
-						>
-							<option value="" disabled selected>
-								Select Region
-							</option>
-							{regions !== undefined && regions.map( (item) => {
-								return (<option value={item.id}>{item.region}</option>);
-							})}
-						</NativeSelect>
-
-							
+ 
 
 					</view>	
 					
@@ -359,7 +314,7 @@ class AddEmp extends React.Component {
 							onClick={this.onTapAddNewEmp.bind(this)}
 							className={classes.button}
 						>
-							Add Employee
+							Save Changes
 						</Button>
 					</view>
 

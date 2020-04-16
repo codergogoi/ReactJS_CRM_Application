@@ -11,9 +11,7 @@ export const GetUsers = (postData) => (dispatch) => {
 		})
 		.then((res) =>{
 
-
 			console.log('Receiving Response: '+ JSON.stringify(res));
-
 			
 				const status = parseInt(res.data.status);
 
@@ -40,14 +38,14 @@ export const GetUsers = (postData) => (dispatch) => {
 
 export const GetTrackDetails = (postData) => (dispatch) => {
 
-	const { from, to, id } = postData;
+	const { startDate, endDate, id } = postData;
 
 	axios.defaults.baseURL = BASE_URL;
 	axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
 	axios
 		.post('user/track-details/'+ id, {
-			from: from,
-			to: to
+			from: startDate,
+			to: endDate
 		})
 		.then((res) =>{
 

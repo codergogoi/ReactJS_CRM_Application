@@ -153,6 +153,40 @@ export const GetTask = (postData) => (dispatch) => {
 		.catch((error) => console.log(' Error Encountered'));
 };
 
+export const GetGroupTask = (postData) => (dispatch) => {
+
+	const { group_id } = postData;
+
+	axios.defaults.baseURL = BASE_URL;
+	axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
+	axios
+		.post('task/group/'+group_id, {
+		})
+		.then((res) =>
+			{
+				const status = parseInt(res.data.status);
+				if (status === 200) {
+					const responseString = JSON.parse(JSON.stringify(res.data));
+
+					console.log(JSON.stringify(responseString));
+					
+					let tasks = responseString.data;
+					dispatch({
+						type: Actions.VIEW_ALL_GROUP_TASK,
+						payload: tasks
+					})
+				}else{
+					dispatch({
+						type: Actions.VIEW_ALL_GROUP_TASK,
+						payload: []
+					})
+				}
+			}
+		)
+		.catch((error) => console.log(' Error Encountered'));
+};
+
+
 
 
 export const NewGroupTask = (postData) => (dispatch) => {
@@ -314,6 +348,35 @@ export const RemoveTask = (postData) => (dispatch) => {
 			});
 };
 
+
+export const RemoveGroupedTask = (postData) => (dispatch) => {
+
+	const { id, group_id } = postData; 
+	
+		axios.defaults.baseURL = BASE_URL;
+		axios.defaults.headers.post['Content-Type'] = 'application/json';
+		axios.defaults.headers.common['Authorization'] = localStorage.getItem('app_token');
+		axios
+			.post('/task/delete-group/'+id, {
+				group_id: group_id
+			})
+			.then((res) => {
+				const status = parseInt(res.data.status);
+				if (status === 200) {
+					const responseString = JSON.parse(JSON.stringify(res.data));
+					let tasks = responseString.data;
+					dispatch({
+						type: Actions.VIEW_ALL_GROUP_TASK,
+						payload: tasks
+					})
+				}else{
+					dispatch({
+						type: Actions.VIEW_ALL_GROUP_TASK,
+						payload: []
+					})
+				}
+			});
+};
 
 export const UpdateGroupTask = (postData) => (dispatch) => {
 	const {  

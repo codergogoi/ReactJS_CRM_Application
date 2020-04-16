@@ -5,7 +5,7 @@ const initialState = {
 	designations: [],
 	policies: [],
 	managers: [],
-	isExported: false
+	isExported: false,
 };
 
 export default function(state = initialState, action) {
@@ -26,7 +26,7 @@ export default function(state = initialState, action) {
 				...state,
 				managers: action.payload
 			};	
-		case Actions.ADD_REGION:
+		case Actions.ADD_REGION_MANAGER:
 			return {
 				...state,
 				isAdded: true,
